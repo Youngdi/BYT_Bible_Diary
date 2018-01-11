@@ -1,0 +1,43 @@
+{
+  "name": "BYTBibleDiary",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "ios-production": "react-native run-ios --configuration Release",
+    "an-production": "react-native run-android --variant=release",
+    "dev": "react-native run-ios",
+    "getjs": "curl http://localhost:8081/index.ios.bundle -o main.jsbundle",
+    "bundle-ios": "react-native bundle --entry-file index.ios.js --platform ios --bundle-output ./bundle/main.jsbundle --dev false --assets-dest ./bundle/",
+    "e-ios": "react-native run-ios",
+    "d-ios": "react-native run-ios --device 'Youngdi' ",
+    "r-ios": "react-native run-ios --configuration Release --device 'Youngdi'",
+    "e-an": "react-native run-android",
+    "r-an": "sh ./doc/buildSignedApk.sh"
+  },
+  "dependencies": {
+    "moment": "^2.20.1",
+    "react": "16.0.0",
+    "react-native": "0.51.0",
+    "react-native-calendars": "^1.16.1",
+    "react-native-iphone-x-helper": "^1.0.1",
+    "react-native-modal": "^4.1.1",
+    "react-native-screen-brightness": "^0.3.2",
+    "react-native-slider": "^0.11.0",
+    "react-native-sqlite-storage": "^3.3.4",
+    "react-native-triangle": "0.0.9",
+    "react-native-vector-icons": "^4.4.3",
+    "react-navigation": "^1.0.0-beta.23",
+    "styled-components": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel-jest": "22.0.4",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.0.4",
+    "react-test-renderer": "16.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
