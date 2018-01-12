@@ -86,7 +86,6 @@ export default class DiaryRead extends Component {
   }
   componentWillMount = async () => {
     let query;
-    let ddd = [];
     query = `SELECT * FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
     const schedule_result = await this.state.db.scheduleDB.executeSql(query);
     const schedule_results = schedule_result[0].rows.raw().map(row => row);
@@ -100,7 +99,7 @@ export default class DiaryRead extends Component {
   componentDidMount = async () => {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
-        content: a,
+        content: '123',
         setting:{
           ...this.state.setting,
           brightnessValue: brightness,
@@ -225,7 +224,7 @@ export default class DiaryRead extends Component {
     const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
     const paddingToBottom = 20;
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
-    if(direction == 'down') {
+    if(direction == 'down' && contentOffset.y > 100) {
       this.setState({
         fullScreenMode: true,
       });
