@@ -16,6 +16,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CalendarModal from '../components/Calendar';
 import FontPanelModal from '../components/FontPanel';
+import DiaryContent from '../components/DiaryContent';
 
 const StyledMain = styled.ScrollView`
   display:flex;
@@ -66,6 +67,9 @@ export default class DiaryRead extends Component {
       fullScreenMode: false,
       isCalendarModalVisible: false,
       isFontSettingModalVisible: false,
+      content: '',
+      scrollPosition: 0,
+      hasRead: 0,
       setting: {
         fontFamily: 'Avenir',
         fontSize: 18,
@@ -92,6 +96,7 @@ export default class DiaryRead extends Component {
   componentDidMount() {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
+        content: a,
         setting:{
           ...this.state.setting,
           brightnessValue: brightness,
@@ -113,14 +118,6 @@ export default class DiaryRead extends Component {
   }
   _toggleModalCalendar = () => this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
   _toggleModalFontSetting = () => this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
-  _onScrollAnimationEnd = () => {
-    this.setState({
-      markedDates: {
-        ...this.state.markedDates,
-        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true},
-      },
-    });
-  }
   _handleNextDay = () => {
     if(this.state.currentDate == '2018-12-31') {
       Alert.alert('今年還沒過完呢！');
@@ -221,33 +218,50 @@ export default class DiaryRead extends Component {
     }
   }
   _handleScroll = (e) => {
-    console.log(e.nativeEvent.contentOffset.y);
+    const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
+    const paddingToBottom = 20;
+    const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
+    if(direction == 'down') {
+      this.setState({
+        fullScreenMode: true,
+      });
+    } else {
+      this.setState({
+        fullScreenMode: false,
+      });
+    }
+    this.setState({
+      scrollPosition: contentOffset.y,
+    });
+    if(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+      if(this.state.hasRead) return;
+      this.setState({
+        markedDates: {
+          ...this.state.markedDates,
+          [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true},
+        },
+      });
+    }
   }
   render() {
     const { bg, fullScreenMode } = this.state;
     return (
       <StyledContainer bg={bg}>
         <Header fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
-        <StyledMain bg={bg} 
-          onMomentumScrollEnd={this._onScrollAnimationEnd.bind(this)}
+        <StyledMain
+          bg={bg} 
           onScroll={this._handleScroll.bind(this)}
           scrollEventThrottle={16}
         >
-          <StyledMainContent bg={bg}
-            onPress={() => {
-              this.setState({
-                fullScreenMode: !this.state.fullScreenMode,
-              });
-          }}>
+          <StyledMainContent bg={bg}>
             <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
-              <StyledDiaryText 
+              <DiaryContent 
                 fontColor={this.state.setting.fontColor}
                 fontSize={this.state.setting.fontSize}
                 lineHeight={this.state.setting.lineHeight}
                 fontFamily={this.state.setting.fontFamily}
-              >
-              {a}
-              </StyledDiaryText>
+                content={this.state.content}
+              />
             </View>
           </StyledMainContent>
         </StyledMain>

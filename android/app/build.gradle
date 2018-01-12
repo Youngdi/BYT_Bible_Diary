@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-webview-bridge')
     compile project(':react-native-vector-icons')
     compile project(':react-native-screen-brightness')
     compile fileTree(dir: "libs", include: ["*.jar"])
