@@ -40,16 +40,6 @@ const StyledDiaryText = styled.Text`
   font-family: ${props => props.fontFamily};
 `;
 
-const a = `Output Box - Random strings/passwords will display here.Load objects used for random string generation into the 
-"Object Input Box" above. Objects above can be characters, words, sentences, etc.Test by clicking the "Generate random strings" 
-button above to generate 10, 14 character, random strings from the default input objects.NOTICE: Tool uses Javascript method Math.random() 
-pseudorandom generator to obtain random string. Do not use for critical random results.Privacy of Data: This tool is built-with and functions-in 
-Client Side JavaScripting, so only your computer will see or process your data input/output.swords will display here.Load objects used for random string generation into the 
-"Object Input Box" above. Objects above can be characters, words, sentences, etc.Test by clicking the "Generate random strings" 
-button above to generate 10, 14 character, random strings from the default input objects.NOTIrom the default input objects.NOTICE: Tool uses Javascript method Math.random() 
-pseudorandom generator to obtain random string. Do not use for critical random results.Privacy of Data: This tool is built-with and functions-in 
-Client Side JavaScripting, so only your computer will see or process your data input/output.swords will display here.Load objects used for random string generation into the 
-"Object Input Box" above. Objects above can be characters, words, sentences, etc.Test by c`;
 const ccc = {
   '2018-01-11': {marked: true}
 }
@@ -63,6 +53,7 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      db: props.navigation.state.params.db,
       bg: '#fff',
       fullScreenMode: false,
       isCalendarModalVisible: false,
@@ -79,7 +70,7 @@ export default class DiaryRead extends Component {
         readingMode: 0, // 0 -> day, 1 -> night
         lang: '', // zh-tw
       },
-      day: {
+      date: {
         dateString: moment().format('YYYY-MM-DD'),
         day:  Number(moment().format('D')),
         month: Number(moment().format('M')),
@@ -93,7 +84,20 @@ export default class DiaryRead extends Component {
       value:0.2,
     };
   }
-  componentDidMount() {
+  componentWillMount = async () => {
+    let query;
+    let ddd = [];
+    query = `SELECT * FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
+    const schedule_result = await this.state.db.scheduleDB.executeSql(query);
+    const schedule_results = schedule_result[0].rows.raw().map(row => row);
+    const bible_results = await Promise.all(schedule_results.map( async (item) => {
+      const query = `SELECT * FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
+      const bible_result = await this.state.db.bible2DB.executeSql(query);
+      const bible_results = bible_result[0].rows.raw().map(row => row);
+      return bible_results;
+    }));
+  }
+  componentDidMount = async () => {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
         content: a,
@@ -197,7 +201,7 @@ export default class DiaryRead extends Component {
   }
   _handleChangeDay = (day) => {
     this.setState({
-      day,
+      date: day,
       markedDates: {
         ...this.state.markedDates,
         [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
@@ -245,6 +249,7 @@ export default class DiaryRead extends Component {
   }
   render() {
     const { bg, fullScreenMode } = this.state;
+    
     return (
       <StyledContainer bg={bg}>
         <Header fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>

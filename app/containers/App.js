@@ -3,11 +3,52 @@ import { Button, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SQLite from 'react-native-sqlite-storage';
+SQLite.DEBUG(true);
+SQLite.enablePromise(true);
 class MyHomeScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      db:{},
+    }
+    // var db = SQLite.openDatabase("test.db", "1.0", "Test Database", 200000, openCB, errorCB);
+    // const bibleDB = SQLite.openDatabase({name : "Bible.db", createFromLocation : 1}, openCB, errorCB);
+
+    // const scheduleDB = SQLite.openDatabase({name : "BibleSchedule.db", createFromLocation : 1}, openCB, errorCB);
+
+    // bibleDB.transaction((tx) => {
+    //   tx.executeSql('SELECT * FROM Book', [], (tx, results) => {
+    //       console.log("Query completed");
+    //       let rows = results.rows.raw(); // shallow copy of rows Array
+    //       rows.map(row => console.log(`Employee name: ${row.BookID}, Dept Name: ${row.BookName}`));
+    //   });
+    // });
+    // scheduleDB.transaction((tx) => {
+    //   tx.executeSql('SELECT * FROM Schedule where ID = 1', [], (tx, results) => {
+    //       console.log("Query completed");
+    //       let rows = results.rows.raw(); // shallow copy of rows Array
+    //       rows.map(row => console.log(`${row.Month}`));
+    //   });
+    // });
+  }
+  componentWillMount = async () => {
+    const bibleDB = await SQLite.openDatabase({name : "Bible.db", createFromLocation : "1"});
+    const bible2DB = await SQLite.openDatabase({name : "Bible2.db", createFromLocation : "1"});
+    const scheduleDB = await SQLite.openDatabase({name : "BibleSchedule.db", createFromLocation : "1"});
+    this.setState({
+      db: {
+        bibleDB: bibleDB,
+        bible2DB: bible2DB,
+        scheduleDB: scheduleDB,
+      }
+    });
+  }
   render() {
     return (
       <View>
-        <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary')}/>
+        <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.state.db})}/>
+        <Button title="讀經去" onPress={() => this.populateDatabase()}/>
       </View>
     );
   }

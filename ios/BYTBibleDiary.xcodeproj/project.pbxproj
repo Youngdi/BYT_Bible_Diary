@@ -37,6 +37,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* BYTBibleDiaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BYTBibleDiaryTests.m */; };
+		2F83DA7A2008D08F0015ED01 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 2F83DA792008D08F0015ED01 /* www */; };
 		33F5036C7A744C76B266C9B7 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64365C340FB14CB881857B9F /* libsqlite3.0.tbd */; };
 		3AA6B27D859341D0B23EC98D /* libSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABDF03833834FA390E11E53 /* libSQLite.a */; };
 		5DDB9BC080034CC792D3FA2D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 731E6DF0E744478880A0ABF8 /* MaterialIcons.ttf */; };
@@ -369,6 +370,7 @@
 		291659FF0873431086BD11CB /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* BYTBibleDiary-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BYTBibleDiary-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BYTBibleDiary-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BYTBibleDiary-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F83DA792008D08F0015ED01 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 		334C3D2A3F1B4C1483758F37 /* libReact-Native-Webview-Bridge.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libReact-Native-Webview-Bridge.a"; sourceTree = "<group>"; };
 		36AC0A9A85344D0CADBDB2D2 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		3ABDF03833834FA390E11E53 /* libSQLite.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSQLite.a; sourceTree = "<group>"; };
@@ -534,6 +536,7 @@
 		13B07FAE1A68108700A75B9A /* BYTBibleDiary */ = {
 			isa = PBXGroup;
 			children = (
+				2F83DA792008D08F0015ED01 /* www */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -1206,6 +1209,7 @@
 				80D8E62E274041CE9B310C19 /* FontAwesome.ttf in Resources */,
 				24436B81C74C49EDBD98249D /* Foundation.ttf in Resources */,
 				B23190AEB820470C94E543BA /* Ionicons.ttf in Resources */,
+				2F83DA7A2008D08F0015ED01 /* www in Resources */,
 				B8531AAA9EA74D19836B8603 /* MaterialCommunityIcons.ttf in Resources */,
 				5DDB9BC080034CC792D3FA2D /* MaterialIcons.ttf in Resources */,
 				D9379D2E3B464A1DA1AC8BA3 /* Octicons.ttf in Resources */,
