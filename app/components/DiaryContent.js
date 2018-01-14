@@ -36,13 +36,46 @@ const PharseNumber = styled.Text`
   color: gray;
   margin-top: -10px;
   margin-right: 5px;
+  font-weight: 300;
 `;
 const Pharse = styled.Text`
   font-size: ${props => props.fontSize}px;
+  font-weight: 300;
 `;
 export default class DiaryContent extends PureComponent {
   constructor(props) {
     super(props);
+  }
+  renderTitle = () => {
+    let content = [...this.props.content];
+    return(
+      <Title fontSize={this.props.fontSize + 6}>
+      {`${this.props.date.month}月${this.props.date.day}日`}
+      {
+        content.map(item => {
+        return(<Text key={`Hint-${item[0].book_ref}-${item[0].chapter_nr}`} style={{fontSize:10}}>{'     '}{`${item[0].book_ref}${item[0].chapter_nr}`}{''}</Text>);
+        })
+      }
+      </Title>
+    );
+  }
+  renderVerse = () => {
+    let content = [...this.props.content];
+    return (
+      content.map(item => {
+        const Title = <BookTitle key={`title-${item[0].book_ref}`} fontSize={this.props.fontSize + 2}>
+        {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}{'\n'}
+        </BookTitle>
+        const Verse = item.map(verseItem => {
+          return(
+            <Pharse key={`Pharsetitle-${verseItem.book_ref}-${verseItem.verse_nr}`} fontSize={this.props.fontSize}>
+            <PharseNumber key={`PharseNumber-${verseItem.book_ref}-${verseItem.verse_nr}`} fontSize={this.props.fontSize - 6}>{`${verseItem.verse_nr}`}{'  '}</PharseNumber>
+            {`${verseItem.verse}`}
+            </Pharse>
+          )});
+        return [Title, Verse];
+      })
+    );
   }
   render() {
     return (
@@ -52,45 +85,8 @@ export default class DiaryContent extends PureComponent {
         lineHeight={this.props.lineHeight}
         fontFamily={this.props.fontFamily}
       >
-        <Title fontSize={this.props.fontSize + 6}>
-          1月12號
-        </Title>
-        <BookTitle fontSize={this.props.fontSize + 2}>
-        {'\n'}{'\n'} 詩篇1章1-10節 {'\n'}{'\n'}
-        </BookTitle>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>1{'  '}</PharseNumber>不從惡人的計謀，不站罪人的道路，不坐褻慢人的座位，</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>2{'  '}</PharseNumber>惟喜愛耶和華的律法，晝夜思想，這人便為有福！</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>3{'  '}</PharseNumber>他要像一棵樹栽在溪水旁，按時候結果子，葉子也不枯乾。凡他所做的盡都順利。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>4{'  '}</PharseNumber>惡人並不是這樣，乃像糠粃被風吹散。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>5{'  '}</PharseNumber>因此，當審判的時候惡人必站立不住；罪人在義人的會中也是如此。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>6{'  '}</PharseNumber>因為耶和華知道義人的道路；惡人的道路卻必滅亡。</Pharse>
-        <BookTitle fontSize={this.props.fontSize + 2}>
-        {'\n'}{'\n'} 詩篇1章1-10節 {'\n'}{'\n'}
-        </BookTitle>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>1{'  '}</PharseNumber>不從惡人的計謀，不站罪人的道路，不坐褻慢人的座位，</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>2{'  '}</PharseNumber>惟喜愛耶和華的律法，晝夜思想，這人便為有福！</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>3{'  '}</PharseNumber>他要像一棵樹栽在溪水旁，按時候結果子，葉子也不枯乾。凡他所做的盡都順利。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>4{'  '}</PharseNumber>惡人並不是這樣，乃像糠粃被風吹散。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>5{'  '}</PharseNumber>因此，當審判的時候惡人必站立不住；罪人在義人的會中也是如此。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>6{'  '}</PharseNumber>因為耶和華知道義人的道路；惡人的道路卻必滅亡。</Pharse>
-        <BookTitle fontSize={this.props.fontSize + 2}>
-        {'\n'}{'\n'} 詩篇1章1-10節 {'\n'}{'\n'}
-        </BookTitle>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>1{'  '}</PharseNumber>不從惡人的計謀，不站罪人的道路，不坐褻慢人的座位，</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>2{'  '}</PharseNumber>惟喜愛耶和華的律法，晝夜思想，這人便為有福！</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>3{'  '}</PharseNumber>他要像一棵樹栽在溪水旁，按時候結果子，葉子也不枯乾。凡他所做的盡都順利。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>4{'  '}</PharseNumber>惡人並不是這樣，乃像糠粃被風吹散。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>5{'  '}</PharseNumber>因此，當審判的時候惡人必站立不住；罪人在義人的會中也是如此。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>6{'  '}</PharseNumber>因為耶和華知道義人的道路；惡人的道路卻必滅亡。</Pharse>
-        <BookTitle fontSize={this.props.fontSize + 2}>
-        {'\n'}{'\n'} 詩篇1章1-10節 {'\n'}{'\n'}
-        </BookTitle>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>1{'  '}</PharseNumber>不從惡人的計謀，不站罪人的道路，不坐褻慢人的座位，</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>2{'  '}</PharseNumber>惟喜愛耶和華的律法，晝夜思想，這人便為有福！</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>3{'  '}</PharseNumber>他要像一棵樹栽在溪水旁，按時候結果子，葉子也不枯乾。凡他所做的盡都順利。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>4{'  '}</PharseNumber>惡人並不是這樣，乃像糠粃被風吹散。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>5{'  '}</PharseNumber>因此，當審判的時候惡人必站立不住；罪人在義人的會中也是如此。</Pharse>
-        <Pharse fontSize={this.props.fontSize}><PharseNumber fontSize={this.props.fontSize - 6}>6{'  '}</PharseNumber>因為耶和華知道義人的道路；惡人的道路卻必滅亡。</Pharse>
+        {this.renderTitle()}
+        {this.renderVerse()}
       </StyledDiaryText>
     );
   }

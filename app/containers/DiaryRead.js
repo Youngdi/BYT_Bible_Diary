@@ -53,6 +53,8 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      lastPress: 0,
+      scrollInitPosition:0,
       db: props.navigation.state.params.db,
       bg: '#fff',
       fullScreenMode: false,
@@ -84,28 +86,54 @@ export default class DiaryRead extends Component {
       value:0.2,
     };
   }
-  componentWillMount = async () => {
-    let query;
-    query = `SELECT * FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
-    const schedule_result = await this.state.db.scheduleDB.executeSql(query);
-    const schedule_results = schedule_result[0].rows.raw().map(row => row);
-    const bible_results = await Promise.all(schedule_results.map( async (item) => {
-      const query = `SELECT * FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
-      const bible_result = await this.state.db.bible2DB.executeSql(query);
-      const bible_results = bible_result[0].rows.raw().map(row => row);
-      return bible_results;
-    }));
+  componentWillMount = () => {
+    this.generateContent();
   }
   componentDidMount = async () => {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
-        content: '123',
         setting:{
           ...this.state.setting,
           brightnessValue: brightness,
         },
       });
     });
+  }
+  generateContent = async () => {
+    let query;
+    query = `SELECT * FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
+    const schedule_result = await this.state.db.scheduleDB.executeSql(query);
+    const schedule_results = schedule_result[0].rows.raw().map(row => row);
+    const _schedule_results = schedule_results.reduce((acc, val) => {
+      let _acc = acc;
+      let _val = val;
+      if(val.ChapterFrom == val.ChapterTo) return [...acc, val];
+      for(let i = 0; i <= val.ChapterTo - val.ChapterFrom; i++) {
+        _val = {..._val, ChapterFrom: val.ChapterFrom + i, ChapterTo: val.ChapterFrom + i}
+        _acc = [..._acc, _val];
+      }
+      return _acc;
+    }, []);
+    const bible_results = await Promise.all(_schedule_results.map( async (item) => {
+      const query = `SELECT * FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
+      const bible_result = await this.state.db.bible2DB.executeSql(query);
+      const bible_results = bible_result[0].rows.raw().map(row => row);
+      return bible_results;
+    }));
+    this.setState({
+      content: bible_results,
+    });
+  }
+  _handleDoublePress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
+    if(delta < 300) {
+      this.setState({
+        fullScreenMode: !this.state.fullScreenMode,
+      });
+    }
+    this.setState({
+      lastPress: new Date().getTime(),
+    })
   }
   _getDiaryBiblePhrase() {
     let number = Math.floor(Math.random() * 74) + 1;
@@ -126,30 +154,50 @@ export default class DiaryRead extends Component {
       Alert.alert('今年還沒過完呢！');
       return null;
     }
-    const nextDay = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
+    const nextDate = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
+    const nextMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("M");
+    const nextDay = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("D");
     this.setState({
+      date: {
+        ...this.state.date,
+        month: Number(nextMonth),
+        day: Number(nextDay),
+      },
       markedDates: {
         ...this.state.markedDates,
         [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
-        [nextDay]: {...this.state.markedDates[nextDay], selected: true},
+        [nextDate]: {...this.state.markedDates[nextDate], selected: true},
       },
-      currentDate: nextDay,
+      currentDate: nextDate,
     });
+    setTimeout(() => {
+      this.generateContent();
+    }, 0);
   }
   _handlePreviousDay = () => {
     if(this.state.currentDate == '2018-01-01') {
       Alert.alert('去年已經不能回頭！');
       return null;
     }
-    const previousDay = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("YYYY-MM-DD");
+    const previousDate = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("YYYY-MM-DD");
+    const previousMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("M");
+    const previousDay = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("D");
     this.setState({
+      date: {
+        ...this.state.date,
+        month: Number(previousMonth),
+        day: Number(previousDay),
+      },
       markedDates: {
         ...this.state.markedDates,
         [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
-        [previousDay]: {...this.state.markedDates[previousDay], selected: true},
+        [previousDate]: {...this.state.markedDates[previousDate], selected: true},
       },
-      currentDate: previousDay,
+      currentDate: previousDate,
     });
+    setTimeout(() => {
+      this.generateContent();
+    }, 0);
   }
   _handleSettingLineHeight = (value) => {
     this.setState({
@@ -209,6 +257,9 @@ export default class DiaryRead extends Component {
       currentDate: day.dateString,
     });
     this._toggleModalCalendar();
+    setTimeout(() => {
+      this.generateContent();
+    }, 0);
   }
   _handleMonthChange = (month) => {
     if(month.year > 2018) {
@@ -229,9 +280,11 @@ export default class DiaryRead extends Component {
         fullScreenMode: true,
       });
     } else {
-      this.setState({
-        fullScreenMode: false,
-      });
+      // if(this.state.scrollInitPosition - contentOffset.y > 40){
+      //   this.setState({
+      //     fullScreenMode: false,
+      //   });
+      // }
     }
     this.setState({
       scrollPosition: contentOffset.y,
@@ -246,6 +299,11 @@ export default class DiaryRead extends Component {
       });
     }
   }
+  // _onMomentumScrollBegin = (e) => {
+  //   this.setState({
+  //     scrollInitPosition: e.nativeEvent.pageY,
+  //   });
+  // }
   render() {
     const { bg, fullScreenMode } = this.state;
     
@@ -255,9 +313,10 @@ export default class DiaryRead extends Component {
         <StyledMain
           bg={bg} 
           onScroll={this._handleScroll.bind(this)}
+          // onTouchStart={this._onMomentumScrollBegin.bind(this)}
           scrollEventThrottle={16}
         >
-          <StyledMainContent bg={bg}>
+          <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
             <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
               <DiaryContent 
                 fontColor={this.state.setting.fontColor}
@@ -265,6 +324,7 @@ export default class DiaryRead extends Component {
                 lineHeight={this.state.setting.lineHeight}
                 fontFamily={this.state.setting.fontFamily}
                 content={this.state.content}
+                date={this.state.date}
               />
             </View>
           </StyledMainContent>
@@ -276,6 +336,7 @@ export default class DiaryRead extends Component {
           navigation={this.props.navigation}
           toggleModal={this._toggleModalFontSetting}
           fullScreenMode={fullScreenMode}
+          generateContent={this.generateContent}
         />
         <CalendarModal
           isCalendarModalVisible={this.state.isCalendarModalVisible}
