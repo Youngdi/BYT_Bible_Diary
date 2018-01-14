@@ -65,7 +65,7 @@ export default class Header extends PureComponent {
           />
         </TouchableOpacity> */}
         <View style={{backgroundColor:'#111', width: 36, height: 36, borderColor:'#111', borderWidth:4, borderStyle:'solid', borderRadius: 18, marginRight:20, marginTop:15}}>
-        <TouchableOpacity onPress={()=> this.props.toggleModal()}>
+        <TouchableOpacity onPress={()=> this.props.toggleModal()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
           <EvilIcons
             name='calendar'
             size={30}

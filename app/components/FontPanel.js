@@ -114,14 +114,14 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>字體</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
-            <TouchableOpacity onPress={() => this.props.handleSettingFontFamily('Avenir')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Avenir' ? '#F7B633': '#fff', padding:15}}>預設</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Avenir')}>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Avenir' ? '#F7B633': '#fff'}}>預設</StyledFontSettingModalText>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.handleSettingFontFamily('PingFangSC-Semibold')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff', padding:15}}>蘋方</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('PingFangSC-Semibold')}>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff'}}>蘋方</StyledFontSettingModalText>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.handleSettingFontFamily('Times New Roman')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff', padding:15}}>Times</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Times New Roman')}>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff'}}>Times</StyledFontSettingModalText>
             </TouchableOpacity>
           </StyledSettingRow>
         </StyledFontSettingModalRow1>
@@ -130,7 +130,7 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>字級</StyledFontSettingModalText>
         </View>
           <StyledSettingRow>
-            <TouchableOpacity onPress={() => this.props.handleSettingFontSize(-2)} style={{marginRight: 5, padding:10}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontSize(-2)} style={{marginRight: 5}}>
               <EvilIcons
                 name='minus'
                 size={30}
@@ -140,7 +140,7 @@ export default class CalendarModal extends Component {
             <View style={{marginRight:3}}>
               <StyledFontSettingModalText>{this.props.setting.fontSize}{'px'}</StyledFontSettingModalText>
             </View>
-            <TouchableOpacity onPress={() => this.props.handleSettingFontSize(2)} style={{marginRight:2, marginLeft:5, padding:10}} >
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontSize(2)} style={{marginRight:2, marginLeft:5}} >
               <EvilIcons
                 name='plus'
                 size={30}
@@ -154,21 +154,21 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>行距</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
-            <TouchableOpacity onPress={() => this.props.handleSettingLineHeight(28)} style={{marginRight:3, padding:15}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(28)} style={{marginRight:3}}>
               <Ionicons
                 name='ios-menu'
                 size={25}
                 color={this.props.setting.lineHeight == 28 ? '#F7B633': '#bbb'}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.handleSettingLineHeight(33)} style={{marginRight:1, padding:15}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(33)} style={{marginRight:1}}>
               <Ionicons
                 name='md-menu'
                 size={30}
                 color={this.props.setting.lineHeight == 33 ? '#F7B633': '#bbb'}
               />
             </TouchableOpacity>
-            <TouchableOpacity  onPress={() => this.props.handleSettingLineHeight(38)} style={{padding:10}} >
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(38)} >
               <SimpleLineIcons
                 name='menu'
                 size={30}

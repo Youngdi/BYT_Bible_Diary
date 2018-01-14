@@ -12,25 +12,6 @@ class MyHomeScreen extends Component {
     this.state = {
       db:{},
     }
-    // var db = SQLite.openDatabase("test.db", "1.0", "Test Database", 200000, openCB, errorCB);
-    // const bibleDB = SQLite.openDatabase({name : "Bible.db", createFromLocation : 1}, openCB, errorCB);
-
-    // const scheduleDB = SQLite.openDatabase({name : "BibleSchedule.db", createFromLocation : 1}, openCB, errorCB);
-
-    // bibleDB.transaction((tx) => {
-    //   tx.executeSql('SELECT * FROM Book', [], (tx, results) => {
-    //       console.log("Query completed");
-    //       let rows = results.rows.raw(); // shallow copy of rows Array
-    //       rows.map(row => console.log(`Employee name: ${row.BookID}, Dept Name: ${row.BookName}`));
-    //   });
-    // });
-    // scheduleDB.transaction((tx) => {
-    //   tx.executeSql('SELECT * FROM Schedule where ID = 1', [], (tx, results) => {
-    //       console.log("Query completed");
-    //       let rows = results.rows.raw(); // shallow copy of rows Array
-    //       rows.map(row => console.log(`${row.Month}`));
-    //   });
-    // });
   }
   componentWillMount = async () => {
     const bibleDB = await SQLite.openDatabase({name : "Bible.db", createFromLocation : "1"});

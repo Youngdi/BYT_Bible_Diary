@@ -84,6 +84,7 @@ export default class DiaryRead extends Component {
       },
       currentDate: moment().format('YYYY-MM-DD'),
       value:0.2,
+      contentView:{}
     };
   }
   componentWillMount = () => {
@@ -92,6 +93,7 @@ export default class DiaryRead extends Component {
   componentDidMount = async () => {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
+        contentView: this.contentView,
         setting:{
           ...this.state.setting,
           brightnessValue: brightness,
@@ -306,11 +308,11 @@ export default class DiaryRead extends Component {
   // }
   render() {
     const { bg, fullScreenMode } = this.state;
-    
     return (
       <StyledContainer bg={bg}>
         <Header fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
         <StyledMain
+          ref={r => this.contentView = r}
           bg={bg} 
           onScroll={this._handleScroll.bind(this)}
           // onTouchStart={this._onMomentumScrollBegin.bind(this)}
@@ -325,6 +327,7 @@ export default class DiaryRead extends Component {
                 fontFamily={this.state.setting.fontFamily}
                 content={this.state.content}
                 date={this.state.date}
+                contentView={this.state.contentView}
               />
             </View>
           </StyledMainContent>

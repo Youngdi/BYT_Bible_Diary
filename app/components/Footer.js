@@ -66,21 +66,21 @@ export default class Footer extends PureComponent {
           ],
         }}
       >
-        <TouchableOpacity onPress={()=> this.props.handlePreviousDay()} style={{padding:10}}>
+        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handlePreviousDay()}>
           <MaterialIcons
             name='arrow-back'
             size={20}
             color='#bbb'
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.getDiaryBiblePhrase()} style={{padding:3}}>
+        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.getDiaryBiblePhrase()}>
           <MaterialCommunityIcons
             name='bible'
             size={20}
             color='#bbb'
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=> this.props.toggleModal()} style={{padding:0}} style={{padding:10}}>
+        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.toggleModal()}>
           <MaterialIcons
             name='font-download'
             size={20}
@@ -90,7 +90,7 @@ export default class Footer extends PureComponent {
         <View style={{padding:3}}>
           <Text style={{marginTop:-2, color:'#bbb', fontSize:16}}>繁</Text>
         </View>
-        <TouchableOpacity onPress={()=> this.props.handleNextDay()} style={{padding:10}}>
+        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handleNextDay()} >
           <MaterialIcons
             name='arrow-forward'
             size={20}
