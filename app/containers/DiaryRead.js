@@ -55,12 +55,11 @@ export default class DiaryRead extends Component {
     this.state = {
       lastPress: 0,
       scrollInitPosition:0,
-      db: props.navigation.state.params.db,
       bg: '#fff',
       fullScreenMode: false,
       isCalendarModalVisible: false,
       isFontSettingModalVisible: false,
-      content: '',
+      content: [],
       scrollPosition: 0,
       hasRead: 0,
       setting: {
@@ -102,9 +101,10 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
+    const {scheduleDB, bible2DB} = this.props.navigation.state.params.db;
     let query;
-    query = `SELECT * FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
-    const schedule_result = await this.state.db.scheduleDB.executeSql(query);
+    query = `SELECT Month, Day, BookID, ChapterFrom, VerseFrom, ChapterTo, VerseTo FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
+    const schedule_result = await scheduleDB.executeSql(query);
     const schedule_results = schedule_result[0].rows.raw().map(row => row);
     const _schedule_results = schedule_results.reduce((acc, val) => {
       let _acc = acc;
@@ -117,8 +117,8 @@ export default class DiaryRead extends Component {
       return _acc;
     }, []);
     const bible_results = await Promise.all(_schedule_results.map( async (item) => {
-      const query = `SELECT * FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
-      const bible_result = await this.state.db.bible2DB.executeSql(query);
+      const query = `SELECT version, book_ref, book_name, book_nr, chapter_nr, verse_nr, verse FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
+      const bible_result = await bible2DB.executeSql(query);
       const bible_results = bible_result[0].rows.raw().map(row => row);
       return bible_results;
     }));
@@ -251,6 +251,7 @@ export default class DiaryRead extends Component {
   _handleChangeDay = (day) => {
     this.setState({
       date: day,
+      isCalendarModalVisible: !this.state.isCalendarModalVisible,
       markedDates: {
         ...this.state.markedDates,
         [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
@@ -258,7 +259,6 @@ export default class DiaryRead extends Component {
       },
       currentDate: day.dateString,
     });
-    this._toggleModalCalendar();
     setTimeout(() => {
       this.generateContent();
     }, 0);

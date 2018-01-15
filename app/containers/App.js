@@ -4,32 +4,26 @@ import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SQLite from 'react-native-sqlite-storage';
-SQLite.DEBUG(true);
+// SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 class MyHomeScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      db:{},
-    }
   }
   componentWillMount = async () => {
     const bibleDB = await SQLite.openDatabase({name : "Bible.db", createFromLocation : "1"});
     const bible2DB = await SQLite.openDatabase({name : "Bible2.db", createFromLocation : "1"});
     const scheduleDB = await SQLite.openDatabase({name : "BibleSchedule.db", createFromLocation : "1"});
-    this.setState({
-      db: {
-        bibleDB: bibleDB,
-        bible2DB: bible2DB,
-        scheduleDB: scheduleDB,
-      }
-    });
+    this.db = {
+      bibleDB,
+      bible2DB,
+      scheduleDB
+    }
   }
   render() {
     return (
       <View>
-        <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.state.db})}/>
-        <Button title="讀經去" onPress={() => this.populateDatabase()}/>
+        <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.db})}/>
       </View>
     );
   }

@@ -58,17 +58,24 @@ export default class DiaryContent extends PureComponent {
     console.log(e.nativeEvent.layout);
   }
   renderTitle = () => {
-    let content = [...this.props.content];
+    if(this.props.content.length == 0) return (<Text>讀取中...</Text>);
     return(
       <Title fontSize={this.props.fontSize + 6}>
       {`${this.props.date.month}月${this.props.date.day}日`}
       {
-        content.map( (item, i) => {
+        this.props.content.map( (item, i) => {
           return(
             <Text
-              onPress={() => this.props.contentView.root.scrollTo({y: 100, animated: true})}
-              key={`Hint-${item[0].book_ref}-${item[0].chapter_nr}`}
-              style={{fontSize:10}}>{'     '}{`${item[0].book_ref}${item[0].chapter_nr}`}{''}
+              onPress={(e) => {
+                console.log(this.aaa.setNativeProps({style:{color: 'red'}}))
+                // this.props.contentView.root.scrollTo({y: 100, animated: true})}
+              }}
+              onPressOut={(e) => {
+                console.log(this.aaa.setNativeProps({style:{color: 'blue'}}))
+                // this.props.contentView.root.scrollTo({y: 100, animated: true})}
+              }}
+              ref={ r => this.aaa = r}
+              style={{fontSize:10, color: 'blue', textDecorationLine:'underline', textDecorationStyle:'dotted'}}>{'     '}{`${item[0].book_ref}${item[0].chapter_nr}`}{''}
             </Text>
           );
         })
@@ -77,21 +84,20 @@ export default class DiaryContent extends PureComponent {
     );
   }
   renderVerse = () => {
-    let content = [...this.props.content];
+    if(this.props.content.length == 0) return;
     return (
-      content.map(item => {
+      this.props.content.map(item => {
         const Title = 
           <BookTitle
             onLayout={this.handleTitleLayout}
-            key={`title-${item[0].book_ref}`}
             fontSize={this.props.fontSize + 2}
           >
           {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}{'\n'}
           </BookTitle>
         const Verse = item.map(verseItem => {
           return(
-            <Pharse key={`Pharsetitle-${verseItem.book_ref}-${verseItem.verse_nr}`} fontSize={this.props.fontSize}>
-            <PharseNumber key={`PharseNumber-${verseItem.book_ref}-${verseItem.verse_nr}`} fontSize={this.props.fontSize - 6}>{`${verseItem.verse_nr}`}{'  '}</PharseNumber>
+            <Pharse fontSize={this.props.fontSize}>
+            <PharseNumber fontSize={this.props.fontSize - 6}>{`${verseItem.verse_nr}`}{'  '}</PharseNumber>
             {`${verseItem.verse}`}
             </Pharse>
           )});

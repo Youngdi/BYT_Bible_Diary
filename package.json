@@ -22,6 +22,7 @@
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-calendars": "^1.16.1",
+    "react-native-htmlview": "^0.12.1",
     "react-native-iphone-x-helper": "^1.0.1",
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-modal": "^4.1.1",
