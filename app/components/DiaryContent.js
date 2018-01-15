@@ -7,33 +7,39 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
+  Botton,
 } from 'react-native';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
+import ReactNativeComponentTree from 'react-native/Libraries/Renderer/shims/ReactNativeComponentTree';
 var {
   height: deviceHeight,
   width: deviceWidth
 } = Dimensions.get('window');
 
-const StyledDiaryText = styled.Text`
+const StyledDiaryText = styled.View`
   margin-left:30px;
   margin-right:30px;
-  font-size: ${props => props.fontSize}px;
-  color: ${props => props.fontColor};
-  line-height: ${props => props.lineHeight};
-  font-weight: 600;
-  font-family: ${props => props.fontFamily};
 `;
 const Title = styled.Text`
   font-weight: bold;
   font-size: ${props => props.fontSize}px;
+  color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-family: ${props => props.fontFamily};
 `;
 const BookTitle = styled.Text`
   font-weight: 800;
   font-size: ${props => props.fontSize}px;
+  color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-family: ${props => props.fontFamily};
 `;
 const PharseNumber = styled.Text`
   font-size: ${props => props.fontSize}px;
+  color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-family: ${props => props.fontFamily};
   color: gray;
   margin-top: -10px;
   margin-right: 5px;
@@ -41,6 +47,16 @@ const PharseNumber = styled.Text`
 `;
 const Pharse = styled.Text`
   font-size: ${props => props.fontSize}px;
+  color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-family: ${props => props.fontFamily};
+  font-weight: 300;
+`;
+const Pharse1 = styled.Text`
+  font-size: ${props => props.fontSize}px;
+  color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-family: ${props => props.fontFamily};
   font-weight: 300;
 `;
 export default class DiaryContent extends PureComponent {
@@ -48,34 +64,34 @@ export default class DiaryContent extends PureComponent {
     super(props);
     this.state = {
       anchor: [],
+      selectVerse: [],
+      selectVerseRef: [],
     }
-  }
-  handleTitleLayout = (e) => {
-    console.log(e);
-    this.setState({
-      anchor:[...this.state.anchor, e.nativeEvent.layout.y],
-    })
-    console.log(e.nativeEvent.layout);
   }
   renderTitle = () => {
     if(this.props.content.length == 0) return (<Text>讀取中...</Text>);
     return(
-      <Title fontSize={this.props.fontSize + 6}>
-      {`${this.props.date.month}月${this.props.date.day}日`}
+      <Title 
+        fontColor={this.props.fontColor}
+        lineHeight={this.props.lineHeight}
+        fontFamily={this.props.fontFamily}
+        fontSize={this.props.fontSize + 6}
+      >
+      {`${this.props.date.month}/${this.props.date.day}`}
       {
         this.props.content.map( (item, i) => {
           return(
             <Text
               onPress={(e) => {
-                console.log(this.aaa.setNativeProps({style:{color: 'red'}}))
-                // this.props.contentView.root.scrollTo({y: 100, animated: true})}
+                this.state.selectVerseRef.map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+                this.setState({
+                  selectVerse: [],
+                  selectVerseRef: [],
+                });
+                // this.props.contentView.root.scrollTo({y: 100, animated: true})
               }}
-              onPressOut={(e) => {
-                console.log(this.aaa.setNativeProps({style:{color: 'blue'}}))
-                // this.props.contentView.root.scrollTo({y: 100, animated: true})}
-              }}
-              ref={ r => this.aaa = r}
-              style={{fontSize:10, color: 'blue', textDecorationLine:'underline', textDecorationStyle:'dotted'}}>{'     '}{`${item[0].book_ref}${item[0].chapter_nr}`}{''}
+              ref={ r => this['link' + i] = r}
+              style={{fontSize:10, color: 'blue'}}>{'     '}{`${item[0].book_ref}${item[0].chapter_nr}`}{''}
             </Text>
           );
         })
@@ -86,18 +102,41 @@ export default class DiaryContent extends PureComponent {
   renderVerse = () => {
     if(this.props.content.length == 0) return;
     return (
-      this.props.content.map(item => {
+      this.props.content.map( (item, i) => {
         const Title = 
           <BookTitle
-            onLayout={this.handleTitleLayout}
+            ref={r => this['anchor' +i] = r}
             fontSize={this.props.fontSize + 2}
+            fontColor={this.props.fontColor}
+            lineHeight={this.props.lineHeight}
+            fontFamily={this.props.fontFamily}
           >
           {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}{'\n'}
           </BookTitle>
         const Verse = item.map(verseItem => {
           return(
-            <Pharse fontSize={this.props.fontSize}>
-            <PharseNumber fontSize={this.props.fontSize - 6}>{`${verseItem.verse_nr}`}{'  '}</PharseNumber>
+            <Pharse 
+              fontSize={this.props.fontSize}
+              fontColor={this.props.fontColor}
+              lineHeight={this.props.lineHeight}
+              fontFamily={this.props.fontFamily}
+              onPress={(e) => {
+                this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                this.setState({
+                  selectVerse: [...this.state.selectVerse, {...verseItem}],
+                  selectVerseRef: [...this.state.selectVerseRef, this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]]
+                })
+              }}
+              ref={ r => this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
+            >
+              <PharseNumber
+                fontSize={this.props.fontSize - 6}
+                fontColor={this.props.fontColor}
+                lineHeight={this.props.lineHeight}
+                fontFamily={this.props.fontFamily}
+              >
+                {`${verseItem.verse_nr}`}{'  '}
+              </PharseNumber>
             {`${verseItem.verse}`}
             </Pharse>
           )});
@@ -114,7 +153,16 @@ export default class DiaryContent extends PureComponent {
         fontFamily={this.props.fontFamily}
       >
         {this.renderTitle()}
-        {this.renderVerse()}
+        <View>
+          <Pharse1
+            fontColor={this.props.fontColor}
+            fontSize={this.props.fontSize}
+            lineHeight={this.props.lineHeight}
+            fontFamily={this.props.fontFamily}
+          >
+            {this.renderVerse()}
+          </Pharse1>
+        </View>
       </StyledDiaryText>
     );
   }

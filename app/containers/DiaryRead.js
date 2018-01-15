@@ -282,11 +282,9 @@ export default class DiaryRead extends Component {
         fullScreenMode: true,
       });
     } else {
-      // if(this.state.scrollInitPosition - contentOffset.y > 40){
-      //   this.setState({
-      //     fullScreenMode: false,
-      //   });
-      // }
+      this.setState({
+        fullScreenMode: false,
+      });
     }
     this.setState({
       scrollPosition: contentOffset.y,
