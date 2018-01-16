@@ -17,6 +17,8 @@ import Footer from '../components/Footer';
 import CalendarModal from '../components/Calendar';
 import FontPanelModal from '../components/FontPanel';
 import DiaryContent from '../components/DiaryContent';
+import ArrowUp from '../components/ArrowUp';
+import Check from '../components/Check';
 
 const StyledMain = styled.ScrollView`
   display:flex;
@@ -62,6 +64,7 @@ export default class DiaryRead extends Component {
       content: [],
       scrollPosition: 0,
       hasRead: 0,
+      finishedReading: false,
       setting: {
         fontFamily: 'Avenir',
         fontSize: 18,
@@ -171,6 +174,8 @@ export default class DiaryRead extends Component {
         [nextDate]: {...this.state.markedDates[nextDate], selected: true},
       },
       currentDate: nextDate,
+      content: [],
+      finishedReading: false,
     });
     setTimeout(() => {
       this.generateContent();
@@ -196,6 +201,8 @@ export default class DiaryRead extends Component {
         [previousDate]: {...this.state.markedDates[previousDate], selected: true},
       },
       currentDate: previousDate,
+      content: [],
+      finishedReading: false,
     });
     setTimeout(() => {
       this.generateContent();
@@ -258,6 +265,8 @@ export default class DiaryRead extends Component {
         [day.dateString]: {...this.state.markedDates[day.dateString], selected: true},
       },
       currentDate: day.dateString,
+      content: [],
+      finishedReading: false,
     });
     setTimeout(() => {
       this.generateContent();
@@ -291,13 +300,21 @@ export default class DiaryRead extends Component {
     });
     if(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
       if(this.state.hasRead) return;
+      if(this.state.markedDates[this.state.currentDate].marked) return;
+      if(this.state.content.length == 0) return;
       this.setState({
+        finishedReading: true,
         markedDates: {
           ...this.state.markedDates,
           [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true},
         },
       });
     }
+  }
+  _handleFinished = () => {
+    this.setState({
+      finishedReading: false,
+    });
   }
   // _onMomentumScrollBegin = (e) => {
   //   this.setState({
@@ -308,7 +325,7 @@ export default class DiaryRead extends Component {
     const { bg, fullScreenMode } = this.state;
     return (
       <StyledContainer bg={bg}>
-        <Header fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
+        <Header content={this.state.content} fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
         <StyledMain
           ref={r => this.contentView = r}
           bg={bg} 
@@ -330,6 +347,8 @@ export default class DiaryRead extends Component {
             </View>
           </StyledMainContent>
         </StyledMain>
+        <ArrowUp content={this.state.content} fullScreenMode={fullScreenMode} contentView={this.state.contentView} />
+        <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} />
         <Footer
           handleNextDay={this._handleNextDay}
           handlePreviousDay={this._handlePreviousDay}
@@ -338,6 +357,7 @@ export default class DiaryRead extends Component {
           toggleModal={this._toggleModalFontSetting}
           fullScreenMode={fullScreenMode}
           generateContent={this.generateContent}
+          content={this.state.content}
         />
         <CalendarModal
           isCalendarModalVisible={this.state.isCalendarModalVisible}

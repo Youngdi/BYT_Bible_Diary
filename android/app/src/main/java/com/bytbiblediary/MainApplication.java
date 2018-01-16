@@ -3,6 +3,8 @@ package com.bytbiblediary;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.cmcewen.blurview.BlurViewPackage;
+import com.react.rnspinkit.RNSpinkitPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
@@ -26,6 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new BlurViewPackage(),
+            new RNSpinkitPackage(),
             new WebViewBridgePackage(),
             new VectorIconsPackage(),
             new ScreenBrightnessPackage()

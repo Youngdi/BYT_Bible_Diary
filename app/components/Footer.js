@@ -41,6 +41,7 @@ export default class Footer extends PureComponent {
     };
   }
   render() {
+    if(this.props.content.length == 0) return (<View></View>);
     this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
     this.state.transformY.setValue(this.props.fullScreenMode ? 0 : 10);
     Animated.parallel([

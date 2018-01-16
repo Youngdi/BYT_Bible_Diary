@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ScrollView, Text, View } from 'react-native';
+import { Button, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -29,26 +29,50 @@ class MyHomeScreen extends Component {
   }
 }
 
-const MyNavScreen = ({ navigation, banner }) => (
-  <ScrollView>
-    <SafeAreaView forceInset={{ horizontal: 'always' }}>
-      <Text>{'banner'}</Text>
-      <Button
-        onPress={() => navigation.navigate('Profile', { name: 'Jordan' })}
-        title="Open profile screen"
-      />
-      <Button
-        onPress={() => navigation.navigate('NotifSettings')}
-        title="Open notifications screen"
-      />
-      <Button
-        onPress={() => navigation.navigate('SettingsTab')}
-        title="Go to settings tab"
-      />
-      <Button onPress={() => navigation.goBack(null)} title="Go back" />
-    </SafeAreaView>
-  </ScrollView>
-);
+
+class MyNavScreen extends Component {
+  render() {
+    return (
+      <ScrollView>
+        <View>
+          <View style={{display:'flex', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
+            <Text>1/16{'  '}</Text>
+            <TouchableOpacity onPress={() => { alert('hi!') }}>
+              <Text>ps9{'  '}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { alert('hi!') }}>
+              <Text>ps9{'  '}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { alert('hi!') }}>
+              <Text>ps9{'  '}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { alert('hi!') }}>
+              <Text>ps9{'  '}</Text>
+            </TouchableOpacity>
+          </View>
+          <View
+          // onLayout={(e)=> console.log(e.nativeEvent.layout)}
+          >
+            <Text>Psalms9章15-20節{'\n'}
+              <Text>1 <Text>外邦人</Text></Text>
+              <Text>2 <Text>耶穌</Text></Text>
+              {'\n'}
+            </Text>
+          </View>
+          <View
+          // onLayout={(e)=> console.log(e.nativeEvent.layout)}
+          >
+            <Text>Psalms9章15-20節{'\n'}</Text>
+            <Text>
+              <Text>1 <Text>外邦人</Text></Text>
+              <Text>2 <Text>耶穌</Text></Text>
+            </Text>
+          </View>
+        </View>
+    </ScrollView>
+    );
+  }
+}
 
 const MyProfileScreen = ({ navigation }) => (
   <MyNavScreen
