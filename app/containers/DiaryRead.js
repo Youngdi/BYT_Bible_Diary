@@ -72,7 +72,7 @@ export default class DiaryRead extends Component {
         lineHeight: 28,
         brightnessValue: 1,
         readingMode: 0, // 0 -> day, 1 -> night
-        lang: '', // zh-tw
+        lang: 'cht', // cht chs en
       },
       date: {
         dateString: moment().format('YYYY-MM-DD'),
@@ -104,6 +104,7 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
+    // if(this.state.lang == 'cht')
     const {scheduleDB, bible2DB} = this.props.navigation.state.params.db;
     let query;
     query = `SELECT Month, Day, BookID, ChapterFrom, VerseFrom, ChapterTo, VerseTo FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
@@ -298,7 +299,7 @@ export default class DiaryRead extends Component {
     this.setState({
       scrollPosition: contentOffset.y,
     });
-    if(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+    if(layoutMeasurement.height + contentOffset.y >= contentSize.height + 120) {
       if(this.state.hasRead) return;
       if(this.state.markedDates[this.state.currentDate].marked) return;
       if(this.state.content.length == 0) return;
@@ -343,6 +344,7 @@ export default class DiaryRead extends Component {
                 content={this.state.content}
                 date={this.state.date}
                 contentView={this.state.contentView}
+                marked={this.state.markedDates[this.state.currentDate].marked}
               />
             </View>
           </StyledMainContent>

@@ -6,6 +6,7 @@ import {
   Easing,
   TouchableOpacity,
   Dimensions,
+  Text,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styled from "styled-components/native";
@@ -20,9 +21,8 @@ const {
 
 const StyledCheck = Animated.createAnimatedComponent(styled.View`
   z-index: 10;
-  position: absolute;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: ${deviceWidth}px
@@ -47,26 +47,34 @@ export default class Check extends PureComponent {
           blurType="dark"
           blurAmount={5}
         />
-         <Animatable.View
+        <Animatable.View
           animation="zoomIn"
-          style={{backgroundColor:'#fff', width: 90, height: 90, borderColor:'#fff', borderWidth:6, borderStyle:'solid', borderRadius: 45, marginBottom:250}}
-          duration={2000}
+          delay={500}
+          style={{backgroundColor:'#fff', width: 90, height: 90, borderColor:'#fff', borderWidth:6, borderStyle:'solid', borderRadius: 45, marginBottom:20}}
+          duration={1500}
           ref="ANFontAwesomeView"
           easing="ease-out"
         >
-          <FontAwesome
+          <TouchableOpacity
+            hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
             onPress={() => {
               this.refs.ANFontAwesomeView.zoomOut(800);
               setTimeout(() => {
                 this.props.handleFinished();
-              }, 1000);
+              }, 900);
             }}
-            name='calendar-check-o'
-            size={50}
-            color="#111"
-            style={{backgroundColor:'transparent', marginLeft:16, marginTop:12}}
-          />
-         </Animatable.View>
+          >
+            <FontAwesome
+              name='calendar-check-o'
+              size={50}
+              color="#111"
+              style={{backgroundColor:'transparent', marginLeft:16, marginTop:12}}
+            />
+          </TouchableOpacity>
+        </Animatable.View>
+        <View style={{marginBottom:150}}>
+         <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}恭喜你完成今天的進度！</Text>
+        </View>
       </StyledCheck>
       : <View></View>
     );

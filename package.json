@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start-reset": "node node_modules/react-native/local-cli/cli.js start '--reset-cache'",
     "test": "jest",
     "ios-production": "react-native run-ios --configuration Release",
     "an-production": "react-native run-android --variant=release",
@@ -24,6 +25,7 @@
     "react-native-animatable": "^1.2.4",
     "react-native-blur": "^3.2.2",
     "react-native-calendars": "^1.16.1",
+    "react-native-circular-action-menu": "^0.4.0",
     "react-native-htmlview": "^0.12.1",
     "react-native-iphone-x-helper": "^1.0.1",
     "react-native-keyboard-spacer": "^0.4.1",

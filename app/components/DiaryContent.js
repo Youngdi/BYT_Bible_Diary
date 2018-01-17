@@ -14,7 +14,8 @@ import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import ReactNativeComponentTree from 'react-native/Libraries/Renderer/shims/ReactNativeComponentTree';
 import Spinner from 'react-native-spinkit';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { bookName } from '../constants/bible';
 const {
   height: deviceHeight,
   width: deviceWidth
@@ -89,11 +90,11 @@ export default class DiaryContent extends PureComponent {
             //   selectVerseRef: [],
             // });
             this[item[0].book_name + item[0].chapter_n].measure((y, pageY) => {
-            this.props.contentView.root.scrollTo({y: (i == 4) ? pageY - 500 : pageY + 100, animated: true})
+            this.props.contentView.root.scrollTo({y: pageY + 100, animated: true})
             })
           }}>
-            <Text style={{fontSize:12, color: '#0881A3'}}>
-              {`${item[0].book_ref}${item[0].chapter_nr}`}
+            <Text style={{fontSize:12, color: '#0881A3', textDecorationLine:'underline'}}>
+              {`${bookName[item[0].version][item[0].book_ref + '-']}${item[0].chapter_nr}`}
             </Text>
           </TouchableOpacity>
         );
@@ -117,7 +118,7 @@ export default class DiaryContent extends PureComponent {
             lineHeight={this.props.lineHeight}
             fontFamily={this.props.fontFamily}
           >
-          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}
+          {'\n'}{'\n'}{`${bookName[item[0].version][item[0].book_name]}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}
           </BookTitle>
         const Verse = () => item.map(verseItem => {
           return(
@@ -159,12 +160,30 @@ export default class DiaryContent extends PureComponent {
       })
     );
   }
-
+  renderFinishText = () => {
+    if(this.props.content.length == 0) return;
+    return(
+      this.props.marked ? 
+      <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:100, marginTop:30}}>
+      <Text style={{fontFamily:this.props.fontFamily}}>今天進度已經完成囉！</Text>
+      </View> :
+      <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:300, marginTop:50}}>
+        <Text style={{fontFamily:this.props.fontFamily}}>用力往下拉來完成今天進度</Text>
+        <MaterialCommunityIcons
+          style={{marginTop:20}}
+          name='arrow-expand-down'
+          size={30}
+          color='#000'
+        />
+      </View>
+    );
+  }
   render() {
     return (
       <StyledDiaryText>
         {this.renderTitle()}
         {this.renderVerse()}
+        {this.renderFinishText()}
       </StyledDiaryText>
     );
   }
