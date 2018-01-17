@@ -104,9 +104,12 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
+    const { month, day}  = this.state.date;
+    // const { bible2DB } = this.props.navigation.state.params.db;
     // if(this.state.lang == 'cht')
     const {scheduleDB, bible2DB} = this.props.navigation.state.params.db;
     let query;
+    console.log(new Date().getTime());
     query = `SELECT Month, Day, BookID, ChapterFrom, VerseFrom, ChapterTo, VerseTo FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
     const schedule_result = await scheduleDB.executeSql(query);
     const schedule_results = schedule_result[0].rows.raw().map(row => row);
@@ -126,6 +129,25 @@ export default class DiaryRead extends Component {
       const bible_results = bible_result[0].rows.raw().map(row => row);
       return bible_results;
     }));
+    console.log(new Date().getTime());
+    query = `select b.version, b.book_ref, b.book_name, 
+    b.book_nr, b.chapter_nr, b.verse_nr, b.verse
+    from bible_cht as b
+    Left join schedule as sc
+    on sc.month = ${month} AND sc.day = ${day}
+    where b.book_nr= sc.book_id
+    AND b.chapter_nr >= sc.chapter_from
+    AND b.chapter_nr <= sc.chapter_to
+    AND b.verse_nr >= sc.verse_from
+    AND b.verse_nr <= (CASE WHEN sc.verse_to = '0' THEN 80 ELSE sc.verse_to END)`;
+    const schedule_result1 = await bible2DB.executeSql(query);
+    
+    const schedule_results2 = schedule_result1[0].rows.raw().map(row => row);
+    console.log(schedule_results2);
+    // const schedule_results3 = schedule_results2.reduce((acc, val) => {
+    //   if()
+    // }, [])
+    console.log(new Date().getTime());
     this.setState({
       content: bible_results,
     });
