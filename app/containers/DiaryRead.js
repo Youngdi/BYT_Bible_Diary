@@ -107,26 +107,25 @@ export default class DiaryRead extends Component {
     const { month, day}  = this.state.date;
     const { bibleDB } = this.props.navigation.state.params.db;
     let query;
-    query = `SELECT month, day, book_id, chapter_from, verse_from, chapter_to, verse_to FROM schedule where month = "1" AND day = "1"`;
-    const schedule_result = await bibleDB.executeSql(query);
-    const schedule_results = schedule_result[0].rows.raw().map(row => row);
-    const _schedule_results = schedule_results.reduce((acc, val) => {
-      let _acc = acc;
-      let _val = val;
-      if(val.chapter_from == val.chapter_to) return [...acc, val];
-      for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
-        _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
-        _acc = [..._acc, _val];
-      }
-      return _acc;
-    }, []);
-    const bible_results = await Promise.all(_schedule_results.map( async (item) => {
-      const query = `SELECT version, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, testament FROM bible_cht WHERE book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${ item.verse_to == 0 ? 60 : item.verse_to} ORDER BY chapter_nr,verse_nr`;
-      const bible_result = await bibleDB.executeSql(query);
-      const bible_results = bible_result[0].rows.raw().map(row => row);
-      return bible_results;
-    }));
-    console.log(bible_results);
+    // query = `SELECT month, day, book_id, chapter_from, verse_from, chapter_to, verse_to FROM schedule where month = ${month} AND day = ${day}`;
+    // const schedule_result = await bibleDB.executeSql(query);
+    // const schedule_results = schedule_result[0].rows.raw().map(row => row);
+    // const _schedule_results = schedule_results.reduce((acc, val) => {
+    //   let _acc = acc;
+    //   let _val = val;
+    //   if(val.chapter_from == val.chapter_to) return [...acc, val];
+    //   for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
+    //     _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
+    //     _acc = [..._acc, _val];
+    //   }
+    //   return _acc;
+    // }, []);
+    // const bible_results = await Promise.all(_schedule_results.map( async (item) => {
+    //   const query = `SELECT version, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, testament FROM bible_cht WHERE book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${ item.verse_to == 0 ? 60 : item.verse_to} ORDER BY chapter_nr,verse_nr`;
+    //   const bible_result = await bibleDB.executeSql(query);
+    //   const bible_results = bible_result[0].rows.raw().map(row => row);
+    //   return bible_results;
+    // }));
     query = `select b.version, b.book_ref, b.book_name, 
     b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
     from bible_cht as b
@@ -137,19 +136,26 @@ export default class DiaryRead extends Component {
     AND b.chapter_nr <= sc.chapter_to
     AND b.verse_nr >= sc.verse_from
     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-    ORDER BY b.chapter_nr,b.verse_nr`;
-    const schedule_result1 = await bibleDB.executeSql(query);
-    const schedule_results2 = schedule_result1[0].rows.raw().map(row => row);
-    console.log(schedule_results2);
-    // let result = [];
-    // let i = 0;
-    // // for()
-    // console.log(schedule_results2);
-    // const schedule_results3 = schedule_results2.reduce((acc, val) => {
-    //   if()
-    // }, [])
+    ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+    const getVerse = await bibleDB.executeSql(query);
+    const roughResults = getVerse[0].rows.raw().map(row => row);
+    let results = [];
+    let previousFlag;
+    let index = 0;
+    for(let i = 0; i < roughResults.length ; i++){
+      if(i == 0) previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
+      if(i == 0) results[index] = [];
+      if((roughResults[i].book_ref + roughResults[i].chapter_nr) == previousFlag){
+        results[index] = [...results[index], roughResults[i]];
+      } else {
+        index++;
+        if(typeof results[index] === 'undefined') results[index] = [];
+        results[index] = [...results[index], roughResults[i]];
+      }
+      previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
+    }
     this.setState({
-      content: bible_results,
+      content: results,
     });
   }
   _handleDoublePress = () => {

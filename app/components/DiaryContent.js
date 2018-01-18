@@ -10,6 +10,7 @@ import {
   Botton,
   ActivityIndicator,
 } from 'react-native';
+import * as R from 'ramda';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import ReactNativeComponentTree from 'react-native/Libraries/Renderer/shims/ReactNativeComponentTree';
@@ -58,8 +59,9 @@ export default class DiaryContent extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectVerse: [],
-      selectVerseRef: [],
+      selectVerse: {},
+      selectVerseNumberRef: {},
+      selectVerseRef: {},
     }
     this.anchor = [];
   }
@@ -84,15 +86,18 @@ export default class DiaryContent extends PureComponent {
         return(
           <TouchableOpacity
             onPress={(e) => {
-            // this.state.selectVerseRef.map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-            // this.setState({
-            //   selectVerse: [],
-            //   selectVerseRef: [],
-            // });
-            this[item[0].book_name + item[0].chapter_n].measure((y, pageY) => {
-            this.props.contentView.root.scrollTo({y: pageY + 100, animated: true})
-            })
-          }}>
+              R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+              R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+              this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
+                this.props.contentView.root.scrollTo({y: pageY + 100, animated: true})
+              });
+              this.setState({
+                selectVerse: {},
+                selectVerseRef: {},
+                selectVerseNumberRef: {},
+              });
+            }}
+          >
             <Text style={{fontSize:12, color: '#0881A3', textDecorationLine:'underline'}}>
               {`${item[0].book_name_short}${item[0].chapter_nr}`}
             </Text>
@@ -112,7 +117,6 @@ export default class DiaryContent extends PureComponent {
       this.props.content.map( (item, i) => {
         const Title = () =>
           <BookTitle
-            ref={r => this['anchor' +i] = r}
             fontSize={this.props.fontSize + 2}
             fontColor={this.props.fontColor}
             lineHeight={this.props.lineHeight}
@@ -124,14 +128,27 @@ export default class DiaryContent extends PureComponent {
           return(
             <Text 
               onPress={(e) => {
-                // console.log(this.state.selectVerse);
                 const key = `${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
-                this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                this.setState({
-                  selectVerse: [...this.state.selectVerse, {[key]:verseItem}],
-                  selectVerseRef: [...this.state.selectVerseRef, this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]]
-                })
+                if(this.state.selectVerse.hasOwnProperty(key)) {
+                  this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  delete this.state.selectVerse[key];
+                  delete this.state.selectVerseRef[key];
+                  delete this.state.selectVerseNumberRef['number' + key];
+                  this.setState({
+                    selectVerse: {...this.state.selectVerse},
+                    selectVerseRef: {...this.state.selectVerseRef},
+                    selectVerseNumberRef: {...this.state.selectVerseNumberRef}
+                  })
+                } else {
+                  this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this.setState({
+                    selectVerse: {...this.state.selectVerse, [key]:verseItem},
+                    selectVerseRef: {...this.state.selectVerseRef, [key] : this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]},
+                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]}
+                  });
+                }
               }}
               ref={ r => this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
             >
@@ -146,7 +163,7 @@ export default class DiaryContent extends PureComponent {
         )});
         return (
           <View
-            ref={r => this[item[0].book_name + item[0].chapter_n] = r}
+            ref={r => this[item[0].book_name + item[0].chapter_nr] = r}
           >
             {Title()}
             <PharseCantainer

@@ -20,6 +20,7 @@
   "dependencies": {
     "moment": "^2.20.1",
     "prop-types": "^15.6.0",
+    "ramda": "^0.25.0",
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-animatable": "^1.2.4",
