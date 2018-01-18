@@ -105,49 +105,49 @@ export default class DiaryRead extends Component {
   }
   generateContent = async () => {
     const { month, day}  = this.state.date;
-    // const { bible2DB } = this.props.navigation.state.params.db;
-    // if(this.state.lang == 'cht')
-    const {scheduleDB, bible2DB} = this.props.navigation.state.params.db;
+    const { bibleDB } = this.props.navigation.state.params.db;
     let query;
-    console.log(new Date().getTime());
-    query = `SELECT Month, Day, BookID, ChapterFrom, VerseFrom, ChapterTo, VerseTo FROM Schedule where Month = ${this.state.date.month} AND Day = ${this.state.date.day}`;
-    const schedule_result = await scheduleDB.executeSql(query);
+    query = `SELECT month, day, book_id, chapter_from, verse_from, chapter_to, verse_to FROM schedule where month = "1" AND day = "1"`;
+    const schedule_result = await bibleDB.executeSql(query);
     const schedule_results = schedule_result[0].rows.raw().map(row => row);
     const _schedule_results = schedule_results.reduce((acc, val) => {
       let _acc = acc;
       let _val = val;
-      if(val.ChapterFrom == val.ChapterTo) return [...acc, val];
-      for(let i = 0; i <= val.ChapterTo - val.ChapterFrom; i++) {
-        _val = {..._val, ChapterFrom: val.ChapterFrom + i, ChapterTo: val.ChapterFrom + i}
+      if(val.chapter_from == val.chapter_to) return [...acc, val];
+      for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
+        _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
         _acc = [..._acc, _val];
       }
       return _acc;
     }, []);
     const bible_results = await Promise.all(_schedule_results.map( async (item) => {
-      const query = `SELECT version, book_ref, book_name, book_nr, chapter_nr, verse_nr, verse FROM bible_cht WHERE book_nr = ${item.BookID} AND chapter_nr >= ${item.ChapterFrom} AND chapter_nr <= ${item.ChapterTo} AND verse_nr >= ${item.VerseFrom} AND verse_nr <= ${item.VerseTo ? item.VerseTo: 200}`;
-      const bible_result = await bible2DB.executeSql(query);
+      const query = `SELECT version, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, testament FROM bible_cht WHERE book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${ item.verse_to == 0 ? 60 : item.verse_to} ORDER BY chapter_nr,verse_nr`;
+      const bible_result = await bibleDB.executeSql(query);
       const bible_results = bible_result[0].rows.raw().map(row => row);
       return bible_results;
     }));
-    console.log(new Date().getTime());
+    console.log(bible_results);
     query = `select b.version, b.book_ref, b.book_name, 
-    b.book_nr, b.chapter_nr, b.verse_nr, b.verse
+    b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
     from bible_cht as b
     Left join schedule as sc
     on sc.month = ${month} AND sc.day = ${day}
-    where b.book_nr= sc.book_id
+    where b.book_nr = sc.book_id
     AND b.chapter_nr >= sc.chapter_from
     AND b.chapter_nr <= sc.chapter_to
     AND b.verse_nr >= sc.verse_from
-    AND b.verse_nr <= (CASE WHEN sc.verse_to = '0' THEN 80 ELSE sc.verse_to END)`;
-    const schedule_result1 = await bible2DB.executeSql(query);
-    
+    AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+    ORDER BY b.chapter_nr,b.verse_nr`;
+    const schedule_result1 = await bibleDB.executeSql(query);
     const schedule_results2 = schedule_result1[0].rows.raw().map(row => row);
     console.log(schedule_results2);
+    // let result = [];
+    // let i = 0;
+    // // for()
+    // console.log(schedule_results2);
     // const schedule_results3 = schedule_results2.reduce((acc, val) => {
     //   if()
     // }, [])
-    console.log(new Date().getTime());
     this.setState({
       content: bible_results,
     });
@@ -293,7 +293,7 @@ export default class DiaryRead extends Component {
     });
     setTimeout(() => {
       this.generateContent();
-    }, 0);
+    }, 300);
   }
   _handleMonthChange = (month) => {
     if(month.year > 2018) {

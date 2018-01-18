@@ -94,7 +94,7 @@ export default class DiaryContent extends PureComponent {
             })
           }}>
             <Text style={{fontSize:12, color: '#0881A3', textDecorationLine:'underline'}}>
-              {`${bookName[item[0].version][item[0].book_ref + '-']}${item[0].chapter_nr}`}
+              {`${item[0].book_name_short}${item[0].chapter_nr}`}
             </Text>
           </TouchableOpacity>
         );
@@ -118,16 +118,18 @@ export default class DiaryContent extends PureComponent {
             lineHeight={this.props.lineHeight}
             fontFamily={this.props.fontFamily}
           >
-          {'\n'}{'\n'}{`${bookName[item[0].version][item[0].book_name]}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}
+          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}
           </BookTitle>
         const Verse = () => item.map(verseItem => {
           return(
             <Text 
               onPress={(e) => {
+                // console.log(this.state.selectVerse);
+                const key = `${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                 this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                 this.setState({
-                  selectVerse: [...this.state.selectVerse, {...verseItem}],
+                  selectVerse: [...this.state.selectVerse, {[key]:verseItem}],
                   selectVerseRef: [...this.state.selectVerseRef, this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]]
                 })
               }}

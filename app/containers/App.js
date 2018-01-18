@@ -12,12 +12,8 @@ class MyHomeScreen extends Component {
   }
   componentWillMount = async () => {
     const bibleDB = await SQLite.openDatabase({name : "Bible.db", createFromLocation : "1"});
-    const bible2DB = await SQLite.openDatabase({name : "Bible3.db", createFromLocation : "1"});
-    const scheduleDB = await SQLite.openDatabase({name : "BibleSchedule.db", createFromLocation : "1"});
     this.db = {
       bibleDB,
-      bible2DB,
-      scheduleDB
     }
   }
   render() {
