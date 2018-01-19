@@ -31,7 +31,11 @@ const StyledFooter = Animated.createAnimatedComponent(styled.View`
   height: ${isIphoneX() ? '8%': '8%'};
   background-color: black;
 `)
-
+const StyledLangListText = styled.Text`
+  margin-top: -2px;
+  color: #bbb;
+  font-size: 16px;
+`;
 export default class Footer extends PureComponent {
   constructor(props) {
     super(props);
@@ -88,9 +92,31 @@ export default class Footer extends PureComponent {
             color='#bbb'
           />
         </TouchableOpacity>
-        <View style={{padding:3}}>
-          <Text style={{marginTop:-2, color:'#bbb', fontSize:16}}>繁</Text>
-        </View>
+          {this.props.defaultLang == 'cht' ? 
+          <TouchableOpacity onPress={() => this.props.handeleChangeLang('chs')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+            <StyledLangListText>繁</StyledLangListText>
+          </TouchableOpacity>
+          : null}
+          {this.props.defaultLang == 'chs' ?
+          <TouchableOpacity onPress={() => this.props.handeleChangeLang('en')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+            <StyledLangListText>簡</StyledLangListText>
+          </TouchableOpacity>
+            : null}
+          {this.props.defaultLang == 'en' ? 
+          <TouchableOpacity onPress={() => this.props.handeleChangeLang('ja')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+            <StyledLangListText>En</StyledLangListText>
+          </TouchableOpacity>
+          : null}
+          {this.props.defaultLang == 'ja' ? 
+          <TouchableOpacity onPress={() => this.props.handeleChangeLang('cht_en')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+            <StyledLangListText>日</StyledLangListText>
+          </TouchableOpacity>
+          : null}
+          {this.props.defaultLang == 'cht_en' ? 
+          <TouchableOpacity onPress={() => this.props.handeleChangeLang('cht')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+            <StyledLangListText style={{fontSize:12}}>中英</StyledLangListText>
+          </TouchableOpacity>
+          : null}
         <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handleNextDay()} >
           <MaterialIcons
             name='arrow-forward'

@@ -30,7 +30,7 @@ const StyledDiaryText = styled.View`
 `;
 const Title = styled.Text`
   font-weight: bold;
-  font-size: ${props => props.fontSize}px;
+  font-size: 20px;
   color: ${props => props.fontColor};
   line-height: ${props => props.lineHeight};
   font-family: ${props => props.fontFamily};
@@ -69,7 +69,7 @@ export default class DiaryContent extends PureComponent {
   renderTitle = () => {
     if(this.props.content.length == 0) return (
       <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
-        <Text>讀取中...</Text>
+        <Text>Loading...</Text>
         <Spinner style={{marginTop:20}} size={70} type={'Wave'}></Spinner>
       </View>
     );
@@ -78,7 +78,6 @@ export default class DiaryContent extends PureComponent {
         fontColor={this.props.fontColor}
         lineHeight={this.props.lineHeight}
         fontFamily={this.props.fontFamily}
-        fontSize={this.props.fontSize + 6}
       >
       {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
       </Title>
@@ -163,14 +162,16 @@ export default class DiaryContent extends PureComponent {
               </PharseNumber>
               {`${verseItem.verse}`}
               
-              {/* 不同版本比較用，要有個通則的旗標 
-                <PharseNumber
-                  fontSize={this.props.fontSize - 6}
-                  ref={ r => this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
-              >
-              {'\n'}{`${verseItem.verse_nr}`}{'  '}
-              </PharseNumber>
-              {`${verseItem.j_verse}`}{'\n'}{'\n'} */}
+              {/* 不同版本比較用，要有個通則的旗標  */}
+              {
+                this.props.defaultLang == 'cht_en' ?
+                  <PharseNumber
+                    fontSize={this.props.fontSize - 6}
+                    ref={ r => this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
+                  >{'\n'}{`${verseItem.verse_nr}`}{'  '}
+                  </PharseNumber> : null
+              }
+              {this.props.defaultLang == 'cht_en' ?  `${verseItem.compare_verse}\n\n`: null}
             </Text>
         )});
         return (

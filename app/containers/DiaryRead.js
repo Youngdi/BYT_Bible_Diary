@@ -64,7 +64,8 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      languages: [],
+      systemLang: '',
+      defaultLang: 'cht',
       lastPress: 0,
       scrollInitPosition:0,
       bg: '#fff',
@@ -99,9 +100,8 @@ export default class DiaryRead extends Component {
     };
   }
   componentWillMount = () => {
-    
     getLanguages().then(languages => {
-      this.setState({ languages });
+      this.setState({ systemLang: languages });
     });
     setTimeout(() => {
       this.generateContent();
@@ -119,55 +119,44 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
-    
     const { month, day}  = this.state.date;
     const { bibleDB } = this.props.navigation.state.params.db;
     let query;
-    // query = `SELECT month, day, book_id, chapter_from, verse_from, chapter_to, verse_to FROM schedule where month = ${month} AND day = ${day}`;
-    // const schedule_result = await bibleDB.executeSql(query);
-    // const schedule_results = schedule_result[0].rows.raw().map(row => row);
-    // const _schedule_results = schedule_results.reduce((acc, val) => {
-    //   let _acc = acc;
-    //   let _val = val;
-    //   if(val.chapter_from == val.chapter_to) return [...acc, val];
-    //   for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
-    //     _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
-    //     _acc = [..._acc, _val];
-    //   }
-    //   return _acc;
-    // }, []);
-    // const bible_results = await Promise.all(_schedule_results.map( async (item) => {
-    //   const query = `SELECT version, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, testament FROM bible_cht WHERE book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${ item.verse_to == 0 ? 60 : item.verse_to} ORDER BY chapter_nr,verse_nr`;
-    //   const bible_result = await bibleDB.executeSql(query);
-    //   const bible_results = bible_result[0].rows.raw().map(row => row);
-    //   return bible_results;
-    // }));
-    query = `select b.version, b.book_ref, b.book_name, 
-    b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
-    from bible_cht as b
-    Left join schedule as sc
-    on sc.month = ${month} AND sc.day = ${day}
-    where b.book_nr = sc.book_id
-    AND b.chapter_nr >= sc.chapter_from
-    AND b.chapter_nr <= sc.chapter_to
-    AND b.verse_nr >= sc.verse_from
-    AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-    ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
-
-    query = `select b.version, b.book_ref, b.book_name, 
-    b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
-    j.verse as j_verse, j.book_name_short as j_book_name_short, j.book_name as j_book_name
-    from bible_cht as b
-    Left join schedule as sc
-    on sc.month = 1 AND sc.day = 1
-    Left join bible_japan as j
-    on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
-    where b.book_nr = sc.book_id
-    AND b.chapter_nr >= sc.chapter_from
-    AND b.chapter_nr <= sc.chapter_to
-    AND b.verse_nr >= sc.verse_from
-    AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-    ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+    let bibleVersion;
+    if(this.state.defaultLang == 'cht') bibleVersion = 'cht';
+    if(this.state.defaultLang == 'chs') bibleVersion = 'chs';
+    if(this.state.defaultLang == 'en') bibleVersion = 'kjv';
+    if(this.state.defaultLang == 'ja') bibleVersion = 'japan';
+    if(this.state.defaultLang == 'cht_en') {
+      bibleVersion = 'cht';
+      // 中英對照版
+      query = `select b.version, b.book_ref, b.book_name, 
+      b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
+      j.verse as compare_verse
+      from bible_${bibleVersion} as b
+      Left join schedule as sc
+      on sc.month = ${month} AND sc.day = ${day}
+      Left join bible_kjv as j
+      on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
+      where b.book_nr = sc.book_id
+      AND b.chapter_nr >= sc.chapter_from
+      AND b.chapter_nr <= sc.chapter_to
+      AND b.verse_nr >= sc.verse_from
+      AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+      ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+    } else {
+      query = `select b.version, b.book_ref, b.book_name, 
+      b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
+      from bible_${bibleVersion} as b
+      Left join schedule as sc
+      on sc.month = ${month} AND sc.day = ${day}
+      where b.book_nr = sc.book_id
+      AND b.chapter_nr >= sc.chapter_from
+      AND b.chapter_nr <= sc.chapter_to
+      AND b.verse_nr >= sc.verse_from
+      AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+      ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+    }
 
     const getVerse = await bibleDB.executeSql(query);
     const roughResults = getVerse[0].rows.raw().map(row => row);
@@ -377,6 +366,21 @@ export default class DiaryRead extends Component {
       finishedReading: false,
     });
   }
+  _handeleChangeLang = (lang) => {
+    let i18nLang;
+    if(lang == 'cht') I18n.locale = 'zh-hant';
+    if(lang == 'chs') I18n.locale = 'zh-hans';
+    if(lang == 'en') I18n.locale = 'en';
+    if(lang == 'ja') I18n.locale = 'ja';
+    if(lang == 'cht_en') I18n.locale = 'zh-hant';
+    this.setState({
+      defaultLang: lang,
+      // content: [],
+    });
+    setTimeout(() => {
+      this.generateContent();
+    }, 0);
+  }
   // _onMomentumScrollBegin = (e) => {
   //   this.setState({
   //     scrollInitPosition: e.nativeEvent.pageY,
@@ -402,6 +406,7 @@ export default class DiaryRead extends Component {
                 lineHeight={this.state.setting.lineHeight}
                 fontFamily={this.state.setting.fontFamily}
                 content={this.state.content}
+                defaultLang={this.state.defaultLang}
                 date={this.state.date}
                 contentView={this.state.contentView}
                 marked={this.state.markedDates[this.state.currentDate].marked}
@@ -414,6 +419,8 @@ export default class DiaryRead extends Component {
         <Footer
           handleNextDay={this._handleNextDay}
           handlePreviousDay={this._handlePreviousDay}
+          handeleChangeLang={this._handeleChangeLang}
+          defaultLang={this.state.defaultLang}
           getDiaryBiblePhrase={this._getDiaryBiblePhrase}
           navigation={this.props.navigation}
           toggleModal={this._toggleModalFontSetting}
