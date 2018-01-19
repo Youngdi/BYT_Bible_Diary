@@ -13,6 +13,7 @@ import styled from "styled-components/native";
 import { BlurView, VibrancyView } from 'react-native-blur';
 import * as Animatable from 'react-native-animatable';
 const ANFontAwesome = Animatable.createAnimatableComponent(FontAwesome);
+import I18n from 'react-native-i18n';
 
 const {
   height: deviceHeight,
@@ -73,7 +74,7 @@ export default class Check extends PureComponent {
           </TouchableOpacity>
         </Animatable.View>
         <View style={{marginBottom:150}}>
-         <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}恭喜你完成今天的進度！</Text>
+         <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}{I18n.t('pull_down_congrats')}</Text>
         </View>
       </StyledCheck>
       : <View></View>

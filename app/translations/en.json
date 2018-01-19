@@ -1,0 +1,15 @@
+{
+  "finishe_today": "You finished the schedule today",
+  "pull_down_to_finish": "Pull down to finish today's schedule!",
+  "move_to_previous_year": "There is no more regrets last year!",
+  "move_to_next_year": "Come on, this year haven't finished yet!",
+  "month": "/",
+  "day": "",
+  "font_type": "Font",
+  "font_type1": "Default",
+  "font_type2": "PingFang",
+  "font_type3": "Times",
+  "font_size": "Font Size",
+  "font_line": "Font Line",
+  "pull_down_congrats": "Congrats, you finished it!"
+}

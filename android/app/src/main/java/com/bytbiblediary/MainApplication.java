@@ -3,11 +3,11 @@ package com.bytbiblediary;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.cmcewen.blurview.BlurViewPackage;
-import com.react.rnspinkit.RNSpinkitPackage;
-import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.react.rnspinkit.RNSpinkitPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
+import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
+import com.cmcewen.blurview.BlurViewPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -28,11 +28,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new BlurViewPackage(),
-            new RNSpinkitPackage(),
-            new WebViewBridgePackage(),
             new VectorIconsPackage(),
-            new ScreenBrightnessPackage()
+            new RNSpinkitPackage(),
+            new ScreenBrightnessPackage(),
+            new RNI18nPackage(),
+            new BlurViewPackage()
       );
     }
 

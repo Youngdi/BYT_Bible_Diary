@@ -21,6 +21,7 @@ const {
   height: deviceHeight,
   width: deviceWidth
 } = Dimensions.get('window');
+import I18n from 'react-native-i18n';
 import { quicksort } from '../api/utilities';
 
 const StyledDiaryText = styled.View`
@@ -79,7 +80,7 @@ export default class DiaryContent extends PureComponent {
         fontFamily={this.props.fontFamily}
         fontSize={this.props.fontSize + 6}
       >
-      {`${this.props.date.month}月${this.props.date.day}日`}
+      {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
       </Title>
     const renderAnchor = () =>
       this.props.content.map( (item, i) => {
@@ -124,7 +125,7 @@ export default class DiaryContent extends PureComponent {
             lineHeight={this.props.lineHeight}
             fontFamily={this.props.fontFamily}
           >
-          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}章${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}節`}{'\n'}
+          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}{'\n'}
           </BookTitle>
         const Verse = () => item.map(verseItem => {
           return(
@@ -160,7 +161,16 @@ export default class DiaryContent extends PureComponent {
               >
                 {`${verseItem.verse_nr}`}{'  '}
               </PharseNumber>
-            {`${verseItem.verse}`}
+              {`${verseItem.verse}`}
+              
+              {/* 不同版本比較用，要有個通則的旗標 
+                <PharseNumber
+                  fontSize={this.props.fontSize - 6}
+                  ref={ r => this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
+              >
+              {'\n'}{`${verseItem.verse_nr}`}{'  '}
+              </PharseNumber>
+              {`${verseItem.j_verse}`}{'\n'}{'\n'} */}
             </Text>
         )});
         return (
@@ -186,10 +196,10 @@ export default class DiaryContent extends PureComponent {
     return(
       this.props.marked ? 
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:100, marginTop:30}}>
-      <Text style={{fontFamily:this.props.fontFamily}}>今天進度已經完成囉！</Text>
+      <Text style={{fontFamily:this.props.fontFamily}}>{I18n.t('finishe_today')}</Text>
       </View> :
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:300, marginTop:50}}>
-        <Text style={{fontFamily:this.props.fontFamily}}>用力往下拉來完成今天進度</Text>
+        <Text style={{fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
         <MaterialCommunityIcons
           style={{marginTop:20}}
           name='arrow-expand-down'

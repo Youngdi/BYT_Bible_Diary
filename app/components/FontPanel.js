@@ -10,6 +10,7 @@ import { isIphoneX } from 'react-native-iphone-x-helper';
 import { Calendar } from 'react-native-calendars';
 import Slider from "react-native-slider";
 import styled from "styled-components/native";
+import I18n from 'react-native-i18n';
 
 const {
   height: deviceHeight,
@@ -111,23 +112,23 @@ export default class CalendarModal extends Component {
       <StyledFontSettingModalContainer>
         <StyledFontSettingModalRow1>
           <View>
-            <StyledFontSettingModalText>字體</StyledFontSettingModalText>
+            <StyledFontSettingModalText>{I18n.t('font_type')}</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
             <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Avenir')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Avenir' ? '#F7B633': '#fff'}}>預設</StyledFontSettingModalText>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Avenir' ? '#F7B633': '#fff'}}>{I18n.t('font_type1')}</StyledFontSettingModalText>
             </TouchableOpacity>
             <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('PingFangSC-Semibold')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff'}}>蘋方</StyledFontSettingModalText>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff'}}>{I18n.t('font_type2')}</StyledFontSettingModalText>
             </TouchableOpacity>
             <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Times New Roman')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff'}}>Times</StyledFontSettingModalText>
+              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff'}}>{I18n.t('font_type3')}</StyledFontSettingModalText>
             </TouchableOpacity>
           </StyledSettingRow>
         </StyledFontSettingModalRow1>
         <StyledFontSettingModalRow2>
         <View>
-            <StyledFontSettingModalText>字級</StyledFontSettingModalText>
+            <StyledFontSettingModalText>{I18n.t('font_size')}</StyledFontSettingModalText>
         </View>
           <StyledSettingRow>
             <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontSize(-2)} style={{marginRight: 5}}>
@@ -151,7 +152,7 @@ export default class CalendarModal extends Component {
         </StyledFontSettingModalRow2>
         <StyledFontSettingModalRow2>
           <View>
-            <StyledFontSettingModalText>行距</StyledFontSettingModalText>
+            <StyledFontSettingModalText>{I18n.t('font_line')}</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
             <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(28)} style={{marginRight:3}}>

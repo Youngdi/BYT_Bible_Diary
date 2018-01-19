@@ -19,6 +19,7 @@ import FontPanelModal from '../components/FontPanel';
 import DiaryContent from '../components/DiaryContent';
 import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
+import I18n, { getLanguages } from 'react-native-i18n';
 
 const StyledMain = styled.ScrollView`
   display:flex;
@@ -42,9 +43,17 @@ const StyledDiaryText = styled.Text`
   font-family: ${props => props.fontFamily};
 `;
 
-const ccc = {
+const fakeRecord = {
   '2018-01-11': {marked: true}
 }
+
+// Available languages
+I18n.translations = {
+  'zh-hant': require('../translations/cht'),
+  'zh-hans': require('../translations/chs'),
+  'en': require('../translations/en'),
+  'ja': require('../translations/ja'),
+};
 export default class DiaryRead extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
@@ -55,6 +64,7 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      languages: [],
       lastPress: 0,
       scrollInitPosition:0,
       bg: '#fff',
@@ -72,7 +82,6 @@ export default class DiaryRead extends Component {
         lineHeight: 28,
         brightnessValue: 1,
         readingMode: 0, // 0 -> day, 1 -> night
-        lang: 'cht', // cht chs en
       },
       date: {
         dateString: moment().format('YYYY-MM-DD'),
@@ -81,7 +90,7 @@ export default class DiaryRead extends Component {
         year: Number(moment().format('YYYY')),
       },
       markedDates: {
-        ...ccc,
+        ...fakeRecord,
         [moment().format('YYYY-MM-DD')]: {selected: true},
       },
       currentDate: moment().format('YYYY-MM-DD'),
@@ -90,7 +99,13 @@ export default class DiaryRead extends Component {
     };
   }
   componentWillMount = () => {
-    this.generateContent();
+    
+    getLanguages().then(languages => {
+      this.setState({ languages });
+    });
+    setTimeout(() => {
+      this.generateContent();
+    }, 0);
   }
   componentDidMount = async () => {
     ScreenBrightness.getBrightness().then(brightness => {
@@ -138,6 +153,22 @@ export default class DiaryRead extends Component {
     AND b.verse_nr >= sc.verse_from
     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
     ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+
+    query = `select b.version, b.book_ref, b.book_name, 
+    b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
+    j.verse as j_verse, j.book_name_short as j_book_name_short, j.book_name as j_book_name
+    from bible_cht as b
+    Left join schedule as sc
+    on sc.month = 1 AND sc.day = 1
+    Left join bible_japan as j
+    on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
+    where b.book_nr = sc.book_id
+    AND b.chapter_nr >= sc.chapter_from
+    AND b.chapter_nr <= sc.chapter_to
+    AND b.verse_nr >= sc.verse_from
+    AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+    ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+
     const getVerse = await bibleDB.executeSql(query);
     const roughResults = getVerse[0].rows.raw().map(row => row);
     let results = [];
@@ -305,11 +336,11 @@ export default class DiaryRead extends Component {
   _handleMonthChange = (month) => {
     if(month.year > 2018) {
       this._toggleModalCalendar();
-      setTimeout(() => Alert.alert('今年還沒過完呢！'), 1000);
+      setTimeout(() => Alert.alert(I18n.t('move_to_next_year')), 1000);
     }
     if(month.year < 2018) {
       this._toggleModalCalendar();
-      setTimeout(() => Alert.alert('去年已經不能回頭！'), 1000);
+      setTimeout(() => Alert.alert(I18n.t('move_to_previous_year')), 1000);
     }
   }
   _handleScroll = (e) => {

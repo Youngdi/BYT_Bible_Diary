@@ -4,6 +4,7 @@ import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SQLite from 'react-native-sqlite-storage';
+import I18n, { getLanguages } from 'react-native-i18n';
 // SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 class MyHomeScreen extends Component {
