@@ -85,6 +85,8 @@ export default class DiaryContent extends PureComponent {
       this.props.content.map( (item, i) => {
         return(
           <TouchableOpacity
+            style={{height:40}}
+            hitSlop={{top: 40, bottom: 40, left: 10, right: 10}}
             onPress={(e) => {
               R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
               R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
@@ -105,7 +107,7 @@ export default class DiaryContent extends PureComponent {
         );
       })
     return (
-      <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:20}}>
+      <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginTop:20}}>
         {renderDay()}
         {renderAnchor()}
       </View>
@@ -126,7 +128,7 @@ export default class DiaryContent extends PureComponent {
           </BookTitle>
         const Verse = () => item.map(verseItem => {
           return(
-            <Text 
+            <Text
               onPress={(e) => {
                 const key = `${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 if(this.state.selectVerse.hasOwnProperty(key)) {

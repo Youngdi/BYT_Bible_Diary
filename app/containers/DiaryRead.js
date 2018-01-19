@@ -104,6 +104,7 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
+    
     const { month, day}  = this.state.date;
     const { bibleDB } = this.props.navigation.state.params.db;
     let query;
