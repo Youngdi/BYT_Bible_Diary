@@ -35,6 +35,7 @@ export default class Check extends PureComponent {
     super(props);
     this.state = {
       fadeInOpacity: new Animated.Value(0),
+      allowClick: true,
     };
   }
   render() {
@@ -59,8 +60,15 @@ export default class Check extends PureComponent {
           <TouchableOpacity
             hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
             onPress={() => {
+              if(!this.state.allowClick) return;
               this.refs.ANFontAwesomeView.zoomOut(800);
+              this.setState({
+                allowClick: false,
+              })
               setTimeout(() => {
+                this.setState({
+                  allowClick: true,
+                });
                 this.props.handleFinished();
               }, 900);
             }}

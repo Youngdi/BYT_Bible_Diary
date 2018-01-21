@@ -205,6 +205,7 @@ export default class DiaryRead extends Component {
   _toggleModalCalendar = () => this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
   _toggleModalFontSetting = () => this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   _handleNextDay = () => {
+    if(this.state.fullScreenMode) return null;
     if(this.state.currentDate == '2018-12-31') {
       Alert.alert('今年還沒過完呢！');
       return null;
@@ -232,6 +233,7 @@ export default class DiaryRead extends Component {
     }, 0);
   }
   _handlePreviousDay = () => {
+    if(this.state.fullScreenMode) return null;
     if(this.state.currentDate == '2018-01-01') {
       Alert.alert('去年已經不能回頭！');
       return null;
@@ -332,6 +334,10 @@ export default class DiaryRead extends Component {
       setTimeout(() => Alert.alert(I18n.t('move_to_previous_year')), 1000);
     }
   }
+  _handeleScrollTop = (e) => {
+    if(!this.state.fullScreenMode) return null;
+    this.contentView.root.scrollTo({y: 0, animated: true});
+  }
   _handleScroll = (e) => {
     const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
     const paddingToBottom = 20;
@@ -414,7 +420,7 @@ export default class DiaryRead extends Component {
             </View>
           </StyledMainContent>
         </StyledMain>
-        <ArrowUp content={this.state.content} fullScreenMode={fullScreenMode} contentView={this.state.contentView} />
+        <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} />
         <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} />
         <Footer
           handleNextDay={this._handleNextDay}
