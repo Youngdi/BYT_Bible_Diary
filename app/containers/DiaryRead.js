@@ -50,6 +50,7 @@ const fakeRecord = {
 // Available languages
 I18n.translations = {
   'zh-hant': require('../translations/cht'),
+  'zh-TW': require('../translations/cht'),
   'zh-hans': require('../translations/chs'),
   'en': require('../translations/en'),
   'ja': require('../translations/ja'),
@@ -118,67 +119,93 @@ export default class DiaryRead extends Component {
       });
     });
   }
-  generateContent = async () => {
+  generateContent = () => {
     const { month, day}  = this.state.date;
-    const { bibleDB } = this.props.navigation.state.params.db;
-    let query;
-    let bibleVersion;
-    if(this.state.defaultLang == 'cht') bibleVersion = 'cht';
-    if(this.state.defaultLang == 'chs') bibleVersion = 'chs';
-    if(this.state.defaultLang == 'en') bibleVersion = 'kjv';
-    if(this.state.defaultLang == 'ja') bibleVersion = 'japan';
-    if(this.state.defaultLang == 'cht_en') {
-      bibleVersion = 'cht';
-      // 中英對照版
-      query = `select b.version, b.book_ref, b.book_name, 
-      b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
-      j.verse as compare_verse
-      from bible_${bibleVersion} as b
-      Left join schedule as sc
-      on sc.month = ${month} AND sc.day = ${day}
-      Left join bible_kjv as j
-      on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
-      where b.book_nr = sc.book_id
-      AND b.chapter_nr >= sc.chapter_from
-      AND b.chapter_nr <= sc.chapter_to
-      AND b.verse_nr >= sc.verse_from
-      AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-      ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
-    } else {
-      query = `select b.version, b.book_ref, b.book_name, 
-      b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
-      from bible_${bibleVersion} as b
-      Left join schedule as sc
-      on sc.month = ${month} AND sc.day = ${day}
-      where b.book_nr = sc.book_id
-      AND b.chapter_nr >= sc.chapter_from
-      AND b.chapter_nr <= sc.chapter_to
-      AND b.verse_nr >= sc.verse_from
-      AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-      ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
-    }
-
-    const getVerse = await bibleDB.executeSql(query);
-    const roughResults = getVerse[0].rows.raw().map(row => row);
-    let results = [];
-    let previousFlag;
-    let index = 0;
-    for(let i = 0; i < roughResults.length ; i++){
-      if(i == 0) previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
-      if(i == 0) results[index] = [];
-      if((roughResults[i].book_ref + roughResults[i].chapter_nr) == previousFlag){
-        results[index] = [...results[index], roughResults[i]];
-      } else {
-        index++;
-        if(typeof results[index] === 'undefined') results[index] = [];
-        results[index] = [...results[index], roughResults[i]];
+    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.navigation.state.params.db;
+    let bibleVersion = realm_bible_cht;
+    if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
+    if(this.state.defaultLang == 'chs') bibleVersion = realm_bible_chs;
+    if(this.state.defaultLang == 'en') bibleVersion = realm_bible_kjv;
+    if(this.state.defaultLang == 'ja') bibleVersion = realm_bible_japan;
+    const schedule_results = realm_schedule.filtered(`month = ${month} AND day = ${day}`);
+    const _schedule_results = schedule_results.reduce((acc, val) => {
+      let _acc = acc;
+      let _val = val;
+      if(val.chapter_from == val.chapter_to) return [...acc, val];
+      for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
+        _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
+        _acc = [..._acc, _val];
       }
-      previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
-    }
+      return _acc;
+    }, []);
+    const content = _schedule_results.map(item => {
+      return bibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
+    });
     this.setState({
-      content: results,
+      content: content,
     });
   }
+  // generateContent = async () => {
+  //   const { month, day}  = this.state.date;
+  //   const { bibleDB } = this.props.navigation.state.params.db;
+  //   let query;
+  //   let bibleVersion;
+  //   if(this.state.defaultLang == 'cht') bibleVersion = 'cht';
+  //   if(this.state.defaultLang == 'chs') bibleVersion = 'chs';
+  //   if(this.state.defaultLang == 'en') bibleVersion = 'kjv';
+  //   if(this.state.defaultLang == 'ja') bibleVersion = 'japan';
+  //   if(this.state.defaultLang == 'cht_en') {
+  //     bibleVersion = 'cht';
+  //     // 中英對照版
+  //     query = `select b.version, b.book_ref, b.book_name, 
+  //     b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
+  //     j.verse as compare_verse
+  //     from bible_${bibleVersion} as b
+  //     Left join schedule as sc
+  //     on sc.month = ${month} AND sc.day = ${day}
+  //     Left join bible_kjv as j
+  //     on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
+  //     where b.book_nr = sc.book_id
+  //     AND b.chapter_nr >= sc.chapter_from
+  //     AND b.chapter_nr <= sc.chapter_to
+  //     AND b.verse_nr >= sc.verse_from
+  //     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+  //     ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+  //   } else {
+  //     query = `select b.version, b.book_ref, b.book_name, 
+  //     b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
+  //     from bible_${bibleVersion} as b
+  //     Left join schedule as sc
+  //     on sc.month = ${month} AND sc.day = ${day}
+  //     where b.book_nr = sc.book_id
+  //     AND b.chapter_nr >= sc.chapter_from
+  //     AND b.chapter_nr <= sc.chapter_to
+  //     AND b.verse_nr >= sc.verse_from
+  //     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
+  //     ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
+  //   }
+
+  //   const getVerse = await bibleDB.executeSql(query);
+  //   const roughResults = getVerse[0].rows.raw().map(row => row);
+  //   let results = [];
+  //   let previousFlag;
+  //   let index = 0;
+  //   for(let i = 0; i < roughResults.length ; i++){
+  //     if(i == 0) previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
+  //     if(i == 0) results[index] = [];
+  //     if((roughResults[i].book_ref + roughResults[i].chapter_nr) == previousFlag){
+  //       results[index] = [...results[index], roughResults[i]];
+  //     } else {
+  //       index++;
+  //       if(typeof results[index] === 'undefined') results[index] = [];
+  //       results[index] = [...results[index], roughResults[i]];
+  //     }
+  //     previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
+  //   }
+  //   this.setState({
+  //     content: results,
+  //   });
+  // }
   _handleDoublePress = () => {
     var delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
@@ -225,7 +252,7 @@ export default class DiaryRead extends Component {
         [nextDate]: {...this.state.markedDates[nextDate], selected: true},
       },
       currentDate: nextDate,
-      content: [],
+      // content: [],
       finishedReading: false,
     });
     setTimeout(() => {
@@ -253,7 +280,7 @@ export default class DiaryRead extends Component {
         [previousDate]: {...this.state.markedDates[previousDate], selected: true},
       },
       currentDate: previousDate,
-      content: [],
+      // content: [],
       finishedReading: false,
     });
     setTimeout(() => {

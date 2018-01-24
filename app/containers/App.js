@@ -1,20 +1,121 @@
 import React, { Component } from 'react';
-import { Button, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { Button, ScrollView, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import SQLite from 'react-native-sqlite-storage';
 import I18n, { getLanguages } from 'react-native-i18n';
-// SQLite.DEBUG(true);
-SQLite.enablePromise(true);
+import RNFS from 'react-native-fs';
+import Realm from 'realm';
+const Person = {
+  name: 'Person',
+  properties: {
+    name: 'string',
+    nickname: 'string',
+    birthday: 'date',
+    picture: 'string?'
+  }
+}
+
+const bible_chs = {
+  name: 'bible_chs',
+  properties: {
+    version: 'string?',
+    testament: 'int?',
+    book_ref: 'string?',
+    book_name: 'string?',
+    book_name_short: 'string?',
+    book_nr: 'int?',
+    chapter_nr: 'int?',
+    verse_nr: 'int?',
+    verse: 'string?'
+  }
+}
+
+const bible_cht = {
+  name: 'bible_cht',
+  properties: {
+    version: 'string?',
+    testament: 'int?',
+    book_ref: 'string?',
+    book_name: 'string?',
+    book_name_short: 'string?',
+    book_nr: 'int?',
+    chapter_nr: 'int?',
+    verse_nr: 'int?',
+    verse: 'string?'
+  }
+}
+
+const bible_japan = {
+  name: 'bible_japan',
+  properties: {
+    id: 'int?',
+    version: 'string?',
+    testament: 'int?',
+    book_ref: 'string?',
+    book_name: 'string?',
+    book_name_short: 'string?',
+    book_nr: 'int?',
+    chapter_nr: 'int?',
+    verse_nr: 'int?',
+    verse: 'string?'
+  }
+}
+
+const bible_kjv = {
+  name: 'bible_kjv',
+  properties: {
+    version: 'string?',
+    testament: 'int?',
+    book_ref: 'string?',
+    book_name: 'string?',
+    book_name_short: 'string?',
+    book_nr: 'int?',
+    chapter_nr: 'int?',
+    verse_nr: 'int?',
+    verse: 'string?'
+  }
+}
+
+const schedule = {
+  name: 'schedule',
+  properties: {
+    id: 'int?',
+    month: 'int?',
+    day: 'int?',
+    book_id: 'int?',
+    chapter_from: 'int?',
+    verse_from: 'int?',
+    chapter_to: 'int?',
+    verse_to: 'int?'
+  }
+}
+Realm.copyBundledRealmFiles();
+const realm = new Realm({
+  path: 'byt.realm',
+  schema:[schedule, bible_kjv,bible_japan, bible_cht, bible_chs, Person],
+});
+
+const realm_schedule = realm.objects('schedule');
+const realm_bible_kjv = realm.objects('bible_kjv');
+const realm_bible_japan = realm.objects('bible_japan');
+const realm_bible_cht = realm.objects('bible_cht');
+const realm_bible_chs = realm.objects('bible_chs');
+// SQLite.enablePromise(true);
 class MyHomeScreen extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      progress: new Animated.Value(0),
+    };
   }
   componentWillMount = async () => {
-    const bibleDB = await SQLite.openDatabase({name : "Bible.db", createFromLocation : "1"});
     this.db = {
-      bibleDB,
+     realm_schedule,
+     realm_bible_kjv,
+     realm_bible_japan,
+     realm_bible_cht,
+     realm_bible_chs,
     }
   }
   render() {
@@ -25,8 +126,6 @@ class MyHomeScreen extends Component {
     );
   }
 }
-
-
 class MyNavScreen extends Component {
   render() {
     return (

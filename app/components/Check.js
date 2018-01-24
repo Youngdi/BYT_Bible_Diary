@@ -12,6 +12,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styled from "styled-components/native";
 import { BlurView, VibrancyView } from 'react-native-blur';
 import * as Animatable from 'react-native-animatable';
+import LottieView from 'lottie-react-native';
 const ANFontAwesome = Animatable.createAnimatableComponent(FontAwesome);
 import I18n from 'react-native-i18n';
 
@@ -36,12 +37,20 @@ export default class Check extends PureComponent {
     this.state = {
       fadeInOpacity: new Animated.Value(0),
       allowClick: true,
+      progress: new Animated.Value(0),
     };
   }
   render() {
     if(this.props.content.length == 0) return (<View></View>);
+    if(this.props.finishedReading){
+      this.animation.play();
+    }
+    Animated.timing(this.state.progress, {
+      toValue: 1,
+      duration: 5000,
+    }).start();
     return (
-      this.props.finishedReading ? 
+      this.props.finishedReading ?
       <StyledCheck>
         <BlurView
           ref="ANBlurView"
@@ -49,40 +58,33 @@ export default class Check extends PureComponent {
           blurType="dark"
           blurAmount={5}
         />
-        <Animatable.View
-          animation="zoomIn"
-          delay={500}
-          style={{backgroundColor:'#fff', width: 90, height: 90, borderColor:'#fff', borderWidth:6, borderStyle:'solid', borderRadius: 45, marginBottom:20}}
-          duration={1500}
-          ref="ANFontAwesomeView"
-          easing="ease-out"
-        >
-          <TouchableOpacity
-            hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
-            onPress={() => {
-              if(!this.state.allowClick) return;
-              this.refs.ANFontAwesomeView.zoomOut(800);
+        <TouchableOpacity
+          hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
+          style={{marginBottom:20}}
+          onPress={() => {
+            if(!this.state.allowClick) return;
+            this.setState({
+              allowClick: false,
+            })
+            setTimeout(() => {
               this.setState({
-                allowClick: false,
-              })
-              setTimeout(() => {
-                this.setState({
-                  allowClick: true,
-                });
-                this.props.handleFinished();
-              }, 900);
+                allowClick: true,
+              });
+              this.props.handleFinished();
+            }, 900);
+          }}
+        >
+          <LottieView
+            style={{width:250, height:250}}
+            ref={animation => {
+              this.animation = animation;
             }}
-          >
-            <FontAwesome
-              name='calendar-check-o'
-              size={50}
-              color="#111"
-              style={{backgroundColor:'transparent', marginLeft:16, marginTop:12}}
-            />
-          </TouchableOpacity>
-        </Animatable.View>
+            progress={this.state.progress}
+            source={require('../lottie/check.json')}
+          />
+        </TouchableOpacity>
         <View style={{marginBottom:150}}>
-         <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}{I18n.t('pull_down_congrats')}</Text>
+          <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}{I18n.t('pull_down_congrats')}</Text>
         </View>
       </StyledCheck>
       : <View></View>
