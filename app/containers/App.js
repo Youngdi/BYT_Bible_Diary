@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import I18n, { getLanguages } from 'react-native-i18n';
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
+import LottieView from 'lottie-react-native';
 const Person = {
   name: 'Person',
   properties: {
@@ -109,6 +110,9 @@ class MyHomeScreen extends Component {
       progress: new Animated.Value(0),
     };
   }
+  componentDidMount() {
+    this.animation.play();
+  }
   componentWillMount = async () => {
     this.db = {
      realm_schedule,
@@ -122,6 +126,13 @@ class MyHomeScreen extends Component {
     return (
       <View>
         <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.db})}/>
+        <LottieView
+              style={{width:100, height:60}}
+              ref={animation => {
+                this.animation = animation;
+              }}
+              source={require('../lottie/Brightness.json')}
+            />
       </View>
     );
   }

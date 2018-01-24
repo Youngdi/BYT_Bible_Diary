@@ -11,6 +11,7 @@ import { Calendar } from 'react-native-calendars';
 import Slider from "react-native-slider";
 import styled from "styled-components/native";
 import I18n from 'react-native-i18n';
+import LottieView from 'lottie-react-native';
 
 const {
   height: deviceHeight,
@@ -99,6 +100,9 @@ const styles = StyleSheet.create({
 });
 
 export default class CalendarModal extends Component {
+  componentDidMount() {
+    //this.animation.play(0,500);
+  }
   render() {
     return (
     <Modal
@@ -179,11 +183,11 @@ export default class CalendarModal extends Component {
           </StyledSettingRow>
         </StyledFontSettingModalRow2>
         <StyledFontSettingModalRow3>
-          <TouchableOpacity onPress={() => this.props.handleSettingReadingMode()} style={{width:30, height:30, borderColor: this.props.setting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
+          <TouchableOpacity onPress={() => this.props.handleSettingReadingMode()} style={{backgroundColor:'white', width:35, height:35, borderColor: this.props.setting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
             <Ionicons
               name='ios-moon-outline'
-              size={25}
-              color={this.props.setting.readingMode == 1 ? '#F7B633': '#bbb'}
+              size={30}
+              color={this.props.setting.readingMode == 1 ? '#F7B633': '#000'}
               style={{marginLeft:6, marginTop:1, backgroundColor:'transparent'}}
             />
           </TouchableOpacity>

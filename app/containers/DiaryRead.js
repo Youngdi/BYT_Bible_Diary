@@ -252,9 +252,9 @@ export default class DiaryRead extends Component {
         [nextDate]: {...this.state.markedDates[nextDate], selected: true},
       },
       currentDate: nextDate,
-      // content: [],
       finishedReading: false,
     });
+    this.contentView.root.scrollTo({y: 10, animated: true});
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -280,9 +280,9 @@ export default class DiaryRead extends Component {
         [previousDate]: {...this.state.markedDates[previousDate], selected: true},
       },
       currentDate: previousDate,
-      // content: [],
       finishedReading: false,
     });
+    this.contentView.root.scrollTo({y: 10, animated: true});
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -336,20 +336,20 @@ export default class DiaryRead extends Component {
   }
   _handleChangeDay = (day) => {
     this.setState({
-      date: day,
       isCalendarModalVisible: !this.state.isCalendarModalVisible,
+      date: day,
       markedDates: {
         ...this.state.markedDates,
         [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
         [day.dateString]: {...this.state.markedDates[day.dateString], selected: true},
       },
       currentDate: day.dateString,
-      content: [],
       finishedReading: false,
     });
+    this.contentView.root.scrollTo({y: 10, animated: true});
     setTimeout(() => {
       this.generateContent();
-    }, 300);
+    }, 800);
   }
   _handleMonthChange = (month) => {
     if(month.year > 2018) {
@@ -408,7 +408,6 @@ export default class DiaryRead extends Component {
     if(lang == 'cht_en') I18n.locale = 'zh-hant';
     this.setState({
       defaultLang: lang,
-      // content: [],
     });
     setTimeout(() => {
       this.generateContent();
@@ -448,7 +447,7 @@ export default class DiaryRead extends Component {
           </StyledMainContent>
         </StyledMain>
         <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} />
-        <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} />
+        {this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
         <Footer
           handleNextDay={this._handleNextDay}
           handlePreviousDay={this._handlePreviousDay}

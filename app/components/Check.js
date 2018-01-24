@@ -21,7 +21,7 @@ const {
   width: deviceWidth
 } = Dimensions.get('window');
 
-const StyledCheck = Animated.createAnimatedComponent(styled.View`
+const StyledCheck = styled.View`
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -29,7 +29,7 @@ const StyledCheck = Animated.createAnimatedComponent(styled.View`
   align-items: center;
   width: ${deviceWidth}px
   height: ${deviceHeight}px;
-`)
+`;
 
 export default class Check extends PureComponent {
   constructor(props) {
@@ -37,20 +37,13 @@ export default class Check extends PureComponent {
     this.state = {
       fadeInOpacity: new Animated.Value(0),
       allowClick: true,
-      progress: new Animated.Value(0),
     };
   }
+  componentDidMount() {
+    this.animation.play(0,500);
+  }
   render() {
-    if(this.props.content.length == 0) return (<View></View>);
-    if(this.props.finishedReading){
-      this.animation.play();
-    }
-    Animated.timing(this.state.progress, {
-      toValue: 1,
-      duration: 5000,
-    }).start();
     return (
-      this.props.finishedReading ?
       <StyledCheck>
         <BlurView
           ref="ANBlurView"
@@ -60,7 +53,6 @@ export default class Check extends PureComponent {
         />
         <TouchableOpacity
           hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
-          style={{marginBottom:20}}
           onPress={() => {
             if(!this.state.allowClick) return;
             this.setState({
@@ -71,23 +63,21 @@ export default class Check extends PureComponent {
                 allowClick: true,
               });
               this.props.handleFinished();
-            }, 900);
+            }, 100);
           }}
         >
           <LottieView
-            style={{width:250, height:250}}
+            style={{width:300, height:300}}
             ref={animation => {
               this.animation = animation;
             }}
-            progress={this.state.progress}
-            source={require('../lottie/check.json')}
+            source={require('../lottie/done.json')}
           />
         </TouchableOpacity>
-        <View style={{marginBottom:150}}>
+        <View style={{marginBottom:250}}>
           <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}{I18n.t('pull_down_congrats')}</Text>
         </View>
       </StyledCheck>
-      : <View></View>
     );
   }
 }
