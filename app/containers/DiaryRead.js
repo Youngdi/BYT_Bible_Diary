@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 import moment from 'moment/min/moment-with-locales';
 import ScreenBrightness from 'react-native-screen-brightness';
@@ -20,6 +21,7 @@ import DiaryContent from '../components/DiaryContent';
 import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import I18n, { getLanguages } from 'react-native-i18n';
+import * as R from 'ramda';
 
 const StyledMain = styled.ScrollView`
   display:flex;
@@ -43,10 +45,6 @@ const StyledDiaryText = styled.Text`
   font-family: ${props => props.fontFamily};
 `;
 
-const fakeRecord = {
-  '2018-01-11': {marked: true}
-}
-
 // Available languages
 I18n.translations = {
   'zh-hant': require('../translations/cht'),
@@ -65,7 +63,6 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      systemLang: '',
       defaultLang: 'cht',
       lastPress: 0,
       scrollInitPosition:0,
@@ -77,6 +74,7 @@ export default class DiaryRead extends Component {
       scrollPosition: 0,
       hasRead: 0,
       finishedReading: false,
+      loadContent: false,
       setting: {
         fontFamily: 'Avenir',
         fontSize: 18,
@@ -85,30 +83,45 @@ export default class DiaryRead extends Component {
         brightnessValue: 1,
         readingMode: 0, // 0 -> day, 1 -> night
       },
+      markedDates: {
+        [moment().format('YYYY-MM-DD')]: {selected: true},
+      },
       date: {
         dateString: moment().format('YYYY-MM-DD'),
         day:  Number(moment().format('D')),
         month: Number(moment().format('M')),
         year: Number(moment().format('YYYY')),
       },
-      markedDates: {
-        ...fakeRecord,
-        [moment().format('YYYY-MM-DD')]: {selected: true},
-      },
       currentDate: moment().format('YYYY-MM-DD'),
-      value:0.2,
-      contentView:{}
+      contentView:{},
+      highlightList: {},
     };
+    this.initData();
+  }
+  initData = async () => {
+    try {
+      const readingRecord = await AsyncStorage.getItem('@readingSchdule');
+      const systemLang = await getLanguages();
+      this.setState({
+        systemLang: systemLang,
+        markedDates: {
+          ...JSON.parse(readingRecord),
+          [this.state.date.dateString]: {
+            selected : true,
+            marked : JSON.parse(readingRecord)[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
+          }
+        },
+      })
+    } catch (error) {
+      // Error saving data
+    }
   }
   componentWillMount = () => {
-    getLanguages().then(languages => {
-      this.setState({ systemLang: languages });
-    });
     setTimeout(() => {
       this.generateContent();
     }, 0);
   }
-  componentDidMount = async () => {
+  componentDidMount = () => {
     ScreenBrightness.getBrightness().then(brightness => {
       this.setState({
         contentView: this.contentView,
@@ -119,7 +132,8 @@ export default class DiaryRead extends Component {
       });
     });
   }
-  generateContent = () => {
+  generateContent = async () => {
+    const highlightList = await AsyncStorage.getItem('@highlightList');
     const { month, day}  = this.state.date;
     const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.navigation.state.params.db;
     let bibleVersion = realm_bible_cht;
@@ -139,73 +153,34 @@ export default class DiaryRead extends Component {
       return _acc;
     }, []);
     const content = _schedule_results.map(item => {
-      return bibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
+      const results = bibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
+      return results.sorted('verse_nr', false);
     });
-    this.setState({
-      content: content,
-    });
+    if(this.state.defaultLang == 'cht_en') {
+      const jContent = _schedule_results.map(item => {
+        const results = realm_bible_kjv.filtered(`book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
+        return results.sorted('verse_nr', false);
+      });
+      const bindContent = jContent.reduce((acc, val, i) => {
+        const zipContent = R.zip(content[i], val);
+        return [...acc, R.flatten(zipContent)];
+      }, []);
+      this.setState({
+        content: bindContent,
+        highlightList: JSON.parse(highlightList) ? {} : JSON.parse(highlightList),
+      });
+    } else {
+      this.setState({
+        content: content,
+        highlightList: JSON.parse(highlightList) ? {} : JSON.parse(highlightList),
+      });
+    }
+    setTimeout(() => {
+      this.setState({
+        loadContent: false,
+      });
+    }, 500);
   }
-  // generateContent = async () => {
-  //   const { month, day}  = this.state.date;
-  //   const { bibleDB } = this.props.navigation.state.params.db;
-  //   let query;
-  //   let bibleVersion;
-  //   if(this.state.defaultLang == 'cht') bibleVersion = 'cht';
-  //   if(this.state.defaultLang == 'chs') bibleVersion = 'chs';
-  //   if(this.state.defaultLang == 'en') bibleVersion = 'kjv';
-  //   if(this.state.defaultLang == 'ja') bibleVersion = 'japan';
-  //   if(this.state.defaultLang == 'cht_en') {
-  //     bibleVersion = 'cht';
-  //     // 中英對照版
-  //     query = `select b.version, b.book_ref, b.book_name, 
-  //     b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament,
-  //     j.verse as compare_verse
-  //     from bible_${bibleVersion} as b
-  //     Left join schedule as sc
-  //     on sc.month = ${month} AND sc.day = ${day}
-  //     Left join bible_kjv as j
-  //     on j.book_nr = b.book_nr AND j.chapter_nr = b.chapter_nr AND j.verse_nr = b.verse_nr
-  //     where b.book_nr = sc.book_id
-  //     AND b.chapter_nr >= sc.chapter_from
-  //     AND b.chapter_nr <= sc.chapter_to
-  //     AND b.verse_nr >= sc.verse_from
-  //     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-  //     ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
-  //   } else {
-  //     query = `select b.version, b.book_ref, b.book_name, 
-  //     b.book_nr, b.chapter_nr, b.verse_nr, b.verse, b.book_name_short, b.testament
-  //     from bible_${bibleVersion} as b
-  //     Left join schedule as sc
-  //     on sc.month = ${month} AND sc.day = ${day}
-  //     where b.book_nr = sc.book_id
-  //     AND b.chapter_nr >= sc.chapter_from
-  //     AND b.chapter_nr <= sc.chapter_to
-  //     AND b.verse_nr >= sc.verse_from
-  //     AND b.verse_nr <= (CASE WHEN sc.verse_to = 0 THEN 80 ELSE sc.verse_to END)
-  //     ORDER BY b.book_nr,b.chapter_nr,b.verse_nr`;
-  //   }
-
-  //   const getVerse = await bibleDB.executeSql(query);
-  //   const roughResults = getVerse[0].rows.raw().map(row => row);
-  //   let results = [];
-  //   let previousFlag;
-  //   let index = 0;
-  //   for(let i = 0; i < roughResults.length ; i++){
-  //     if(i == 0) previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
-  //     if(i == 0) results[index] = [];
-  //     if((roughResults[i].book_ref + roughResults[i].chapter_nr) == previousFlag){
-  //       results[index] = [...results[index], roughResults[i]];
-  //     } else {
-  //       index++;
-  //       if(typeof results[index] === 'undefined') results[index] = [];
-  //       results[index] = [...results[index], roughResults[i]];
-  //     }
-  //     previousFlag = roughResults[i].book_ref + roughResults[i].chapter_nr;
-  //   }
-  //   this.setState({
-  //     content: results,
-  //   });
-  // }
   _handleDoublePress = () => {
     var delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
@@ -215,7 +190,19 @@ export default class DiaryRead extends Component {
     }
     this.setState({
       lastPress: new Date().getTime(),
-    })
+    });
+  }
+  _handleMultiPress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
+    if(delta > 300) {
+      this.generateContent();
+      this.setState({
+        lastPress: new Date().getTime(),
+      });
+    }
+    this.setState({
+      fullScreenMode: !this.state.fullScreenMode,
+    });
   }
   _getDiaryBiblePhrase() {
     let number = Math.floor(Math.random() * 74) + 1;
@@ -233,10 +220,12 @@ export default class DiaryRead extends Component {
   _toggleModalFontSetting = () => this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   _handleNextDay = () => {
     if(this.state.fullScreenMode) return null;
+    if(this.state.loadContent) return null;
     if(this.state.currentDate == '2018-12-31') {
       Alert.alert('今年還沒過完呢！');
       return null;
     }
+    this.diaryContent.resetHighlight();
     const nextDate = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
     const nextMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("M");
     const nextDay = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("D");
@@ -253,6 +242,7 @@ export default class DiaryRead extends Component {
       },
       currentDate: nextDate,
       finishedReading: false,
+      loadContent: true,
     });
     this.contentView.root.scrollTo({y: 10, animated: true});
     setTimeout(() => {
@@ -261,10 +251,12 @@ export default class DiaryRead extends Component {
   }
   _handlePreviousDay = () => {
     if(this.state.fullScreenMode) return null;
+    if(this.state.loadContent) return null;
     if(this.state.currentDate == '2018-01-01') {
       Alert.alert('去年已經不能回頭！');
       return null;
     }
+    this.diaryContent.resetHighlight();
     const previousDate = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("YYYY-MM-DD");
     const previousMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("M");
     const previousDay = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("D");
@@ -281,6 +273,7 @@ export default class DiaryRead extends Component {
       },
       currentDate: previousDate,
       finishedReading: false,
+      loadContent: true,
     });
     this.contentView.root.scrollTo({y: 10, animated: true});
     setTimeout(() => {
@@ -347,6 +340,7 @@ export default class DiaryRead extends Component {
       finishedReading: false,
     });
     this.contentView.root.scrollTo({y: 10, animated: true});
+    this.diaryContent.resetHighlight();
     setTimeout(() => {
       this.generateContent();
     }, 800);
@@ -365,7 +359,7 @@ export default class DiaryRead extends Component {
     if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
-  _handleScroll = (e) => {
+  _handleScroll = async (e) => {
     const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
     const paddingToBottom = 20;
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
@@ -385,13 +379,22 @@ export default class DiaryRead extends Component {
       if(this.state.hasRead) return;
       if(this.state.markedDates[this.state.currentDate].marked) return;
       if(this.state.content.length == 0) return;
+      const markedDates = {
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true}
+      }
+      const recordMarkedDates ={
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true, selected: false}
+      }
       this.setState({
         finishedReading: true,
-        markedDates: {
-          ...this.state.markedDates,
-          [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true},
-        },
+        markedDates: markedDates,
       });
+      try {
+        await AsyncStorage.setItem('@readingSchdule', JSON.stringify(recordMarkedDates));
+      } catch (error) {
+      }
     }
   }
   _handleFinished = () => {
@@ -409,6 +412,7 @@ export default class DiaryRead extends Component {
     this.setState({
       defaultLang: lang,
     });
+    this.diaryContent.resetHighlight();
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -432,7 +436,8 @@ export default class DiaryRead extends Component {
         >
           <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
             <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
-              <DiaryContent 
+              <DiaryContent
+                ref={ r => this.diaryContent = r}
                 fontColor={this.state.setting.fontColor}
                 fontSize={this.state.setting.fontSize}
                 lineHeight={this.state.setting.lineHeight}
@@ -442,6 +447,8 @@ export default class DiaryRead extends Component {
                 date={this.state.date}
                 contentView={this.state.contentView}
                 marked={this.state.markedDates[this.state.currentDate].marked}
+                db={this.props.navigation.state.params.db}
+                highlightList={this.state.highlightList}
               />
             </View>
           </StyledMainContent>

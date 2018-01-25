@@ -37,10 +37,14 @@ export default class Check extends PureComponent {
     this.state = {
       fadeInOpacity: new Animated.Value(0),
       allowClick: true,
+      progress: new Animated.Value(0),
     };
   }
   componentDidMount() {
-    this.animation.play(0,500);
+    Animated.timing(this.state.progress, {
+      toValue: 1,
+      duration: 3000,
+    }).start();
   }
   render() {
     return (
@@ -68,9 +72,7 @@ export default class Check extends PureComponent {
         >
           <LottieView
             style={{width:300, height:300}}
-            ref={animation => {
-              this.animation = animation;
-            }}
+            progress={this.state.progress}
             source={require('../lottie/done.json')}
           />
         </TouchableOpacity>

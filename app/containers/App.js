@@ -16,7 +16,6 @@ const Person = {
     picture: 'string?'
   }
 }
-
 const bible_chs = {
   name: 'bible_chs',
   properties: {
@@ -28,10 +27,10 @@ const bible_chs = {
     book_nr: 'int?',
     chapter_nr: 'int?',
     verse_nr: 'int?',
-    verse: 'string?'
+    verse: 'string?',
+    highlight_color: 'string?'
   }
 }
-
 const bible_cht = {
   name: 'bible_cht',
   properties: {
@@ -43,10 +42,10 @@ const bible_cht = {
     book_nr: 'int?',
     chapter_nr: 'int?',
     verse_nr: 'int?',
-    verse: 'string?'
+    verse: 'string?',
+    highlight_color: 'string?'
   }
 }
-
 const bible_japan = {
   name: 'bible_japan',
   properties: {
@@ -59,10 +58,10 @@ const bible_japan = {
     book_nr: 'int?',
     chapter_nr: 'int?',
     verse_nr: 'int?',
-    verse: 'string?'
+    verse: 'string?',
+    highlight_color: 'string?'
   }
 }
-
 const bible_kjv = {
   name: 'bible_kjv',
   properties: {
@@ -74,12 +73,13 @@ const bible_kjv = {
     book_nr: 'int?',
     chapter_nr: 'int?',
     verse_nr: 'int?',
-    verse: 'string?'
+    verse: 'string?',
+    highlight_color: 'string?'
   }
 }
-
 const schedule = {
   name: 'schedule',
+  primaryKey: 'id',
   properties: {
     id: 'int?',
     month: 'int?',
@@ -94,7 +94,8 @@ const schedule = {
 Realm.copyBundledRealmFiles();
 const realm = new Realm({
   path: 'byt.realm',
-  schema:[schedule, bible_kjv,bible_japan, bible_cht, bible_chs, Person],
+  schema:[schedule, bible_kjv, bible_japan, bible_cht, bible_chs, Person],
+  schemaVersion: 7,
 });
 
 const realm_schedule = realm.objects('schedule');
@@ -111,10 +112,11 @@ class MyHomeScreen extends Component {
     };
   }
   componentDidMount() {
-    this.animation.play();
+    this.props.navigation.navigate('Diary', { db: this.db});
   }
   componentWillMount = async () => {
     this.db = {
+     realm,
      realm_schedule,
      realm_bible_kjv,
      realm_bible_japan,
@@ -125,14 +127,14 @@ class MyHomeScreen extends Component {
   render() {
     return (
       <View>
-        <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.db})}/>
+        {/* <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.db})}/>
         <LottieView
               style={{width:100, height:60}}
               ref={animation => {
                 this.animation = animation;
               }}
               source={require('../lottie/Brightness.json')}
-            />
+            /> */}
       </View>
     );
   }

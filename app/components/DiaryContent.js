@@ -9,6 +9,8 @@ import {
   Text,
   Botton,
   ActivityIndicator,
+  AsyncStorage,
+  Button,
 } from 'react-native';
 import * as R from 'ramda';
 import styled from "styled-components/native";
@@ -29,6 +31,7 @@ const StyledDiaryText = styled.View`
   margin-right:30px;
 `;
 const Title = styled.Text`
+  height: 23px;
   font-weight: bold;
   font-size: 20px;
   color: ${props => props.fontColor};
@@ -66,6 +69,32 @@ export default class DiaryContent extends PureComponent {
     }
     this.anchor = [];
   }
+  resetHighlight = () => {
+    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    this.setState({
+      selectVerse: {},
+      selectVerseRef: {},
+      selectVerseNumberRef: {},
+    });
+  }
+  setHighlight = async () => {
+    const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.db;
+    realm.write(() => {
+      const schedule = realm.create('schedule', {
+        id: 2000,
+        month: 300,
+        day: 300,
+        book_id: 300,
+        chapter_from: 300,
+        verse_from: 300,
+        chapter_to: 300,
+        verse_to: 300
+      }, true);
+      realm.delete(schedule);
+      alert(realm_schedule.length);
+    });
+  }
   renderTitle = () => {
     if(this.props.content.length == 0) return (
       <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
@@ -85,29 +114,24 @@ export default class DiaryContent extends PureComponent {
       this.props.content.map( (item, i) => {
         return(
           <TouchableOpacity
-            style={{height:40}}
+            style={{height:40, display:'flex', justifyContent:'flex-end', borderBottomWidth: 1, borderBottomColor:'#0881A3', paddingBottom:1}}
             hitSlop={{top: 40, bottom: 40, left: 10, right: 10}}
             onPress={(e) => {
-              R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-              R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
               this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
-                this.props.contentView.root.scrollTo({y: pageY + 100, animated: true})
+                this.props.contentView.root.scrollTo({y: pageY + 100, animated: true});
               });
-              this.setState({
-                selectVerse: {},
-                selectVerseRef: {},
-                selectVerseNumberRef: {},
-              });
+              const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.db;
+              this.resetHighlight();
             }}
           >
-            <Text style={{fontSize:12, color: '#0881A3', textDecorationLine:'underline'}}>
+            <Text style={{fontSize:12, color: '#0881A3'}}>
               {`${item[0].book_name_short}${item[0].chapter_nr}`}
             </Text>
           </TouchableOpacity>
         );
       })
     return (
-      <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginTop:20}}>
+      <View style={{display:'flex', flexDirection:'row', alignItems:'flex-end', justifyContent:'space-between', marginTop:20}}>
         {renderDay()}
         {renderAnchor()}
       </View>
@@ -124,16 +148,16 @@ export default class DiaryContent extends PureComponent {
             lineHeight={this.props.lineHeight}
             fontFamily={this.props.fontFamily}
           >
-          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}{'\n'}
+          {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}{this.props.defaultLang == 'cht_en' ? '': '\n'}
           </BookTitle>
         const Verse = () => item.map(verseItem => {
           return(
             <Text
               onPress={(e) => {
-                const key = `${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
+                const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 if(this.state.selectVerse.hasOwnProperty(key)) {
-                  this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
                   delete this.state.selectVerse[key];
                   delete this.state.selectVerseRef[key];
                   delete this.state.selectVerseNumberRef['number' + key];
@@ -143,35 +167,28 @@ export default class DiaryContent extends PureComponent {
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef}
                   })
                 } else {
-                  this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                  this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this.setState({
                     selectVerse: {...this.state.selectVerse, [key]:verseItem},
-                    selectVerseRef: {...this.state.selectVerseRef, [key] : this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]},
-                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr]}
+                    selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
+                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]}
                   });
                 }
               }}
-              ref={ r => this[item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
+              ref={ r => this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr] = r}
+              style={{
+                color: this.props.fontColor,
+                // backgroundColor: this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`] ? this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`].bg : 'transparent'
+              }}
             >
               <PharseNumber
                 fontSize={this.props.fontSize - 6}
-                ref={ r => this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
+                ref={ r => this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
               >
-                {`${verseItem.verse_nr}`}{'  '}
+                {this.props.defaultLang == 'cht_en' ? '\n': ''}{`${verseItem.verse_nr}`}{'  '}
               </PharseNumber>
-              {`${verseItem.verse}`}
-              
-              {/* 不同版本比較用，要有個通則的旗標  */}
-              {
-                this.props.defaultLang == 'cht_en' ?
-                  <PharseNumber
-                    fontSize={this.props.fontSize - 6}
-                    ref={ r => this['number' + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
-                  >{'\n'}{`${verseItem.verse_nr}`}{'  '}
-                  </PharseNumber> : null
-              }
-              {this.props.defaultLang == 'cht_en' ?  `${verseItem.compare_verse}\n\n`: null}
+              {`${verseItem.verse}`}{this.props.defaultLang == 'cht_en' ? '\n' : ''}
             </Text>
         )});
         return (
@@ -213,6 +230,7 @@ export default class DiaryContent extends PureComponent {
   render() {
     return (
       <StyledDiaryText>
+        {/* <Button onPress={() => this.setHighlight()} title="test"></Button> */}
         {this.renderTitle()}
         {this.renderVerse()}
         {this.renderFinishText()}
