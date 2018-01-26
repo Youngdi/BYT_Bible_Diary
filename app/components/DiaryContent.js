@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   AsyncStorage,
   Button,
+  Clipboard,
 } from 'react-native';
 import * as R from 'ramda';
 import styled from "styled-components/native";
@@ -113,6 +114,54 @@ export default class DiaryContent extends PureComponent {
       alert(JSON.stringify(e));
     }
   }
+  copyVerse = async () => {
+    let c = 0;
+    const verse = R.pipe(
+      R.toPairs(),
+      R.sort((a, b) => {
+        let _a = a[0];
+        let _b = b[0];
+        _a = Number(_a.slice(0, _a.indexOf('-')));
+        _b = Number(_b.slice(0, _b.indexOf('-')));
+        return _a - _b;
+        }
+      ),
+      R.fromPairs(),
+      R.values(),
+    )(this.state.selectVerse);
+    const copy = verse.reduce((acc, val, i) => {
+      let b = [];
+      const previousVerse = verse[i - 1];
+      if(i == 0){
+        b.push(val);
+        acc[c] = b;
+        return acc;
+      }
+      if(previousVerse.book_name == val.book_name && previousVerse.chapter_nr == val.chapter_nr && previousVerse.verse_nr == val.verse_nr -1){
+        acc[c].push(val);
+        return [...acc];
+      }
+      ++c;
+      b.push(val);
+      acc[c] = b;
+      return  [...acc];
+    }, []);
+    const copyText = copy.reduce((acc, val) => {
+      let verseNumber = '';
+      verseNumber = (val.length == 1) ? '' : '-' + (val[0].verse_nr + val.length);
+      for(let i = 0; i < val.length; i++){
+        if(i == 0){
+          acc = acc + val[0].book_name + val[0].chapter_nr + ':' + val[0].verse_nr + verseNumber + '  :『' + val[i].verse;
+        } else {
+          acc = acc  + val[i].verse;
+        }
+      }
+      acc = acc + '』\n\n';
+      return acc;
+    }, '');
+    Clipboard.setString(copyText);
+    this.resetHighlight();
+  }
   renderTitle = () => {
     const renderDay = () =>
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
@@ -170,10 +219,11 @@ export default class DiaryContent extends PureComponent {
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
                 const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
-                if(this.state.selectVerse.hasOwnProperty(key)) {
+                const keyId = `${verseItem.id}-${verseItem.version}`;
+                if(this.state.selectVerse.hasOwnProperty(keyId)) {
                   this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
                   this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  delete this.state.selectVerse[key];
+                  delete this.state.selectVerse[keyId];
                   delete this.state.selectVerseRef[key];
                   delete this.state.selectVerseNumberRef['number' + key];
                   this.setState({
@@ -185,7 +235,7 @@ export default class DiaryContent extends PureComponent {
                   this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this.setState({
-                    selectVerse: {...this.state.selectVerse, [key]:verseItem},
+                    selectVerse: {...this.state.selectVerse, [keyId]:verseItem},
                     selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]}
                   });
@@ -195,7 +245,7 @@ export default class DiaryContent extends PureComponent {
               ref={ r => this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr] = r}
               style={{
                 color: this.props.fontColor,
-                backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`) ? this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`] : 'transparent'
+                backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
               }}
             >
               <PharseNumber

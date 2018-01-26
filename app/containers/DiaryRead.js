@@ -418,15 +418,14 @@ export default class DiaryRead extends Component {
   _handleHighlight = (color) => {
     this.diaryContent.setHighlight(color);
     this.setState({ isTooltipModalVisible: false });
-    // this._closeTooltip();
   }
   _handleBookmark = async () => {
     this.diaryContent.addBookmark();
     this.setState({ isTooltipModalVisible: false });
   }
   _handleCopyVerse = async () => {
-    const bookmark = await AsyncStorage.getItem('@bookmark');
-    alert(bookmark);
+    this.diaryContent.copyVerse();
+    this.setState({ isTooltipModalVisible: false });
   }
   // _onMomentumScrollBegin = (e) => {
   //   this.setState({
