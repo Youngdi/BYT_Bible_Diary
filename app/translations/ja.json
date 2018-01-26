@@ -1,15 +1,19 @@
 {
   "finishe_today": "今日の進歩は完了しましたこんにちは！",
-  "pull_down_to_finish": "今日の進歩を終わらせるために引き裂く",
+  "pull_down_to_finish": "今日の進歩を完了させる",
   "move_to_previous_year": "昨年は振り返ることはできません！",
   "move_to_next_year": "今年はまだ終わっていない！",
   "month": "月",
   "day": "日",
-  "font_type": "フォント",
+  "font_type": "Font",
   "font_type1": "デフォルト",
   "font_type2": "PingFang",
   "font_type3": "Times",
-  "font_size": "フォントサイズ",
-  "font_line": "フォントスペース",
-  "pull_down_congrats": "今日のあなたの進歩をお祝いします！"
+  "font_size": "Font Size",
+  "font_line": "Font Space",
+  "pull_down_congrats": "今日のあなたの進歩をお祝いします！",
+  "bookmark": "Book Mark",
+  "close_tooltip": "Close",
+  "copy_verse": "Copy",
+  "share_verse": "Share"
 }

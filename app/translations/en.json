@@ -11,5 +11,9 @@
   "font_type3": "Times",
   "font_size": "Font Size",
   "font_line": "Line Space",
-  "pull_down_congrats": "Congrats, you finished it!"
+  "pull_down_congrats": "Congrats, you finished it!",
+  "bookmark": "Book Mark",
+  "close_tooltip": "Close",
+  "copy_verse": "Copy",
+  "share_verse": "Share"
 }

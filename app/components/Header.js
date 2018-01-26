@@ -58,13 +58,6 @@ export default class Header extends PureComponent {
           ],
         }}
       >
-        {/* <TouchableOpacity onPress={ ()=> this.props.navigation.goBack()}>
-          <MaterialIcons
-            name='keyboard-arrow-left'
-            size={45}
-            color='black'
-          />
-        </TouchableOpacity> */}
         <View style={{backgroundColor:'#111', width: 36, height: 36, borderColor:'#111', borderWidth:4, borderStyle:'solid', borderRadius: 18, marginRight:20, marginTop:15}}>
         <TouchableOpacity onPress={()=> this.props.toggleModal()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
           <EvilIcons

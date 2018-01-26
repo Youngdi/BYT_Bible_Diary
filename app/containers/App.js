@@ -7,18 +7,12 @@ import I18n, { getLanguages } from 'react-native-i18n';
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
 import LottieView from 'lottie-react-native';
-const Person = {
-  name: 'Person',
-  properties: {
-    name: 'string',
-    nickname: 'string',
-    birthday: 'date',
-    picture: 'string?'
-  }
-}
+
 const bible_chs = {
   name: 'bible_chs',
+  primaryKey: 'id',
   properties: {
+    id: 'int',
     version: 'string?',
     testament: 'int?',
     book_ref: 'string?',
@@ -33,7 +27,9 @@ const bible_chs = {
 }
 const bible_cht = {
   name: 'bible_cht',
+  primaryKey: 'id',
   properties: {
+    id: 'int',
     version: 'string?',
     testament: 'int?',
     book_ref: 'string?',
@@ -48,8 +44,9 @@ const bible_cht = {
 }
 const bible_japan = {
   name: 'bible_japan',
+  primaryKey: 'id',
   properties: {
-    id: 'int?',
+    id: 'int',
     version: 'string?',
     testament: 'int?',
     book_ref: 'string?',
@@ -64,7 +61,9 @@ const bible_japan = {
 }
 const bible_kjv = {
   name: 'bible_kjv',
+  primaryKey: 'id',
   properties: {
+    id: 'int',
     version: 'string?',
     testament: 'int?',
     book_ref: 'string?',
@@ -94,8 +93,40 @@ const schedule = {
 Realm.copyBundledRealmFiles();
 const realm = new Realm({
   path: 'byt.realm',
-  schema:[schedule, bible_kjv, bible_japan, bible_cht, bible_chs, Person],
-  schemaVersion: 7,
+  schema:[schedule, bible_kjv, bible_japan, bible_cht, bible_chs],
+  schemaVersion: 13,
+  // migration: (oldRealm, newRealm) => {
+  //     var nextID1 = 0;
+  //     var nextID2 = 0;
+  //     var nextID3 = 0;
+  //     var nextID4 = 0;
+  //     // only apply this change if upgrading to schemaVersion 1
+  //     const oldObjects1 = oldRealm.objects('bible_chs');
+  //     const newObjects1 = newRealm.objects('bible_chs');
+  //     const oldObjects2 = oldRealm.objects('bible_cht');
+  //     const newObjects2 = newRealm.objects('bible_cht');
+  //     const oldObjects3 = oldRealm.objects('bible_kjv');
+  //     const newObjects3 = newRealm.objects('bible_kjv');
+  //     const oldObjects4 = oldRealm.objects('bible_japan');
+  //     const newObjects4 = newRealm.objects('bible_japan');
+  //     // loop through all objects and set the name property in the new schema
+  //     for (let i = 0; i < oldObjects1.length; i++) {
+  //       newObjects1[i].id = nextID1;
+  //       nextID1 += 1
+  //     }
+  //     for (let i = 0; i < oldObjects2.length; i++) {
+  //       newObjects2[i].id = nextID2;
+  //       nextID2 += 1
+  //     }
+  //     for (let i = 0; i < oldObjects3.length; i++) {
+  //       newObjects3[i].id = nextID3;
+  //       nextID3 += 1
+  //     }
+  //     for (let i = 0; i < oldObjects4.length; i++) {
+  //       newObjects4[i].id = nextID4;
+  //       nextID4 += 1
+  //     }
+  // }
 });
 
 const realm_schedule = realm.objects('schedule');

@@ -70,46 +70,60 @@ export default class DiaryContent extends PureComponent {
     this.anchor = [];
   }
   resetHighlight = () => {
-    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}}));
     this.setState({
       selectVerse: {},
       selectVerseRef: {},
       selectVerseNumberRef: {},
     });
   }
-  setHighlight = async () => {
-    const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.db;
-    realm.write(() => {
-      const schedule = realm.create('schedule', {
-        id: 2000,
-        month: 300,
-        day: 300,
-        book_id: 300,
-        chapter_from: 300,
-        verse_from: 300,
-        chapter_to: 300,
-        verse_to: 300
-      }, true);
-      realm.delete(schedule);
-      alert(realm_schedule.length);
-    });
+  setHighlight = async (color) => {
+    try {
+      const selectVerses = R.keys(this.state.selectVerse);
+      const setColorList = selectVerses.reduce((acc, val) => {
+        return {
+          ...acc,
+          [val]: color,
+        };
+      }, {});
+      const highlightList = await AsyncStorage.getItem('@highlightList');
+      const _highlightList = {
+        ...JSON.parse(highlightList),
+        ...setColorList,
+      }
+      await AsyncStorage.setItem('@highlightList', JSON.stringify(_highlightList));
+      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:color == 'transparent' ? 'gray' : 'black', backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+      R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+      this.resetHighlight();
+    } catch(e) {
+      alert(JSON.stringify(e));
+    }
+  }
+  addBookmark = async () => {
+    try {
+      const bookmark = await AsyncStorage.getItem('@bookmark');
+      const _bookmark = {
+        ...JSON.parse(bookmark),
+        ...this.state.selectVerse,
+      }
+      await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
+      this.resetHighlight();
+    } catch(e) {
+      alert(JSON.stringify(e));
+    }
   }
   renderTitle = () => {
-    if(this.props.content.length == 0) return (
-      <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
-        <Text>Loading...</Text>
-        <Spinner style={{marginTop:20}} size={70} type={'Wave'}></Spinner>
+    const renderDay = () =>
+      <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
+        <Title 
+          fontColor={this.props.fontColor}
+          lineHeight={this.props.lineHeight}
+          fontFamily={this.props.fontFamily}
+        >
+        {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
+        </Title>
       </View>
-    );
-    const renderDay = () => 
-      <Title 
-        fontColor={this.props.fontColor}
-        lineHeight={this.props.lineHeight}
-        fontFamily={this.props.fontFamily}
-      >
-      {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
-      </Title>
     const renderAnchor = () =>
       this.props.content.map( (item, i) => {
         return(
@@ -153,11 +167,12 @@ export default class DiaryContent extends PureComponent {
         const Verse = () => item.map(verseItem => {
           return(
             <Text
+              key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
                 const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 if(this.state.selectVerse.hasOwnProperty(key)) {
-                  this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
                   delete this.state.selectVerse[key];
                   delete this.state.selectVerseRef[key];
                   delete this.state.selectVerseNumberRef['number' + key];
@@ -167,19 +182,20 @@ export default class DiaryContent extends PureComponent {
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef}
                   })
                 } else {
-                  this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color: '#BB0029', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this.setState({
                     selectVerse: {...this.state.selectVerse, [key]:verseItem},
                     selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]}
                   });
                 }
+                if(R.isEmpty(this.state.selectVerse)) this.props.toggleModalTooltip();
               }}
               ref={ r => this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr] = r}
               style={{
                 color: this.props.fontColor,
-                // backgroundColor: this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`] ? this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`].bg : 'transparent'
+                backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`) ? this.props.highlightList[`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`] : 'transparent'
               }}
             >
               <PharseNumber
@@ -230,7 +246,6 @@ export default class DiaryContent extends PureComponent {
   render() {
     return (
       <StyledDiaryText>
-        {/* <Button onPress={() => this.setHighlight()} title="test"></Button> */}
         {this.renderTitle()}
         {this.renderVerse()}
         {this.renderFinishText()}

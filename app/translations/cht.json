@@ -1,6 +1,6 @@
 {
   "finishe_today": "今天進度已經完成囉！",
-  "pull_down_to_finish": "用力往下拉來完成今天進度",
+  "pull_down_to_finish": "用力往上滑來完成今天進度",
   "move_to_previous_year": "去年已經不能回頭！",
   "move_to_next_year": "今年還沒過完呢！",
   "month": "月",
@@ -11,5 +11,9 @@
   "font_type3": "Times",
   "font_size": "字級",
   "font_line": "行距",
-  "pull_down_congrats": "恭喜你完成今天的進度！"
+  "pull_down_congrats": "恭喜你完成今天的進度！",
+  "bookmark": "書籤",
+  "close_tooltip": "關閉",
+  "copy_verse": "複製",
+  "share_verse": "分享"
 }
