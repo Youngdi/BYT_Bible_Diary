@@ -14,7 +14,7 @@ import { isIphoneX } from 'react-native-iphone-x-helper';
 import styled from "styled-components/native";
 import I18n, { getLanguages } from 'react-native-i18n';
 import * as R from 'ramda';
-
+import Pupup from '../components/Popup';
 import bibleFlag from '../constants/bible';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -66,6 +66,7 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      popupText: '',
       defaultLang: 'cht',
       lastPress: 0,
       scrollInitPosition:0,
@@ -421,11 +422,17 @@ export default class DiaryRead extends Component {
   }
   _handleBookmark = async () => {
     this.diaryContent.addBookmark();
-    this.setState({ isTooltipModalVisible: false });
+    this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_bookmark_successed') });
+    setTimeout(() => {
+      this.pupupDialog.popup();
+      }, 0);
   }
   _handleCopyVerse = async () => {
     this.diaryContent.copyVerse();
-    this.setState({ isTooltipModalVisible: false });
+    this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_copy_successed') });
+    setTimeout(() => {
+    this.pupupDialog.popup();
+    }, 0);
   }
   // _onMomentumScrollBegin = (e) => {
   //   this.setState({
@@ -464,6 +471,7 @@ export default class DiaryRead extends Component {
             </View>
           </StyledMainContent>
         </StyledMain>
+        <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         { this.state.isTooltipModalVisible ? null : <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> }
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
         { this.state.isTooltipModalVisible ? null :
@@ -480,6 +488,7 @@ export default class DiaryRead extends Component {
             content={this.state.content}
           />
         }
+       
         <CalendarModal
           isCalendarModalVisible={this.state.isCalendarModalVisible}
           currentDate={this.state.currentDate}

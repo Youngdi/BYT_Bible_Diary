@@ -167,26 +167,7 @@ class MyHomeScreen extends Component {
   }
   render() {
     return (
-      <View style={{flex:1, backgroundColor: '#f3f3f3'}}>
-        {/*Rest of App come ABOVE the action button component!*/}
-        <ActionButton degrees={90} position={'center'} icon={<FontAwesome name="language" size={26} color={'#fff'}/>}>
-          <ActionButton.Item buttonColor='#000' title="New Task" onPress={() => console.log("notes tapped!")}>
-            <Text style={styles.actionButtonIcon}>繁</Text>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' title="Notifications" onPress={() => {}}>
-            <Text style={styles.actionButtonIcon}>簡</Text>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
-            <Text style={styles.actionButtonIcon}>EN</Text>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
-            <Text style={styles.actionButtonIcon}>日</Text>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
-            <Text style={[styles.actionButtonIcon,{backgroundColor:'transparent'}]}>中英</Text>
-          </ActionButton.Item>
-        </ActionButton>
-      </View>
+      <View></View>
     );
   }
 }

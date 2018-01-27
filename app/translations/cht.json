@@ -15,5 +15,7 @@
   "bookmark": "書籤",
   "close_tooltip": "關閉",
   "copy_verse": "複製",
-  "share_verse": "分享"
+  "share_verse": "分享",
+  "popup_copy_successed": "複製成功",
+  "popup_bookmark_successed": "已加入書籤"
 }

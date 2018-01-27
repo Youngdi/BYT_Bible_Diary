@@ -15,5 +15,7 @@
   "bookmark": "书签",
   "close_tooltip": "关闭",
   "copy_verse": "复制",
-  "share_verse": "分享"
+  "share_verse": "分享",
+  "popup_copy_successed": "复制成功",
+  "popup_bookmark_successed": "已加入书签"
 }
