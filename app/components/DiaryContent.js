@@ -148,7 +148,7 @@ export default class DiaryContent extends PureComponent {
     }, []);
     const copyText = copy.reduce((acc, val) => {
       let verseNumber = '';
-      verseNumber = (val.length == 1) ? '' : '-' + (val[0].verse_nr + val.length);
+      verseNumber = (val.length == 1) ? '' : '-' + (val[0].verse_nr + val.length - 1);
       for(let i = 0; i < val.length; i++){
         if(i == 0){
           acc = acc + val[0].book_name + val[0].chapter_nr + ':' + val[0].verse_nr + verseNumber + '  :『' + val[i].verse;
@@ -286,7 +286,7 @@ export default class DiaryContent extends PureComponent {
         <Text style={{fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
         <MaterialCommunityIcons
           style={{marginTop:20}}
-          name='arrow-expand-down'
+          name='arrow-expand-up'
           size={30}
           color='#000'
         />

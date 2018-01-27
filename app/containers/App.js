@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Button, ScrollView, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import I18n, { getLanguages } from 'react-native-i18n';
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
 import LottieView from 'lottie-react-native';
+import ActionButton from 'react-native-circular-action-menu';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const bible_chs = {
   name: 'bible_chs',
@@ -129,6 +131,14 @@ const realm = new Realm({
   // }
 });
 
+const styles = StyleSheet.create({
+  actionButtonIcon: {
+    fontSize: 16,
+    height: 18,
+    color: 'white',
+  },
+});
+
 const realm_schedule = realm.objects('schedule');
 const realm_bible_kjv = realm.objects('bible_kjv');
 const realm_bible_japan = realm.objects('bible_japan');
@@ -157,15 +167,25 @@ class MyHomeScreen extends Component {
   }
   render() {
     return (
-      <View>
-        {/* <Button title="讀經去" onPress={() => this.props.navigation.navigate('Diary', { db: this.db})}/>
-        <LottieView
-              style={{width:100, height:60}}
-              ref={animation => {
-                this.animation = animation;
-              }}
-              source={require('../lottie/Brightness.json')}
-            /> */}
+      <View style={{flex:1, backgroundColor: '#f3f3f3'}}>
+        {/*Rest of App come ABOVE the action button component!*/}
+        <ActionButton degrees={90} position={'center'} icon={<FontAwesome name="language" size={26} color={'#fff'}/>}>
+          <ActionButton.Item buttonColor='#000' title="New Task" onPress={() => console.log("notes tapped!")}>
+            <Text style={styles.actionButtonIcon}>繁</Text>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000' title="Notifications" onPress={() => {}}>
+            <Text style={styles.actionButtonIcon}>簡</Text>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
+            <Text style={styles.actionButtonIcon}>EN</Text>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
+            <Text style={styles.actionButtonIcon}>日</Text>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000' title="All Tasks" onPress={() => {}}>
+            <Text style={[styles.actionButtonIcon,{backgroundColor:'transparent'}]}>中英</Text>
+          </ActionButton.Item>
+        </ActionButton>
       </View>
     );
   }

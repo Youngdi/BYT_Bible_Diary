@@ -12,6 +12,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ActionButton from './ActionButton';
+import FontAwesome from 'react-native-vector-icons/MaterialIcons';
+
 var {
   height: deviceHeight
 } = Dimensions.get('window');
@@ -35,6 +39,11 @@ const StyledLangListText = styled.Text`
   margin-top: -2px;
   color: #bbb;
   font-size: 16px;
+`;
+const StyledLangText = styled.Text`
+  fontSize: 16px;
+  height: 18px;
+  color: white;
 `;
 export default class Footer extends PureComponent {
   constructor(props) {
@@ -60,6 +69,58 @@ export default class Footer extends PureComponent {
         easing: Easing.linear,
       })
     ]).start();
+    let selectLangText = 'cht';
+    let langList = [
+      <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
+      <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('en')}><StyledLangText>EN</StyledLangText></ActionButton.Item>,
+      <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('ja')}><StyledLangText>日</StyledLangText></ActionButton.Item>,
+      <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht_en')}><StyledLangText>中英</StyledLangText></ActionButton.Item>,
+    ];
+    if(this.props.defaultLang == 'cht'){
+      selectLangText = '繁';
+      langList = [
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('en')}><StyledLangText>EN</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('ja')}><StyledLangText>日</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht_en')}><StyledLangText>中英</StyledLangText></ActionButton.Item>,
+      ];
+    }
+    if(this.props.defaultLang == 'chs'){
+      selectLangText = '簡';
+      langList = [
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht')}><StyledLangText>繁</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('en')}><StyledLangText>EN</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('ja')}><StyledLangText>日</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht_en')}><StyledLangText>中英</StyledLangText></ActionButton.Item>,
+      ];
+    }
+    if(this.props.defaultLang == 'en'){
+      selectLangText = 'EN';
+      langList = [
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht')}><StyledLangText>繁</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('ja')}><StyledLangText>日</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht_en')}><StyledLangText>中英</StyledLangText></ActionButton.Item>,
+      ];
+    }
+    if(this.props.defaultLang == 'ja'){
+      selectLangText = '日';
+      langList = [
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht')}><StyledLangText>繁</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('en')}><StyledLangText>EN</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht_en')}><StyledLangText>中英</StyledLangText></ActionButton.Item>,
+      ];
+    }
+    if(this.props.defaultLang == 'cht_en'){
+      selectLangText = '中英';
+      langList = [
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('cht')}><StyledLangText>繁</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('en')}><StyledLangText>EN</StyledLangText></ActionButton.Item>,
+        <ActionButton.Item buttonColor='#000' onPress={() => this.props.handeleChangeLang('ja')}><StyledLangText>日</StyledLangText></ActionButton.Item>,
+      ];
+    }
     return (
       <StyledFooter 
         style={{
@@ -92,31 +153,12 @@ export default class Footer extends PureComponent {
             color='#bbb'
           />
         </TouchableOpacity>
-          {this.props.defaultLang == 'cht' ? 
-          <TouchableOpacity onPress={() => this.props.handeleChangeLang('chs')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-            <StyledLangListText>繁</StyledLangListText>
-          </TouchableOpacity>
-          : null}
-          {this.props.defaultLang == 'chs' ?
-          <TouchableOpacity onPress={() => this.props.handeleChangeLang('en')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-            <StyledLangListText>簡</StyledLangListText>
-          </TouchableOpacity>
-            : null}
-          {this.props.defaultLang == 'en' ? 
-          <TouchableOpacity onPress={() => this.props.handeleChangeLang('ja')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-            <StyledLangListText>En</StyledLangListText>
-          </TouchableOpacity>
-          : null}
-          {this.props.defaultLang == 'ja' ? 
-          <TouchableOpacity onPress={() => this.props.handeleChangeLang('cht_en')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-            <StyledLangListText>日</StyledLangListText>
-          </TouchableOpacity>
-          : null}
-          {this.props.defaultLang == 'cht_en' ? 
-          <TouchableOpacity onPress={() => this.props.handeleChangeLang('cht')} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-            <StyledLangListText style={{fontSize:12}}>中英</StyledLangListText>
-          </TouchableOpacity>
-          : null}
+        <ActionButton degrees={90} position={'center'} icon={<StyledLangText>{selectLangText}</StyledLangText>}>
+          {langList}
+        </ActionButton>
+        <TouchableOpacity>
+          <StyledLangListText>{''}</StyledLangListText>
+        </TouchableOpacity>
         <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handleNextDay()} >
           <MaterialIcons
             name='arrow-forward'
