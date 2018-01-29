@@ -16,6 +16,7 @@
   "close_tooltip": "Close",
   "copy_verse": "Copy",
   "share_verse": "Share",
-  "popup_copy_successed": "Copy Successed",
-  "popup_bookmark_successed": "Added to Bookmark"
+  "popup_copy_successed": "Copied Successfully",
+  "popup_bookmark_successed": "Added to Bookmark",
+  "popup_bookmark_removed": "Removed the Bookmark"
 }

@@ -101,15 +101,34 @@ export default class DiaryContent extends PureComponent {
       alert(JSON.stringify(e));
     }
   }
-  addBookmark = async () => {
+  addBookmark = async (action) => {
+    try {
+      if (action) {
+        const bookmark = await AsyncStorage.getItem('@bookmark');
+        const _bookmark = JSON.parse(bookmark);
+        R.keys(this.state.selectVerse).map((keyId) => {
+          delete _bookmark[keyId];
+        });
+        await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
+      } else {
+        const bookmark = await AsyncStorage.getItem('@bookmark');
+        const _bookmark = {
+          ...JSON.parse(bookmark),
+          ...this.state.selectVerse,
+        }
+        await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
+      }
+      this.resetHighlight();
+    } catch(e) {
+      alert(JSON.stringify(e));
+    }
+  }
+  checkBookmark = async () => {
     try {
       const bookmark = await AsyncStorage.getItem('@bookmark');
-      const _bookmark = {
-        ...JSON.parse(bookmark),
-        ...this.state.selectVerse,
-      }
-      await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
-      this.resetHighlight();
+      const matchFn = R.contains(R.__, R.keys(JSON.parse(bookmark)));
+      const isMatch = R.all(matchFn)(R.keys(this.state.selectVerse));
+      this.props.checkBookmark(isMatch);
     } catch(e) {
       alert(JSON.stringify(e));
     }
@@ -240,6 +259,7 @@ export default class DiaryContent extends PureComponent {
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]}
                   });
                 }
+                this.checkBookmark();
                 if(R.isEmpty(this.state.selectVerse)) this.props.toggleModalTooltip();
               }}
               ref={ r => this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr] = r}

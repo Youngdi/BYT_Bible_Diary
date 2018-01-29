@@ -6,9 +6,10 @@ import I18n, { getLanguages } from 'react-native-i18n';
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
 import LottieView from 'lottie-react-native';
-import ActionButton from 'react-native-circular-action-menu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import BookmarkScreen from './Bookmark';
+import BibleScreen from './Bible';
 
 const bible_chs = {
   name: 'bible_chs',
@@ -130,15 +131,6 @@ const realm = new Realm({
   //     }
   // }
 });
-
-const styles = StyleSheet.create({
-  actionButtonIcon: {
-    fontSize: 16,
-    height: 18,
-    color: 'white',
-  },
-});
-
 const realm_schedule = realm.objects('schedule');
 const realm_bible_kjv = realm.objects('bible_kjv');
 const realm_bible_japan = realm.objects('bible_japan');
@@ -288,7 +280,13 @@ const App = StackNavigator(
   },
   Diary: {
     screen: DiaryScreen,
-  }
+  },
+  Bible: {
+    screen: BibleScreen,
+  },
+  Bookmark: {
+    screen: BookmarkScreen,
+  },
 },
   {
     headerMode: 'screen'

@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Alert,
   AsyncStorage,
+  Button,
 } from 'react-native';
 import moment from 'moment/min/moment-with-locales';
 import ScreenBrightness from 'react-native-screen-brightness';
@@ -61,6 +62,7 @@ export default class DiaryRead extends Component {
     const {state, setParams} = navigation;
     return {
       header: null,
+      title: '閱讀',
     };
   };
   constructor(props) {
@@ -80,6 +82,7 @@ export default class DiaryRead extends Component {
       hasRead: 0,
       finishedReading: false,
       loadContent: false,
+      bookmarkIsMatch: false,
       setting: {
         fontFamily: 'Avenir',
         fontSize: 18,
@@ -136,6 +139,11 @@ export default class DiaryRead extends Component {
         },
       });
     });
+  }
+  checkBookmark = (isMatch) => {
+    this.setState({
+      bookmarkIsMatch : isMatch,
+    })
   }
   generateContent = async () => {
     const highlightList = await AsyncStorage.getItem('@highlightList');
@@ -361,6 +369,7 @@ export default class DiaryRead extends Component {
     const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
     const paddingToBottom = 20;
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
+    if(this.state.isTooltipModalVisible) return;
     if(direction == 'down' && contentOffset.y > 100) {
       this.setState({
         fullScreenMode: true,
@@ -421,8 +430,8 @@ export default class DiaryRead extends Component {
     this.setState({ isTooltipModalVisible: false });
   }
   _handleBookmark = async () => {
-    this.diaryContent.addBookmark();
-    this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_bookmark_successed') });
+    this.diaryContent.addBookmark(this.state.bookmarkIsMatch);
+    this.setState({ isTooltipModalVisible: false, popupText: this.state.bookmarkIsMatch ? I18n.t('popup_bookmark_removed') : I18n.t('popup_bookmark_successed') });
     setTimeout(() => {
       this.pupupDialog.popup();
       }, 0);
@@ -443,7 +452,7 @@ export default class DiaryRead extends Component {
     const { bg, fullScreenMode } = this.state;
     return (
       <StyledContainer bg={bg}>
-        { this.state.isTooltipModalVisible ? null : <Header content={this.state.content} fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>}
+        <Header content={this.state.content} fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
         <StyledMain
           ref={r => this.contentView = r}
           bg={bg} 
@@ -467,14 +476,15 @@ export default class DiaryRead extends Component {
                 db={this.props.navigation.state.params.db}
                 highlightList={this.state.highlightList}
                 toggleModalTooltip={this._toggleModalTooltip}
+                isTooltipModalVisible={this.state.isTooltipModalVisible}
+                checkBookmark={this.checkBookmark}
               />
             </View>
           </StyledMainContent>
         </StyledMain>
         <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-        { this.state.isTooltipModalVisible ? null : <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> }
+        <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} />
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-        { this.state.isTooltipModalVisible ? null :
           <Footer
             handleNextDay={this._handleNextDay}
             handlePreviousDay={this._handlePreviousDay}
@@ -487,7 +497,6 @@ export default class DiaryRead extends Component {
             generateContent={this.generateContent}
             content={this.state.content}
           />
-        }
        
         <CalendarModal
           isCalendarModalVisible={this.state.isCalendarModalVisible}
@@ -504,6 +513,7 @@ export default class DiaryRead extends Component {
           handleHighlight={this._handleHighlight}
           handleBookmark={this._handleBookmark}
           handleCopyVerse={this._handleCopyVerse}
+          bookmarkIsMatch={this.state.bookmarkIsMatch}
         />
         <FontPanelModal 
           isFontSettingModalVisible={this.state.isFontSettingModalVisible}

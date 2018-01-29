@@ -17,5 +17,6 @@
   "copy_verse": "複製",
   "share_verse": "分享",
   "popup_copy_successed": "複製成功",
-  "popup_bookmark_successed": "已加入書籤"
+  "popup_bookmark_successed": "已加入書籤",
+  "popup_bookmark_removed": "移除書籤"
 }

@@ -5,7 +5,6 @@ import styled from "styled-components/native";
 import ModalWrapper from 'react-native-modal-wrapper';
 import I18n from 'react-native-i18n';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ActionButton from 'react-native-circular-action-menu';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const {
@@ -55,10 +54,11 @@ export default class Tooltip extends Component {
   render() {
     return (
       <ModalWrapper
+        style={{zIndex:3}}
         isNative={false}
         onRequestClose={() => null}
         position='bottom'
-        shouldAnimateOnRequestClose={true}
+        shouldAnimateOnRequestClose={false}
         showOverlay={false}
         visible={this.props.isTooltipModalVisible}>
         <Container>
@@ -67,10 +67,7 @@ export default class Tooltip extends Component {
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => this.props.handleBookmark()}
               >
-                <Ionicons
-                  name='ios-bookmark-outline'
-                  size={35}
-                />
+              {this.props.bookmarkIsMatch ? <Ionicons name='ios-bookmark' size={35} />: <Ionicons name='ios-bookmark-outline' size={35} />}
               </TouchableOpacity>
               <TouchableOpacity
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}

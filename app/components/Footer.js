@@ -153,7 +153,7 @@ export default class Footer extends PureComponent {
             color='#bbb'
           />
         </TouchableOpacity>
-        <ActionButton degrees={90} position={'center'} icon={<StyledLangText>{selectLangText}</StyledLangText>}>
+        <ActionButton degrees={0} position={'center'} icon={<StyledLangText>{selectLangText}</StyledLangText>}>
           {langList}
         </ActionButton>
         <TouchableOpacity>

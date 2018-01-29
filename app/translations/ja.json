@@ -17,5 +17,6 @@
   "copy_verse": "Copy",
   "share_verse": "Share",
   "popup_copy_successed": "コピーが成功しました",
-  "popup_bookmark_successed": "ブックマークされた"
+  "popup_bookmark_successed": "ブックマークされた",
+  "popup_bookmark_removed": "ブックマークを削除する"
 }
