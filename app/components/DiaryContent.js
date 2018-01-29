@@ -54,7 +54,6 @@ const PharseCantainer = styled.Text`
 `;
 const PharseNumber = styled.Text`
   font-size: ${props => props.fontSize}px;
-  color: ${props => props.color};
   margin-top: -10px;
   margin-right: 5px;
 `;
@@ -66,8 +65,18 @@ export default class DiaryContent extends PureComponent {
       selectVerse: {},
       selectVerseNumberRef: {},
       selectVerseRef: {},
+      lastPress: 0,
     }
     this.anchor = [];
+  }
+  _handleDoublePress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
+    if(delta < 300) {
+      this.props.handleDoublePress();
+    }
+    this.setState({
+      lastPress: new Date().getTime(),
+    });
   }
   resetHighlight = () => {
     R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
@@ -93,7 +102,7 @@ export default class DiaryContent extends PureComponent {
         ...setColorList,
       }
       await AsyncStorage.setItem('@highlightList', JSON.stringify(_highlightList));
-      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:color != 'transparent' ? this.props.readingMode ? this.props.fontColor : 'black' : 'gray', backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
       R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
       this.resetHighlight();
     } catch(e) {
@@ -208,6 +217,7 @@ export default class DiaryContent extends PureComponent {
             style={{height:40, display:'flex', justifyContent:'flex-end', borderBottomWidth: 1, borderBottomColor:'#0881A3', paddingBottom:1}}
             hitSlop={{top: 40, bottom: 40, left: 10, right: 10}}
             onPress={(e) => {
+              this.props.closeActionButton();
               this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
                 this.props.contentView.root.scrollTo({y: pageY + 100, animated: true});
               });
@@ -246,6 +256,15 @@ export default class DiaryContent extends PureComponent {
             <Text
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
+                const delta = new Date().getTime() - this.state.lastPress;
+                if(delta < 300) {
+                  if(this.props.isTooltipModalVisible){
+                    setTimeout(() => {
+                      this.props.handleDoublePress();
+                      this.props.handleDoublePress();
+                    }, 0);
+                  }
+                }
                 const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 const keyId = `${verseItem.id}-${verseItem.version}`;
                 if(this.state.selectVerse.hasOwnProperty(keyId)) {
@@ -257,7 +276,8 @@ export default class DiaryContent extends PureComponent {
                   this.setState({
                     selectVerse: {...this.state.selectVerse},
                     selectVerseRef: {...this.state.selectVerseRef},
-                    selectVerseNumberRef: {...this.state.selectVerseNumberRef}
+                    selectVerseNumberRef: {...this.state.selectVerseNumberRef},
+                    lastPress: new Date().getTime(),
                   })
                 } else {
                   this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
@@ -265,7 +285,8 @@ export default class DiaryContent extends PureComponent {
                   this.setState({
                     selectVerse: {...this.state.selectVerse, [keyId]:verseItem},
                     selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
-                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]}
+                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
+                    lastPress: new Date().getTime(),
                   });
                 }
                 this.checkBookmark();
@@ -278,7 +299,11 @@ export default class DiaryContent extends PureComponent {
               }}
             >
               <PharseNumber
-                color={this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? this.props.fontColor : 'black': 'gray'}
+                style={{
+                  color: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? '#ccc' : 'black': 'gray',
+                  backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
+                }}
+                //color={this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? 'black' : 'black': 'gray'}
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
               >

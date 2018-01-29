@@ -53,6 +53,9 @@ export default class Footer extends PureComponent {
       transformY: new Animated.Value(0),
     };
   }
+  closeActionButton = () => {
+    this.actionButton.reset();
+  }
   render() {
     if(this.props.content.length == 0) return (<View></View>);
     this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
@@ -153,7 +156,12 @@ export default class Footer extends PureComponent {
             color='#bbb'
           />
         </TouchableOpacity>
-        <ActionButton degrees={0} position={'center'} icon={<StyledLangText>{selectLangText}</StyledLangText>}>
+        <ActionButton
+          ref={r => this.actionButton = r}
+          degrees={0}
+          position={'center'}
+          icon={<StyledLangText>{selectLangText}</StyledLangText>}
+        >
           {langList}
         </ActionButton>
         <TouchableOpacity>

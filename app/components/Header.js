@@ -5,10 +5,20 @@ import {
   Animated,
   Easing,
   TouchableOpacity,
+  Text,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons'
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Foundation from 'react-native-vector-icons/Foundation';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled from "styled-components/native";
+import ActionButton from './ActionButton2';
+var {
+  height: deviceHeight,
+  width: deviceWidth,
+} = Dimensions.get('window');
 
 const StyledHeader = Animated.createAnimatedComponent(styled.View`
   z-index: 2;
@@ -19,7 +29,7 @@ const StyledHeader = Animated.createAnimatedComponent(styled.View`
   left: 0;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: ${Platform.OS == 'ios' ? 25 : 0};
   height: 6%;
 `)
@@ -30,7 +40,11 @@ export default class Header extends PureComponent {
     this.state = {
       fadeInOpacity: new Animated.Value(0),
       transformY: new Animated.Value(0),
+      active: false,
     };
+  }
+  closeActionButton = () => {
+    this.actionButton.reset();
   }
   render() {
     if(this.props.content.length == 0) return (<View></View>);
@@ -58,15 +72,42 @@ export default class Header extends PureComponent {
           ],
         }}
       >
+      <View></View>
+        <ActionButton ref={r => this.actionButton = r} radius={80} size={36} position={'left'} >
+          <ActionButton.Item buttonColor='#000'>
+            <Ionicons
+              name='ios-more'
+              size={30}
+              color='#ddd'
+              style={{width: 26, height: 26, marginTop:-4, marginLeft:7, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000'>
+            <Foundation
+              name='book-bookmark'
+              size={28}
+              color='#ddd'
+              style={{width: 26, height: 26, marginTop:-4, marginLeft:9, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000'>
+            <SimpleLineIcons
+              name='note'
+              size={21}
+              color='#ddd'
+              style={{width: 26, height: 26, marginTop:0, marginLeft:8, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item>
+        </ActionButton>
         <View style={{backgroundColor:'#111', width: 36, height: 36, borderColor:'#111', borderWidth:4, borderStyle:'solid', borderRadius: 18, marginRight:20, marginTop:15}}>
-        <TouchableOpacity onPress={()=> this.props.toggleModal()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-          <EvilIcons
-            name='calendar'
-            size={30}
-            color='#bbb'
-            style={{width: 26, height: 26, marginTop:3, marginLeft:-1, backgroundColor:'transparent'}}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={()=> this.props.toggleModal()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+            <EvilIcons
+              name='calendar'
+              size={30}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:3, marginLeft:-1, backgroundColor:'transparent'}}
+            />
+          </TouchableOpacity>
         </View>
       </StyledHeader>
     );

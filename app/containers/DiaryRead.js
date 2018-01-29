@@ -51,7 +51,7 @@ const StyledDiaryText = styled.Text`
 
 // Available languages
 I18n.translations = {
-  'zh-hant-TW': require('../translations/cht'),
+  'zh-Hant-TW': require('../translations/cht'),
   'zh-hant': require('../translations/cht'),
   'zh-TW': require('../translations/cht'),
   'zh-hans': require('../translations/chs'),
@@ -141,10 +141,14 @@ export default class DiaryRead extends Component {
       });
     });
   }
+  closeActionButton = () => {
+    this.header.closeActionButton();
+    this.footer.closeActionButton();
+  }
   checkBookmark = (isMatch) => {
     this.setState({
       bookmarkIsMatch : isMatch,
-    })
+    });
   }
   generateContent = async () => {
     const highlightList = await AsyncStorage.getItem('@highlightList');
@@ -201,12 +205,14 @@ export default class DiaryRead extends Component {
       this.setState({
         fullScreenMode: !this.state.fullScreenMode,
       });
+      this.closeActionButton();
     }
     this.setState({
       lastPress: new Date().getTime(),
     });
   }
-  _getDiaryBiblePhrase() {
+  _getDiaryBiblePhrase = () => {
+    this.closeActionButton();
     let number = Math.floor(Math.random() * 74) + 1;
     let bible_number = `B${number}`;
     Alert.alert(
@@ -216,16 +222,26 @@ export default class DiaryRead extends Component {
       {text: '確定', onPress: () => {}},
     ],
       { cancelable: false }
-    )
+    );
   }
-  _toggleModalCalendar = () => this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
-  _toggleModalTooltip = () => this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
+  _toggleModalCalendar = () => {
+    this.closeActionButton();
+    this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
+  }
+  _toggleModalTooltip = () => {
+    this.closeActionButton();
+    this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
+  }
   _closeTooltip = () => {
     this.diaryContent.resetHighlight();
     this.setState({ isTooltipModalVisible: false });
   };
-  _toggleModalFontSetting = () => this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
+  _toggleModalFontSetting = () => {
+    this.closeActionButton();
+    this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
+  }
   _handleNextDay = () => {
+    this.closeActionButton();
     if(this.state.fullScreenMode) return null;
     if(this.state.loadContent) return null;
     if(this.state.currentDate == '2018-12-31') {
@@ -257,6 +273,7 @@ export default class DiaryRead extends Component {
     }, 0);
   }
   _handlePreviousDay = () => {
+    this.closeActionButton();
     if(this.state.fullScreenMode) return null;
     if(this.state.loadContent) return null;
     if(this.state.currentDate == '2018-01-01') {
@@ -335,6 +352,7 @@ export default class DiaryRead extends Component {
     });
   }
   _handleChangeDay = (day) => {
+    this.closeActionButton();
     this.setState({
       isCalendarModalVisible: !this.state.isCalendarModalVisible,
       date: day,
@@ -363,6 +381,7 @@ export default class DiaryRead extends Component {
     }
   }
   _handeleScrollTop = (e) => {
+    this.closeActionButton();
     if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
@@ -372,6 +391,7 @@ export default class DiaryRead extends Component {
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
     if(this.state.isTooltipModalVisible) return;
     if(direction == 'down' && contentOffset.y > 100) {
+      this.closeActionButton();
       this.setState({
         fullScreenMode: true,
       });
@@ -467,7 +487,13 @@ export default class DiaryRead extends Component {
     const { bg, fullScreenMode } = this.state;
     return (
       <StyledContainer bg={bg}>
-        <Header content={this.state.content} fullScreenMode={fullScreenMode} navigation={this.props.navigation} toggleModal={this._toggleModalCalendar}/>
+        <Header
+          ref={r => this.header = r}
+          content={this.state.content}
+          fullScreenMode={fullScreenMode}
+          navigation={this.props.navigation}
+          toggleModal={this._toggleModalCalendar}
+        />
         <StyledMain
           ref={r => this.contentView = r}
           bg={bg} 
@@ -494,6 +520,8 @@ export default class DiaryRead extends Component {
                 toggleModalTooltip={this._toggleModalTooltip}
                 isTooltipModalVisible={this.state.isTooltipModalVisible}
                 checkBookmark={this.checkBookmark}
+                handleDoublePress={this._handleDoublePress}
+                closeActionButton={this.closeActionButton}
               />
             </View>
           </StyledMainContent>
@@ -502,6 +530,7 @@ export default class DiaryRead extends Component {
         <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} />
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
           <Footer
+            ref={r => this.footer = r}
             handleNextDay={this._handleNextDay}
             handlePreviousDay={this._handlePreviousDay}
             handeleChangeLang={this._handeleChangeLang}

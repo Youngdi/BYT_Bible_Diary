@@ -12,6 +12,8 @@ import React, {
     Dimensions,
   } from 'react-native';
   import ActionButtonItem from './ActionButtonItem';
+  import { isIphoneX } from 'react-native-iphone-x-helper';
+
   const {
     height: deviceHeight,
     width: deviceWidth
@@ -297,7 +299,7 @@ import React, {
   const styles = StyleSheet.create({
     overlay: {
       position: 'absolute',
-      bottom: deviceHeight > 700 ? 2.5 : 1.5,
+      bottom: deviceHeight > 700 ? isIphoneX() ? 8 : 2.5 : 1.5,
       left: deviceWidth / 4.7,
       right: 0,
       top: 0,

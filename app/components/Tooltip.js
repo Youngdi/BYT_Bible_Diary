@@ -6,6 +6,7 @@ import ModalWrapper from 'react-native-modal-wrapper';
 import I18n from 'react-native-i18n';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 const {
   height: deviceHeight,
@@ -13,15 +14,16 @@ const {
 } = Dimensions.get('window');
 
 const Container = styled.View`
-  height:140px;
+  height: 140px;
   background-color: white;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
   borderTopWidth: 1px;
   border-color: rgba(0, 0, 0, 0.5);
 `;
 const TooltipRow = styled.View`
-  margin-top:-10px;
+  margin-top:10px;
+  margin-bottom:10px;
   padding:10px;
   width:100%;
   display:flex;
@@ -43,7 +45,6 @@ const HighlightRow = styled.View`
   align-items: center;
 `;
 const CloseRow = styled.View`
-  marginTop:-18px;
   width:100%;
   display:flex;
   flex-direction: row;
