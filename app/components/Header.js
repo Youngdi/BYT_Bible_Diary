@@ -13,6 +13,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from "styled-components/native";
 import ActionButton from './ActionButton2';
 var {
@@ -46,6 +47,9 @@ export default class Header extends PureComponent {
   closeActionButton = () => {
     this.actionButton.reset();
   }
+  navigateTo =(toWhere) => {
+    this.props.navigateTo(toWhere);
+  }
   render() {
     if(this.props.content.length == 0) return (<View></View>);
     this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
@@ -73,8 +77,8 @@ export default class Header extends PureComponent {
         }}
       >
       <View></View>
-        <ActionButton ref={r => this.actionButton = r} radius={80} size={36} position={'left'} >
-          <ActionButton.Item buttonColor='#000'>
+        <ActionButton ref={r => this.actionButton = r} radius={100} size={36} position={'left'} >
+          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('More')}>
             <Ionicons
               name='ios-more'
               size={30}
@@ -82,7 +86,7 @@ export default class Header extends PureComponent {
               style={{width: 26, height: 26, marginTop:-4, marginLeft:7, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000'>
+          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('Bookmark')}>
             <Foundation
               name='book-bookmark'
               size={28}
@@ -90,9 +94,17 @@ export default class Header extends PureComponent {
               style={{width: 26, height: 26, marginTop:-4, marginLeft:9, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000'>
+          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('Note')}>
             <SimpleLineIcons
               name='note'
+              size={21}
+              color='#ddd'
+              style={{width: 26, height: 26, marginTop:0, marginLeft:8, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('Bible')}>
+            <MaterialCommunityIcons
+              name='book-open-page-variant'
               size={21}
               color='#ddd'
               style={{width: 26, height: 26, marginTop:0, marginLeft:8, backgroundColor:'transparent'}}

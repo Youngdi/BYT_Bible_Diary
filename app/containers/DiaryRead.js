@@ -72,7 +72,6 @@ export default class DiaryRead extends Component {
       popupText: '',
       defaultLang: 'cht',
       lastPress: 0,
-      scrollInitPosition:0,
       bg: '#fff',
       fullScreenMode: false,
       isCalendarModalVisible: false,
@@ -140,6 +139,16 @@ export default class DiaryRead extends Component {
         },
       });
     });
+  }
+  reset = () => {
+    this._closeTooltip();
+    this.closeActionButton();
+    this.contentView.root.scrollTo({y: 0, animated: false});
+    this.setState({
+      isCalendarModalVisible: false,
+      fullScreenMode: false,
+      isFontSettingModalVisible:false,
+    })
   }
   closeActionButton = () => {
     this.header.closeActionButton();
@@ -386,12 +395,12 @@ export default class DiaryRead extends Component {
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
   _handleScroll = async (e) => {
+    this.closeActionButton();
     const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
     const paddingToBottom = 20;
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
     if(this.state.isTooltipModalVisible) return;
     if(direction == 'down' && contentOffset.y > 100) {
-      this.closeActionButton();
       this.setState({
         fullScreenMode: true,
       });
@@ -431,6 +440,7 @@ export default class DiaryRead extends Component {
     });
   }
   _handeleChangeLang = (lang) => {
+    this.closeActionButton();
     if(this.state.loadContent) return null;
     let i18nLang;
     if(lang == 'cht') I18n.locale = 'zh-hant';
@@ -478,11 +488,10 @@ export default class DiaryRead extends Component {
     this.pupupDialog.popup();
     }, 0);
   }
-  // _onMomentumScrollBegin = (e) => {
-  //   this.setState({
-  //     scrollInitPosition: e.nativeEvent.pageY,
-  //   });
-  // }
+  navigateTo = (toWhere) => {
+    this.reset();
+    this.props.navigation.navigate(toWhere);
+  }
   render() {
     const { bg, fullScreenMode } = this.state;
     return (
@@ -493,6 +502,7 @@ export default class DiaryRead extends Component {
           fullScreenMode={fullScreenMode}
           navigation={this.props.navigation}
           toggleModal={this._toggleModalCalendar}
+          navigateTo={this.navigateTo}
         />
         <StyledMain
           ref={r => this.contentView = r}

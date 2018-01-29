@@ -10,6 +10,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import BookmarkScreen from './Bookmark';
 import BibleScreen from './Bible';
+import MoreScreen from './More';
+import NoteScreen from './Note';
 
 const bible_chs = {
   name: 'bible_chs',
@@ -288,6 +290,12 @@ const App = StackNavigator(
   Bookmark: {
     screen: BookmarkScreen,
   },
+  More: {
+    screen: MoreScreen,
+  },
+  Note: {
+    screen: NoteScreen,
+  }
 },
   {
     headerMode: 'screen'
