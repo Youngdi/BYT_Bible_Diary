@@ -18,5 +18,6 @@
   "share_verse": "Share",
   "popup_copy_successed": "Copied Successfully",
   "popup_bookmark_successed": "Added to Bookmark",
-  "popup_bookmark_removed": "Removed the Bookmark"
+  "popup_bookmark_removed": "Removed the Bookmark",
+  "popup_share_successed": "Shared Successfully"
 }

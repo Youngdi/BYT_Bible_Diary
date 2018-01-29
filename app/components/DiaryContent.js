@@ -16,7 +16,6 @@ import {
 import * as R from 'ramda';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
-import ReactNativeComponentTree from 'react-native/Libraries/Renderer/shims/ReactNativeComponentTree';
 import Spinner from 'react-native-spinkit';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { bookName } from '../constants/bible';
@@ -133,7 +132,7 @@ export default class DiaryContent extends PureComponent {
       alert(JSON.stringify(e));
     }
   }
-  copyVerse = async () => {
+  generateCopyText = () => {
     let c = 0;
     const verse = R.pipe(
       R.toPairs(),
@@ -178,10 +177,20 @@ export default class DiaryContent extends PureComponent {
       acc = acc + '』\n\n';
       return acc;
     }, '');
+    return copyText;
+  }
+  copyVerse = () => {
+    const copyText = this.generateCopyText();
     Clipboard.setString(copyText);
     this.resetHighlight();
   }
   renderTitle = () => {
+    if(this.props.content.length == 0) return (
+      <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
+        <Text>Loading...</Text>
+        <Spinner style={{marginTop:20}} size={70} type={'Wave'}></Spinner>
+      </View>
+    );
     const renderDay = () =>
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
         <Title 

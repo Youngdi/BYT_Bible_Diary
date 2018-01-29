@@ -294,11 +294,10 @@ import React, {
     btnOutRange: 'rgba(0,0,0,1)',
     btnOutRangeTxt: 'rgba(255,255,255,1)',
   };
-  
   const styles = StyleSheet.create({
     overlay: {
       position: 'absolute',
-      bottom: 0,
+      bottom: deviceHeight > 700 ? 2.5 : 1.5,
       left: deviceWidth / 4.7,
       right: 0,
       top: 0,
@@ -306,7 +305,6 @@ import React, {
     },
     actionContainer: {
       flexDirection: 'column',
-      padding: 3,
     },
     actionBarItem: {
       alignItems: 'center',

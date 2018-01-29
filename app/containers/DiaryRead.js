@@ -8,6 +8,7 @@ import {
   Alert,
   AsyncStorage,
   Button,
+  Share,
 } from 'react-native';
 import moment from 'moment/min/moment-with-locales';
 import ScreenBrightness from 'react-native-screen-brightness';
@@ -436,6 +437,20 @@ export default class DiaryRead extends Component {
       this.pupupDialog.popup();
       }, 0);
   }
+  _handleShare = async () => {
+    const copyText = this.diaryContent.generateCopyText();
+    const share = await Share.share({
+      message: copyText,
+      title: this.state.currentDate,
+    });
+    if(share.action == "sharedAction") {
+      this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_share_successed') });
+      this.diaryContent.resetHighlight();
+      setTimeout(() => {
+        this.pupupDialog.popup();
+        }, 0);
+    }
+  }
   _handleCopyVerse = async () => {
     this.diaryContent.copyVerse();
     this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_copy_successed') });
@@ -513,6 +528,7 @@ export default class DiaryRead extends Component {
           handleHighlight={this._handleHighlight}
           handleBookmark={this._handleBookmark}
           handleCopyVerse={this._handleCopyVerse}
+          handleShare={this._handleShare}
           bookmarkIsMatch={this.state.bookmarkIsMatch}
         />
         <FontPanelModal 

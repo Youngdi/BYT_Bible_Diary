@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet, Share } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import DiaryScreen from './DiaryRead';
 import I18n, { getLanguages } from 'react-native-i18n';
@@ -159,7 +159,8 @@ class MyHomeScreen extends Component {
   }
   render() {
     return (
-      <View></View>
+      <View>
+      </View>
     );
   }
 }

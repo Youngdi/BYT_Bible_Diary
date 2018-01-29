@@ -81,6 +81,7 @@ export default class Tooltip extends Component {
               
               <TouchableOpacity
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                onPress={() => this.props.handleShare()}
               >
                 <Ionicons
                   name='ios-share-outline'
