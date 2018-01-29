@@ -54,7 +54,7 @@ const PharseCantainer = styled.Text`
 `;
 const PharseNumber = styled.Text`
   font-size: ${props => props.fontSize}px;
-  color: gray;
+  color: ${props => props.color};
   margin-top: -10px;
   margin-right: 5px;
 `;
@@ -70,8 +70,8 @@ export default class DiaryContent extends PureComponent {
     this.anchor = [];
   }
   resetHighlight = () => {
-    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
     this.setState({
       selectVerse: {},
       selectVerseRef: {},
@@ -93,8 +93,8 @@ export default class DiaryContent extends PureComponent {
         ...setColorList,
       }
       await AsyncStorage.setItem('@highlightList', JSON.stringify(_highlightList));
-      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:color == 'transparent' ? 'gray' : 'black', backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-      R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:color != 'transparent' ? this.props.readingMode ? this.props.fontColor : 'black' : 'gray', backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+      R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
       this.resetHighlight();
     } catch(e) {
       alert(JSON.stringify(e));
@@ -249,8 +249,8 @@ export default class DiaryContent extends PureComponent {
                 const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
                 const keyId = `${verseItem.id}-${verseItem.version}`;
                 if(this.state.selectVerse.hasOwnProperty(keyId)) {
-                  this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
                   delete this.state.selectVerse[keyId];
                   delete this.state.selectVerseRef[key];
                   delete this.state.selectVerseNumberRef['number' + key];
@@ -260,8 +260,8 @@ export default class DiaryContent extends PureComponent {
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef}
                   })
                 } else {
-                  this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+                  this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this.setState({
                     selectVerse: {...this.state.selectVerse, [keyId]:verseItem},
                     selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
@@ -278,6 +278,7 @@ export default class DiaryContent extends PureComponent {
               }}
             >
               <PharseNumber
+                color={this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? this.props.fontColor : 'black': 'gray'}
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
               >

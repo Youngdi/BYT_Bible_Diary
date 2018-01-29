@@ -483,6 +483,7 @@ export default class DiaryRead extends Component {
                 fontSize={this.state.setting.fontSize}
                 lineHeight={this.state.setting.lineHeight}
                 fontFamily={this.state.setting.fontFamily}
+                readingMode={this.state.setting.readingMode}
                 content={this.state.content}
                 defaultLang={this.state.defaultLang}
                 date={this.state.date}
