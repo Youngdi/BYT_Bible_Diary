@@ -139,30 +139,24 @@ const realm_bible_japan = realm.objects('bible_japan');
 const realm_bible_cht = realm.objects('bible_cht');
 const realm_bible_chs = realm.objects('bible_chs');
 // SQLite.enablePromise(true);
+global.db = {
+  realm,
+  realm_schedule,
+  realm_bible_kjv,
+  realm_bible_japan,
+  realm_bible_cht,
+  realm_bible_chs,
+};
 class MyHomeScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      progress: new Animated.Value(0),
-    };
   }
   componentDidMount() {
-    this.props.navigation.navigate('Diary', { db: this.db});
-  }
-  componentWillMount = async () => {
-    this.db = {
-     realm,
-     realm_schedule,
-     realm_bible_kjv,
-     realm_bible_japan,
-     realm_bible_cht,
-     realm_bible_chs,
-    }
+    this.props.navigation.navigate('Diary');
   }
   render() {
     return (
-      <View>
-      </View>
+      <View style={{opacity:0}}></View>
     );
   }
 }

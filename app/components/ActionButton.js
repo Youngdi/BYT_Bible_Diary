@@ -104,7 +104,6 @@ import React, {
         this.setState({ active: false });
       }, 250);
     }
-  
     renderButton() {
       return (
         <View
@@ -149,12 +148,10 @@ import React, {
         </View>
       );
     }
-  
     renderButtonIcon() {
       if (this.props.icon) {
         return this.props.icon;
       }
-  
       return (
         <Animated.Text
           style={[styles.btnText,
@@ -168,30 +165,27 @@ import React, {
         </Animated.Text>
       );
     }
-  
     renderActions() {
       if (!this.state.active) return null;
       const startDegree = this.props.startDegree || alignMap[this.props.position].startDegree;
       const endDegree = this.props.endDegree || alignMap[this.props.position].endDegree;
       const startRadian = startDegree * Math.PI / 180;
       const endRadian = endDegree * Math.PI / 180;
-  
       const childrenCount = React.Children.count(this.props.children);
       let offset = 0;
       if (childrenCount !== 1) {
         offset = (endRadian - startRadian) / (childrenCount - 1);
       }
-  
       return (
         React.Children.map(this.props.children, (button, index) => {
           return (
-  
             <View
               pointerEvents="box-none"
               style={this.getActionContainerStyle()}
             >
               <ActionButtonItem
-                index={index}
+                offsetY={(-50 * index) - 60}
+                offsetX={0}
                 key={index}
                 position={this.props.position}
                 anim={this.state.anim}
@@ -307,6 +301,7 @@ import React, {
     },
     actionContainer: {
       flexDirection: 'column',
+      zIndex:99,
     },
     actionBarItem: {
       alignItems: 'center',

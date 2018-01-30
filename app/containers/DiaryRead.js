@@ -6,10 +6,10 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Alert,
-  AsyncStorage,
   Button,
   Share,
 } from 'react-native';
+import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
 import ScreenBrightness from 'react-native-screen-brightness';
 import { isIphoneX } from 'react-native-iphone-x-helper';
@@ -27,6 +27,14 @@ import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
 
+const storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+	enableCache: true,
+  // sync : {}
+});
+global.storage = storage;
 const StyledMain = styled.ScrollView`
   display:flex;
   background-color: ${props => props.bg};
@@ -107,27 +115,56 @@ export default class DiaryRead extends Component {
     this.initData();
   }
   initData = async () => {
-    try {
-      const readingRecord = await AsyncStorage.getItem('@readingSchdule');
-      const systemLang = await getLanguages();
-      this.setState({
-        systemLang: systemLang,
-        markedDates: {
-          ...JSON.parse(readingRecord),
-          [this.state.date.dateString]: {
-            selected : true,
-            marked : JSON.parse(readingRecord)[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
-          }
-        },
-      })
-    } catch (error) {
-      // Error saving data
-    }
-  }
-  componentWillMount = () => {
-    setTimeout(() => {
-      this.generateContent();
-    }, 0);
+      try {
+        const readingRecord = await global.storage.load({key:'@readingSchdule'});
+        const systemLang = await getLanguages();
+        this.generateContent();
+        this.setState({
+          systemLang: systemLang,
+          markedDates: {
+            ...readingRecord,
+            [this.state.date.dateString]: {
+              selected : true,
+              marked : readingRecord[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
+            }
+          },
+        });
+      } catch (err) {
+        switch (err.name) {
+          case 'NotFoundError':
+            await global.storage.save({
+              key: '@readingSchdule',
+              data: {},
+              expires: null,
+            });
+            await global.storage.save({
+              key: '@highlightList',
+              data: {},
+              expires: null,
+            });
+            await global.storage.save({
+              key: '@bookmark',
+              data: {},
+              expires: null,
+            });
+            const readingRecord = await global.storage.load({key:'@readingSchdule'});
+            const systemLang = await getLanguages();
+            this.generateContent();
+            this.setState({
+              systemLang: systemLang,
+              markedDates: {
+                ...readingRecord,
+                [this.state.date.dateString]: {
+                  selected : true,
+                  marked : readingRecord[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
+                }
+              },
+            });
+            break;
+          case 'ExpiredError':
+            break;
+        }
+      }
   }
   componentDidMount = () => {
     ScreenBrightness.getBrightness().then(brightness => {
@@ -148,7 +185,7 @@ export default class DiaryRead extends Component {
       isCalendarModalVisible: false,
       fullScreenMode: false,
       isFontSettingModalVisible:false,
-    })
+    });
   }
   closeActionButton = () => {
     this.header.closeActionButton();
@@ -160,9 +197,9 @@ export default class DiaryRead extends Component {
     });
   }
   generateContent = async () => {
-    const highlightList = await AsyncStorage.getItem('@highlightList');
+    const highlightList = await global.storage.load({key:'@highlightList'});
     const { month, day}  = this.state.date;
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.navigation.state.params.db;
+    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
     let bibleVersion = realm_bible_cht;
     if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
     if(this.state.defaultLang == 'chs') bibleVersion = realm_bible_chs;
@@ -194,12 +231,12 @@ export default class DiaryRead extends Component {
       }, []);
       this.setState({
         content: bindContent,
-        highlightList: JSON.parse(highlightList) ? JSON.parse(highlightList) : {},
+        highlightList: highlightList,
       });
     } else {
       this.setState({
         content: content,
-        highlightList: JSON.parse(highlightList) ? JSON.parse(highlightList) : {},
+        highlightList: highlightList,
       });
     }
     setTimeout(() => {
@@ -429,7 +466,7 @@ export default class DiaryRead extends Component {
         markedDates: markedDates,
       });
       try {
-        await AsyncStorage.setItem('@readingSchdule', JSON.stringify(recordMarkedDates));
+        await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
       } catch (error) {
       }
     }
@@ -525,7 +562,6 @@ export default class DiaryRead extends Component {
                 date={this.state.date}
                 contentView={this.state.contentView}
                 marked={this.state.markedDates[this.state.currentDate].marked}
-                db={this.props.navigation.state.params.db}
                 highlightList={this.state.highlightList}
                 toggleModalTooltip={this._toggleModalTooltip}
                 isTooltipModalVisible={this.state.isTooltipModalVisible}

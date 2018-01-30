@@ -7,9 +7,8 @@ export default class Bible extends Component {
       super(props);
     }
     render() {
-
       return (
-        <View><Text>Bible</Text></View>
+        <View><Button title="b" onPress={() => this.props.navigation.navigate('Diary')}></Button></View>
       );
     }
   }

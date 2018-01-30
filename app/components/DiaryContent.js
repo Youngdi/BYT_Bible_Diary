@@ -9,7 +9,6 @@ import {
   Text,
   Botton,
   ActivityIndicator,
-  AsyncStorage,
   Button,
   Clipboard,
 } from 'react-native';
@@ -96,12 +95,12 @@ export default class DiaryContent extends PureComponent {
           [val]: color,
         };
       }, {});
-      const highlightList = await AsyncStorage.getItem('@highlightList');
+      const highlightList = await global.storage.load({key:'@highlightList'});
       const _highlightList = {
-        ...JSON.parse(highlightList),
+        ...highlightList,
         ...setColorList,
       }
-      await AsyncStorage.setItem('@highlightList', JSON.stringify(_highlightList));
+      await global.storage.save({key: '@highlightList', data: _highlightList, expires: null});
       R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
       R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
       this.resetHighlight();
@@ -112,19 +111,18 @@ export default class DiaryContent extends PureComponent {
   addBookmark = async (action) => {
     try {
       if (action) {
-        const bookmark = await AsyncStorage.getItem('@bookmark');
-        const _bookmark = JSON.parse(bookmark);
+        const _bookmark = await global.storage.load({key:'@bookmark'});
         R.keys(this.state.selectVerse).map((keyId) => {
           delete _bookmark[keyId];
         });
-        await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
+        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
       } else {
-        const bookmark = await AsyncStorage.getItem('@bookmark');
+        const bookmark = await global.storage.load({key:'@bookmark'});
         const _bookmark = {
-          ...JSON.parse(bookmark),
+          ...bookmark,
           ...this.state.selectVerse,
         }
-        await AsyncStorage.setItem('@bookmark', JSON.stringify(_bookmark));
+        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
       }
       this.resetHighlight();
     } catch(e) {
@@ -133,8 +131,8 @@ export default class DiaryContent extends PureComponent {
   }
   checkBookmark = async () => {
     try {
-      const bookmark = await AsyncStorage.getItem('@bookmark');
-      const matchFn = R.contains(R.__, R.keys(JSON.parse(bookmark)));
+      const bookmark = await global.storage.load({key:'@bookmark'});
+      const matchFn = R.contains(R.__, R.keys(bookmark)); 
       const isMatch = R.all(matchFn)(R.keys(this.state.selectVerse));
       this.props.checkBookmark(isMatch);
     } catch(e) {
@@ -221,7 +219,7 @@ export default class DiaryContent extends PureComponent {
               this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
                 this.props.contentView.root.scrollTo({y: pageY + 100, animated: true});
               });
-              const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = this.props.db;
+              const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
               this.resetHighlight();
             }}
           >
@@ -299,8 +297,9 @@ export default class DiaryContent extends PureComponent {
               }}
             >
               <PharseNumber
+                key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}-number`}
                 style={{
-                  color: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? '#ccc' : 'black': 'gray',
+                  color: this.props.fontColor, // this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? '#ccc' : '#000': 'gray'
                   backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
                 }}
                 //color={this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? 'black' : 'black': 'gray'}

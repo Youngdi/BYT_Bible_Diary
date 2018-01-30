@@ -164,9 +164,9 @@ export default class Footer extends PureComponent {
         >
           {langList}
         </ActionButton>
-        <TouchableOpacity>
-          <StyledLangListText>{''}</StyledLangListText>
-        </TouchableOpacity>
+        <View style={{opacity:0, zIndex:-999}}>
+          <StyledLangListText>{'  '}</StyledLangListText>
+        </View>
         <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handleNextDay()} >
           <MaterialIcons
             name='arrow-forward'

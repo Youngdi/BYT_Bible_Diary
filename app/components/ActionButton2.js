@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import ActionButtonItem from './ActionButtonItem2';
+import ActionButtonItem from './ActionButtonItem';
 
 const alignMap = {
   center: {
@@ -24,7 +24,7 @@ const alignMap = {
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
     startDegree: 90,
-    endDegree: 0,
+    endDegree: 90,
   },
 
   right: {
@@ -188,6 +188,9 @@ export default class ActionButton extends Component {
             style={this.getActionContainerStyle()}
           >
             <ActionButtonItem
+              offsetY={(50 * index) + 50}
+              offsetX={0}
+              index={index}
               key={index}
               position={this.props.position}
               anim={this.state.anim}
