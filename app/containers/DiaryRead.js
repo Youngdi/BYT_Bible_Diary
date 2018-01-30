@@ -207,8 +207,8 @@ export default class DiaryRead extends Component {
     });
   }
   closeActionButton = () => {
-    this.header.closeActionButton();
-    this.footer.closeActionButton();
+    if(this.header) this.header.closeActionButton();
+    if(this.footer) this.footer.closeActionButton();
   }
   closeHeaderActionButton = () => this.header.closeActionButton();
   closeFooterActionButton = () => this.footer.closeActionButton();
@@ -508,10 +508,7 @@ export default class DiaryRead extends Component {
         finishedReading: true,
         markedDates: markedDates,
       });
-      try {
-        await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
-      } catch (error) {
-      }
+      await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
     }
   }
   _handleFinished = () => {
@@ -581,6 +578,7 @@ export default class DiaryRead extends Component {
     const { bg, fullScreenMode } = this.state;
     return (
       <StyledContainer bg={bg}>
+      { !this.state.finishedReading ?
         <Header
           ref={r => this.header = r}
           content={this.state.content}
@@ -590,6 +588,8 @@ export default class DiaryRead extends Component {
           navigateTo={this.navigateTo}
           closeFooterActionButton={this.closeFooterActionButton}
         />
+        : null
+      }
         <StyledMain
           ref={r => this.contentView = r}
           bg={bg} 
@@ -622,9 +622,9 @@ export default class DiaryRead extends Component {
           </StyledMainContent>
         </StyledMain>
         <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-        <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} />
+        { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> : null}
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-          <Footer
+        { !this.state.finishedReading ? <Footer
             ref={r => this.footer = r}
             handleNextDay={this._handleNextDay}
             handlePreviousDay={this._handlePreviousDay}
@@ -638,7 +638,9 @@ export default class DiaryRead extends Component {
             content={this.state.content}
             closeHeaderActionButton={this.closeHeaderActionButton}
           />
-       
+          : null
+        }
+       { !this.state.finishedReading ?
         <CalendarModal
           isCalendarModalVisible={this.state.isCalendarModalVisible}
           currentDate={this.state.currentDate}
@@ -647,6 +649,9 @@ export default class DiaryRead extends Component {
           markedDates={this.state.markedDates}
           handleMonthChange={this._handleMonthChange}
         />
+        : null
+       }
+       { !this.state.finishedReading ?
         <Tooltip
           isTooltipModalVisible={this.state.isTooltipModalVisible}
           toggleModalTooltip={this._toggleModalTooltip}
@@ -657,6 +662,9 @@ export default class DiaryRead extends Component {
           handleShare={this._handleShare}
           bookmarkIsMatch={this.state.bookmarkIsMatch}
         />
+        : null
+       }
+       { !this.state.finishedReading ?
         <FontPanelModal 
           isFontSettingModalVisible={this.state.isFontSettingModalVisible}
           toggleModalFontSetting={this._toggleModalFontSetting}
@@ -667,6 +675,8 @@ export default class DiaryRead extends Component {
           handleSliderValueChange={this._handleSliderValueChange}
           setting={this.state.setting}
         />
+        : null
+       }
       </StyledContainer>
     );
   }
