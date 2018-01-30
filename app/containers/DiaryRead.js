@@ -129,6 +129,7 @@ export default class DiaryRead extends Component {
           defaultLang: lang,
           bg: BgColor,
           setting:{
+            ...this.state.setting,
             ...setting,
             brightnessValue: brightness,
             fontColor: FontColor,
