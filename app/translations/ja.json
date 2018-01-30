@@ -6,7 +6,7 @@
   "month": "月",
   "day": "日",
   "font_type": "フォント",
-  "font_type1": "デフォルト",　
+  "font_type1": "Default",　
   "font_type2": "PingFang",
   "font_type3": "Times",
   "font_size": "サイズ",
@@ -19,5 +19,6 @@
   "popup_copy_successed": "コピーが成功しました。",
   "popup_bookmark_successed": "お気に入りに追加されました。",
   "popup_bookmark_removed": "ブックマークを削除しました。",
-  "popup_share_successed": "共有しました。"
+  "popup_share_successed": "共有しました。",
+  "bookmark_isempty": "現在ブックマークはありません"
 }

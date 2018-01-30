@@ -19,7 +19,18 @@ import FontAwesome from 'react-native-vector-icons/MaterialIcons';
 var {
   height: deviceHeight
 } = Dimensions.get('window');
-
+let footerBottom = '16';
+let footerHeight = '8%';
+if(deviceHeight > 700) {
+  footerBottom = isIphoneX() ? '30' : '16';
+}
+if(deviceHeight < 579 && deviceHeight > 481) footerBottom = '6'; 
+if(deviceHeight < 481) footerBottom = '8';
+if(deviceHeight < 481){
+  footerHeight = '9%';
+} else {
+  footerHeight = '8%';
+}
 const StyledFooter = Animated.createAnimatedComponent(styled.View`
   z-index: 2;
   position: absolute;
@@ -31,8 +42,8 @@ const StyledFooter = Animated.createAnimatedComponent(styled.View`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  padding-bottom: ${isIphoneX() ? '30': '16'}px;
-  height: ${isIphoneX() ? '8%': '8%'};
+  padding-bottom: ${footerBottom}px;
+  height: ${footerHeight};
   background-color: black;
 `)
 const StyledLangListText = styled.Text`

@@ -18,11 +18,11 @@ export default class CalendarModal extends Component {
         backdropOpacity={0}
         animationIn={'fadeIn'}
         animationOut={'fadeOut'}
-        style={{ position: 'absolute', right:0, width: deviceWidth * 0.7, top: 68}}
+        style={{ position: 'absolute', right:0, width: deviceWidth * 0.8, top: 68}}
       >
       <View>
         <Triangle 
-          style={{position:'absolute', top:-10, right:7.5}}
+          style={{position:'absolute', top:-10, right:10}}
           width={20}
           height={10}
           color={'#111'}

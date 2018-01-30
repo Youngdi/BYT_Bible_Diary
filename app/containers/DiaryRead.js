@@ -57,7 +57,7 @@ const StyledDiaryText = styled.Text`
   font-weight: 600;
   font-family: ${props => props.fontFamily};
 `;
-
+I18n.fallbacks = true
 // Available languages
 I18n.translations = {
   'zh-Hant-TW': require('../translations/cht'),
@@ -65,6 +65,7 @@ I18n.translations = {
   'zh-TW': require('../translations/cht'),
   'zh-hans': require('../translations/chs'),
   'en': require('../translations/en'),
+  'en-US': require('../translations/en'),
   'ja': require('../translations/ja'),
 };
 export default class DiaryRead extends Component {
@@ -73,6 +74,7 @@ export default class DiaryRead extends Component {
     return {
       header: null,
       title: '閱讀',
+      gesturesEnabled: false,
     };
   };
   constructor(props) {
@@ -124,6 +126,11 @@ export default class DiaryRead extends Component {
         const brightness = await ScreenBrightness.getBrightness();
         const FontColor = setting.readingMode ? '#ccc' : '#000';
         const BgColor = setting.readingMode ? '#333' : '#fff';
+        if(lang == 'cht') I18n.locale = 'zh-hant';
+        if(lang == 'chs') I18n.locale = 'zh-hans';
+        if(lang == 'en') I18n.locale = 'en';
+        if(lang == 'ja') I18n.locale = 'ja';
+        if(lang == 'cht_en') I18n.locale = 'zh-hant';
         this.generateContent();
         this.setState({
           defaultLang: lang,
@@ -519,7 +526,6 @@ export default class DiaryRead extends Component {
   _handeleChangeLang = async (lang) => {
     this.closeActionButton();
     if(this.state.loadContent) return null;
-    let i18nLang;
     if(lang == 'cht') I18n.locale = 'zh-hant';
     if(lang == 'chs') I18n.locale = 'zh-hans';
     if(lang == 'en') I18n.locale = 'en';

@@ -71,7 +71,7 @@ export default class Check extends PureComponent {
           }}
         >
           <LottieView
-            style={{width:300, height:300}}
+            style={{width:deviceWidth - 100, height:deviceWidth - 100}}
             progress={this.state.progress}
             source={require('../lottie/done.json')}
           />

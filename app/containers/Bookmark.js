@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Swipeout from "react-native-swipeout";
 import * as R from 'ramda';
-
+import I18n from 'react-native-i18n';
 class FlatListItem extends React.Component {
   constructor(props) {
     super(props);
@@ -17,16 +17,16 @@ class FlatListItem extends React.Component {
     }
   }
   render() {
-    const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime} = this.props.item;
+    const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
     const swipeSettings = {
       autoClose: true,
       onClose: (secId, rowId, direction) => {
-        // if(this.state.activeRowKey != null){
-        //   this.setState({activeRowKey: null});
-        // }
+        if(this.state.activeRowKey != null){
+          this.setState({activeRowKey: null});
+        }
       },
       onOpen: (secId, rowId, direction) => {
-        //this.setState({activeRowKey: this.props.item.key});
+        this.setState({activeRowKey: this.props.item.keyId});
       },
       right: [
         {
@@ -37,7 +37,7 @@ class FlatListItem extends React.Component {
               [
                 {text: 'No', onPress: () => console.log('cancel pressed'), style:'cancel'},
                 {text: 'Yes', onPress: () => {
-                  //flatListData.splice(this.props.index, 1)
+                  this.props.deleteBookmark(this.props.item);
                 }},
               ],
               {cancelable: true}
@@ -84,6 +84,13 @@ class FlatListItem extends React.Component {
 }
 
 export default class Bookmark extends Component {
+  static navigationOptions = ({ navigation }) => {
+    const {state, setParams} = navigation;
+    return {
+      title: '書籤',
+      gesturesEnabled: true,
+    };
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -100,14 +107,36 @@ export default class Bookmark extends Component {
       bookmarkList: _bookmarkList,
     });
   }
+  refresh = async () => {
+    const bookmarkList = await global.storage.load({key:'@bookmark'});
+    const _bookmarkList = R.pipe(
+      R.values(),
+      R.sort(R.descend(R.prop('createdTime'))),
+    )(bookmarkList);
+    this.setState({
+      bookmarkList: _bookmarkList,
+    });
+  }
+  deleteBookmark = async (item) => {
+    const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = item;
+    const bookmarkList = await global.storage.load({key:'@bookmark'});
+    delete bookmarkList[keyId];
+    await global.storage.save({key:'@bookmark', data:bookmarkList});
+    this.refresh();
+  }
   render() {
     return (
+      R.isEmpty(this.state.bookmarkList) ?
+      <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:20}}>
+        <Text>{I18n.t('bookmark_isempty')}</Text>
+      </View>
+      :
       <View style={{flex:1}}>
         <FlatList
           data={this.state.bookmarkList}
           renderItem={ ({item, index}) => {
             return (
-              <FlatListItem item={item} index={index}/>
+              <FlatListItem deleteBookmark={this.deleteBookmark} refresh={this.refresh} item={item} index={index}/>
             );
           }}
         />

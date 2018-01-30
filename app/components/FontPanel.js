@@ -111,7 +111,7 @@ export default class CalendarModal extends Component {
       animationIn={'fadeIn'}
       animationOut={'fadeOut'}
       backdropOpacity={0}
-      style={{position:'absolute', bottom: isIphoneX() ? 50 : 20, width: deviceWidth * 0.75, left: deviceWidth * 0.09}}
+      style={{position:'absolute', bottom: isIphoneX() ? 50 : 20, width: deviceWidth * 0.8, left: deviceWidth * 0.045}}
     >
       <StyledFontSettingModalContainer>
         <StyledFontSettingModalRow1>
@@ -220,7 +220,7 @@ export default class CalendarModal extends Component {
         </StyledFontSettingModalRow3>
       </StyledFontSettingModalContainer>
       <Triangle 
-          style={{position:'relative', left: deviceWidth * 0.34}}
+          style={{position:'relative', left: deviceWidth * 0.39}}
           width={20}
           height={10}
           color={'black'}
