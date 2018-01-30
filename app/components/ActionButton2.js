@@ -93,7 +93,6 @@ export default class ActionButton extends Component {
       toValue: 0,
       duration: 250,
     }).start();
-
     setTimeout(() => {
       this.setState({ active: false });
     }, 250);

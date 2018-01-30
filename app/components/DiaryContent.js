@@ -13,6 +13,7 @@ import {
   Clipboard,
 } from 'react-native';
 import * as R from 'ramda';
+import moment from 'moment/min/moment-with-locales';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import Spinner from 'react-native-spinkit';
@@ -34,7 +35,7 @@ const Title = styled.Text`
   font-weight: bold;
   font-size: 20px;
   color: ${props => props.fontColor};
-  line-height: ${props => props.lineHeight};
+  line-height: 28;
   font-family: ${props => props.fontFamily};
 `;
 const BookTitle = styled.Text`
@@ -202,7 +203,6 @@ export default class DiaryContent extends PureComponent {
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
         <Title 
           fontColor={this.props.fontColor}
-          lineHeight={this.props.lineHeight}
           fontFamily={this.props.fontFamily}
         >
         {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
@@ -281,7 +281,7 @@ export default class DiaryContent extends PureComponent {
                   this[verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
                   this.setState({
-                    selectVerse: {...this.state.selectVerse, [keyId]:verseItem},
+                    selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, createdTime: moment().format('YYYY-MM-DD')}},
                     selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
                     selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + item[0].book_name + item[0].chapter_nr + verseItem.verse_nr]},
                     lastPress: new Date().getTime(),
@@ -302,7 +302,6 @@ export default class DiaryContent extends PureComponent {
                   color: this.props.fontColor, // this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? '#ccc' : '#000': 'gray'
                   backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
                 }}
-                //color={this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? 'black' : 'black': 'gray'}
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
               >
