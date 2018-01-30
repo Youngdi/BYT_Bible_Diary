@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Share,
+  AsyncStorage,
 } from 'react-native';
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
@@ -97,7 +98,7 @@ export default class DiaryRead extends Component {
         fontColor: '#000',
         lineHeight: 28,
         brightnessValue: 1,
-        readingMode: 0, // 0 -> day, 1 -> night
+        readingMode: false, // 0 -> day, 1 -> night
       },
       markedDates: {
         [moment().format('YYYY-MM-DD')]: {selected: true},
@@ -117,15 +118,27 @@ export default class DiaryRead extends Component {
   initData = async () => {
       try {
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
+        const setting = await global.storage.load({key:'@setting'});
+        const lang = await global.storage.load({key:'@lang'});
         const systemLang = await getLanguages();
+        const brightness = await ScreenBrightness.getBrightness();
+        const FontColor = setting.readingMode ? '#ccc' : '#000';
+        const BgColor = setting.readingMode ? '#333' : '#fff';
         this.generateContent();
         this.setState({
+          defaultLang: lang,
+          bg: BgColor,
+          setting:{
+            ...setting,
+            brightnessValue: brightness,
+            fontColor: FontColor,
+          },
           systemLang: systemLang,
           markedDates: {
             ...readingRecord,
             [this.state.date.dateString]: {
-              selected : true,
-              marked : readingRecord[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
+              selected: true,
+              marked: R.path([`${this.state.date.dateString}`, 'marked'], readingRecord) ? true : false,
             }
           },
         });
@@ -147,17 +160,28 @@ export default class DiaryRead extends Component {
               data: {},
               expires: null,
             });
+            await global.storage.save({
+              key: '@setting',
+              data: {},
+              expires: null,
+            });
+            await global.storage.save({
+              key: '@lang',
+              data: 'cht',
+              expires: null,
+            });
             const readingRecord = await global.storage.load({key:'@readingSchdule'});
             const systemLang = await getLanguages();
             this.generateContent();
+           
             this.setState({
               systemLang: systemLang,
               markedDates: {
                 ...readingRecord,
                 [this.state.date.dateString]: {
                   selected : true,
-                  marked : readingRecord[this.state.date.dateString].hasOwnProperty('marked') ? true : false,
-                }
+                  marked: R.path([`${this.state.date.dateString}`, 'marked'], readingRecord) ? true : false,
+                },
               },
             });
             break;
@@ -167,14 +191,8 @@ export default class DiaryRead extends Component {
       }
   }
   componentDidMount = () => {
-    ScreenBrightness.getBrightness().then(brightness => {
-      this.setState({
-        contentView: this.contentView,
-        setting:{
-          ...this.state.setting,
-          brightnessValue: brightness,
-        },
-      });
+    this.setState({
+      contentView: this.contentView,
     });
   }
   reset = () => {
@@ -191,6 +209,8 @@ export default class DiaryRead extends Component {
     this.header.closeActionButton();
     this.footer.closeActionButton();
   }
+  closeHeaderActionButton = () => this.header.closeActionButton();
+  closeFooterActionButton = () => this.footer.closeActionButton();
   checkBookmark = (isMatch) => {
     this.setState({
       bookmarkIsMatch : isMatch,
@@ -206,7 +226,8 @@ export default class DiaryRead extends Component {
     if(this.state.defaultLang == 'en') bibleVersion = realm_bible_kjv;
     if(this.state.defaultLang == 'ja') bibleVersion = realm_bible_japan;
     const schedule_results = realm_schedule.filtered(`month = ${month} AND day = ${day}`);
-    const _schedule_results = schedule_results.reduce((acc, val) => {
+    const schedule_result_reorder = schedule_results.sorted('book_id', false);
+    const _schedule_results = schedule_result_reorder.reduce((acc, val) => {
       let _acc = acc;
       let _val = val;
       if(val.chapter_from == val.chapter_to) return [...acc, val];
@@ -253,6 +274,7 @@ export default class DiaryRead extends Component {
       });
       this.closeActionButton();
     }
+    this.closeActionButton();
     this.setState({
       lastPress: new Date().getTime(),
     });
@@ -350,42 +372,62 @@ export default class DiaryRead extends Component {
       this.generateContent();
     }, 0);
   }
-  _handleSettingLineHeight = (value) => {
-    this.setState({
+  _handleSettingLineHeight = async (value) => {
+    await this.setState({
       setting:{
         ...this.state.setting,
         lineHeight: value,
       },
     });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
   }
-  _handleSettingFontFamily = (font) => {
-    this.setState({
+  _handleSettingFontFamily = async (font) => {
+    await this.setState({
       setting:{
         ...this.state.setting,
         fontFamily: font,
       },
     });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
   }
-  _handleSettingFontSize = (value) => {
+  _handleSettingFontSize = async (value) => {
     if(this.state.setting.fontSize >= 28 && value == 2) return null;
     if(this.state.setting.fontSize <= 12 && value == -2) return null;
-    this.setState({
+    await this.setState({
       setting:{
         ...this.state.setting,
         fontSize: this.state.setting.fontSize + value,
       },
     });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
   }
-  _handleSettingReadingMode = () => {
+  _handleSettingReadingMode = async () => {
     const FontColor = !this.state.setting.readingMode ? '#ccc' : '#000';
     const BgColor = !this.state.setting.readingMode ? '#333' : '#fff';
-    this.setState({
+    await this.setState({
       bg: BgColor,
       setting:{
         ...this.state.setting,
         readingMode: !this.state.setting.readingMode,
         fontColor: FontColor,
       },
+    });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
     });
   }
   _handleSliderValueChange = (value) => {
@@ -476,7 +518,7 @@ export default class DiaryRead extends Component {
       finishedReading: false,
     });
   }
-  _handeleChangeLang = (lang) => {
+  _handeleChangeLang = async (lang) => {
     this.closeActionButton();
     if(this.state.loadContent) return null;
     let i18nLang;
@@ -492,6 +534,11 @@ export default class DiaryRead extends Component {
     setTimeout(() => {
       this.generateContent();
     }, 0);
+    await global.storage.save({
+      key: '@lang',
+      data: lang,
+      expires: null,
+    });
   }
   _handleHighlight = (color) => {
     this.diaryContent.setHighlight(color);
@@ -540,6 +587,7 @@ export default class DiaryRead extends Component {
           navigation={this.props.navigation}
           toggleModal={this._toggleModalCalendar}
           navigateTo={this.navigateTo}
+          closeFooterActionButton={this.closeFooterActionButton}
         />
         <StyledMain
           ref={r => this.contentView = r}
@@ -587,6 +635,7 @@ export default class DiaryRead extends Component {
             fullScreenMode={fullScreenMode}
             generateContent={this.generateContent}
             content={this.state.content}
+            closeHeaderActionButton={this.closeHeaderActionButton}
           />
        
         <CalendarModal

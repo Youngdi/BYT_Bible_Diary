@@ -157,6 +157,7 @@ export default class Footer extends PureComponent {
           />
         </TouchableOpacity>
         <ActionButton
+          onPress={this.props.closeHeaderActionButton}
           ref={r => this.actionButton = r}
           degrees={0}
           position={'center'}

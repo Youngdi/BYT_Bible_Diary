@@ -77,7 +77,13 @@ export default class Header extends PureComponent {
         }}
       >
       <View></View>
-        <ActionButton ref={r => this.actionButton = r} radius={100} size={36} position={'left'} >
+        <ActionButton
+          onPress={this.props.closeFooterActionButton}
+          ref={r => this.actionButton = r}
+          radius={100}
+          size={36}
+          position={'left'}
+        >
           <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('More')}>
             <Ionicons
               name='ios-more'
