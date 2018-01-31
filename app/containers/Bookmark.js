@@ -129,7 +129,7 @@ export default class Bookmark extends Component {
       headerRight:<Sae
                     onChangeText={(e) => state.params.handleSearch(e)}
                     height={33}
-                    style={{width:deviceWidth - 280,marginRight:18,marginTop:-20}}
+                    style={{width:deviceWidth - 290,marginRight:18,marginTop:-23}}
                     iconClass={Ionicons}
                     iconName={'ios-search-outline'}
                     iconColor={'#333'}
@@ -167,7 +167,16 @@ export default class Bookmark extends Component {
     });
   }
   search = (event) => {
-    const matchKey = key => item => R.concat(item.book_name, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1 || item.createdTime.indexOf(key) != -1;
+    const matchKey = key => item => 
+      R.concat(item.book_name, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
+      || R.concat(item.book_name_short, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
+      || R.replace(/-/g, '', item.createdTime).indexOf(key) != -1
+      || item.createdTime.indexOf(key) != -1
+      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
+      || R.concat(item.createdTime, `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
+      || item.verse.indexOf(key) != -1
+      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
+      || R.concat(item.createdTime, `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1;
     const find = R.curry((bookmarkList, key) =>
       R.pipe(
         R.filter(matchKey(key)),

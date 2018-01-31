@@ -220,7 +220,6 @@ export default class DiaryContent extends PureComponent {
                 this.props.contentView.root.scrollTo({y: pageY + 100, animated: true});
               });
               const { realm, realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-              this.resetHighlight();
             }}
           >
             <Text style={{fontSize:12, color: '#0881A3'}}>
