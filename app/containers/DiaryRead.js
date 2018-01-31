@@ -73,7 +73,6 @@ export default class DiaryRead extends Component {
     const {state, setParams} = navigation;
     return {
       header: null,
-      title: '閱讀',
       gesturesEnabled: false,
     };
   };
