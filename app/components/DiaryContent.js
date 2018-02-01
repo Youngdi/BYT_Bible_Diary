@@ -16,7 +16,6 @@ import * as R from 'ramda';
 import moment from 'moment/min/moment-with-locales';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
-import Spinner from 'react-native-spinkit';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { bookName } from '../constants/bible';
 const {
@@ -193,12 +192,7 @@ export default class DiaryContent extends PureComponent {
     this.resetHighlight();
   }
   renderTitle = () => {
-    if(this.props.content.length == 0) return (
-      <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
-        <Text>Loading...</Text>
-        <Spinner style={{marginTop:20}} size={70} type={'Wave'}></Spinner>
-      </View>
-    );
+
     const renderDay = () =>
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
         <Title 

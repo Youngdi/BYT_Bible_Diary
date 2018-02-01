@@ -166,41 +166,8 @@ class MyNavScreen extends Component {
     return (
       <ScrollView>
         <View>
-          <View style={{display:'flex', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
-            <Text>1/16{'  '}</Text>
-            <TouchableOpacity onPress={() => { alert('hi!') }}>
-              <Text>ps9{'  '}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { alert('hi!') }}>
-              <Text>ps9{'  '}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { alert('hi!') }}>
-              <Text>ps9{'  '}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { alert('hi!') }}>
-              <Text>ps9{'  '}</Text>
-            </TouchableOpacity>
-          </View>
-          <View
-          // onLayout={(e)=> console.log(e.nativeEvent.layout)}
-          >
-            <Text>Psalms9章15-20節{'\n'}
-              <Text>1 <Text>外邦人</Text></Text>
-              <Text>2 <Text>耶穌</Text></Text>
-              {'\n'}
-            </Text>
-          </View>
-          <View
-          // onLayout={(e)=> console.log(e.nativeEvent.layout)}
-          >
-            <Text>Psalms9章15-20節{'\n'}</Text>
-            <Text>
-              <Text>1 <Text>外邦人</Text></Text>
-              <Text>2 <Text>耶穌</Text></Text>
-            </Text>
-          </View>
         </View>
-    </ScrollView>
+      </ScrollView>
     );
   }
 }
@@ -226,7 +193,7 @@ const TabNav = TabNavigator(
       screen: MyHomeScreen,
       path: '/',
       navigationOptions: {
-        title: 'Welcome',
+        title: '',
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
           <Ionicons

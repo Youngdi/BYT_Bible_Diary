@@ -9,7 +9,9 @@ import {
   Button,
   Share,
   AsyncStorage,
+  Dimensions,
 } from 'react-native';
+import Spinner from 'react-native-spinkit';
 import Drawer from 'react-native-drawer'
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
@@ -20,6 +22,7 @@ import I18n, { getLanguages } from 'react-native-i18n';
 import * as R from 'ramda';
 import Pupup from '../components/Popup';
 import bibleFlag from '../constants/bible';
+import { bookName } from '../constants/bibleBookList';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CalendarModal from '../components/Calendar';
@@ -28,7 +31,7 @@ import DiaryContent from '../components/DiaryContent';
 import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
-import ControlPanel from '../components/ControlPanel';
+import BibleListPanel from '../components/BibleListPanel';
 
 const storage = new Storage({
 	size: 1000,
@@ -37,6 +40,11 @@ const storage = new Storage({
 	enableCache: true,
   // sync : {}
 });
+const {
+  height: deviceHeight,
+  width: deviceWidth
+} = Dimensions.get('window');
+
 global.storage = storage;
 const StyledMain = styled.ScrollView`
   display:flex;
@@ -81,6 +89,8 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      oldBooks: [],
+      newBooks: [],
       popupText: '',
       defaultLang: 'cht',
       lastPress: 0,
@@ -117,13 +127,13 @@ export default class DiaryRead extends Component {
       highlightList: {},
     };
     this.initData();
+    
   }
   initData = async () => {
       try {
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
         const setting = await global.storage.load({key:'@setting'});
         const lang = await global.storage.load({key:'@lang'});
-        const systemLang = await getLanguages();
         const brightness = await ScreenBrightness.getBrightness();
         const FontColor = setting.readingMode ? '#ccc' : '#000';
         const BgColor = setting.readingMode ? '#333' : '#fff';
@@ -133,6 +143,7 @@ export default class DiaryRead extends Component {
         if(lang == 'ja') I18n.locale = 'ja';
         if(lang == 'cht_en') I18n.locale = 'zh-hant';
         this.generateContent();
+        this.generateBooks(lang);
         this.setState({
           defaultLang: lang,
           bg: BgColor,
@@ -142,7 +153,6 @@ export default class DiaryRead extends Component {
             brightnessValue: brightness,
             fontColor: FontColor,
           },
-          systemLang: systemLang,
           markedDates: {
             ...readingRecord,
             [this.state.date.dateString]: {
@@ -180,11 +190,9 @@ export default class DiaryRead extends Component {
               expires: null,
             });
             const readingRecord = await global.storage.load({key:'@readingSchdule'});
-            const systemLang = await getLanguages();
             this.generateContent();
-           
+            this.generateBooks('cht');
             this.setState({
-              systemLang: systemLang,
               markedDates: {
                 ...readingRecord,
                 [this.state.date.dateString]: {
@@ -229,6 +237,19 @@ export default class DiaryRead extends Component {
   checkBookmark = (isMatch) => {
     this.setState({
       bookmarkIsMatch : isMatch,
+    });
+  }
+  generateBooks = (lang) => {
+    // const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
+    // let bibleVersion = realm_bible_cht;
+    // if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
+    // if(this.state.defaultLang == 'chs') bibleVersion = realm_bible_chs;
+    // if(this.state.defaultLang == 'en') bibleVersion = realm_bible_kjv;
+    // if(this.state.defaultLang == 'ja') bibleVersion = realm_bible_japan;
+    const bookNameList = bookName[lang];
+    this.setState({
+      oldBooks: R.slice(0, 39 ,R.values(bookNameList)),
+      newBooks: R.slice(39, 66, R.values(bookNameList)),
     });
   }
   generateContent = async () => {
@@ -550,6 +571,7 @@ export default class DiaryRead extends Component {
       data: lang,
       expires: null,
     });
+    this.generateBooks(lang);
   }
   _handleHighlight = (color) => {
     this.diaryContent.setHighlight(color);
@@ -593,10 +615,18 @@ export default class DiaryRead extends Component {
       drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
       main: {paddingLeft: 3},
     }
+    if(R.isEmpty(this.state.content)) {
+      return (
+        <View style={{height:deviceHeight - 300, flex:1, flexDirection: 'column', justifyContent:'center', alignItems:'center'}}>
+          <Text>Loading...</Text>
+          <Spinner style={{marginTop:20}} size={70} type={'Wave'}></Spinner>
+        </View>
+      );
+    }
     return (
       <Drawer
         type="overlay"
-        content={<ControlPanel closeControlPanel={this.closeControlPanel} />}
+        content={<BibleListPanel defaultLang={this.state.defaultLang} oldBooks={this.state.oldBooks} newBooks={this.state.newBooks} closeControlPanel={this.closeControlPanel} />}
         tapToClose={true}
         openDrawerOffset={0.2} // 20% gap on the right side of drawer
         panCloseMask={0.2}
