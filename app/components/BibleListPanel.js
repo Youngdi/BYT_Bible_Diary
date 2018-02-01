@@ -105,7 +105,7 @@ export default class BibleListPanel extends Component {
       </StyledBookListTextView>
     );
     return(
-      <View>
+      <View style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
         <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
           {oldBooks}
         </View>
@@ -128,7 +128,7 @@ export default class BibleListPanel extends Component {
           </StyledBookListTextView>
         );
       })
-    )(this.state.chapterLength);
+    )(this.state.chapterLength == 1 ? 2 : this.state.chapterLength);
     return(
       <View>
         <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
@@ -149,7 +149,7 @@ export default class BibleListPanel extends Component {
           </StyledBookListTextView>
         );
       })
-    )(this.state.verseLength);
+    )(this.state.verseLength == 1 ? 2 : this.state.verseLength);
     return(
       <View>
         <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
