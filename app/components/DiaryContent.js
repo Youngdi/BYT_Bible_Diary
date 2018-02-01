@@ -332,15 +332,15 @@ export default class DiaryContent extends PureComponent {
     return(
       this.props.marked ? 
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:100, marginTop:30}}>
-      <Text style={{fontFamily:this.props.fontFamily}}>{I18n.t('finishe_today')}</Text>
+        <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('finishe_today')}</Text>
       </View> :
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:300, marginTop:50}}>
-        <Text style={{fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
+        <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
         <MaterialCommunityIcons
           style={{marginTop:20}}
           name='arrow-expand-up'
           size={30}
-          color='#000'
+          color={`${this.props.fontColor}`}
         />
       </View>
     );

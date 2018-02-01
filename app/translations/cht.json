@@ -20,5 +20,8 @@
   "popup_bookmark_successed": "已加入書籤",
   "popup_bookmark_removed": "移除書籤",
   "popup_share_successed": "分享成功",
-  "bookmark_isempty": "目前沒有書籤"
+  "bookmark_search": "搜尋",
+  "bookmark_isempty": "目前沒有書籤",
+  "bookmark_no_searchKey": "沒有bookmark_no_searchKey的書籤",
+  "bookmark_number": "目前書籤經文有bookmark_number個"
 }

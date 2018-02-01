@@ -20,5 +20,8 @@
   "popup_bookmark_successed": "お気に入りに追加されました。",
   "popup_bookmark_removed": "ブックマークを削除しました。",
   "popup_share_successed": "共有しました。",
-  "bookmark_isempty": "現在ブックマークはありません"
+  "bookmark_search": "検索",
+  "bookmark_isempty": "現在ブックマークはありません",
+  "bookmark_no_searchKey": "bookmark_no_searchKeyブックマークなし",
+  "bookmark_number": "現在bookmark_numberつのブックマークされた聖典があります"
 }

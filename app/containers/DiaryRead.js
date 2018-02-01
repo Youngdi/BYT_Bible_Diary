@@ -10,6 +10,7 @@ import {
   Share,
   AsyncStorage,
 } from 'react-native';
+import Drawer from 'react-native-drawer'
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
 import ScreenBrightness from 'react-native-screen-brightness';
@@ -27,6 +28,7 @@ import DiaryContent from '../components/DiaryContent';
 import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
+import ControlPanel from '../components/ControlPanel';
 
 const storage = new Storage({
 	size: 1000,
@@ -202,6 +204,12 @@ export default class DiaryRead extends Component {
       contentView: this.contentView,
     });
   }
+  closeControlPanel = () => {
+    this._drawer.close()
+  };
+  openControlPanel = () => {
+    this._drawer.open()
+  };
   reset = () => {
     this._closeTooltip();
     this.closeActionButton();
@@ -581,108 +589,127 @@ export default class DiaryRead extends Component {
   }
   render() {
     const { bg, fullScreenMode } = this.state;
+    const drawerStyles = {
+      drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
+      main: {paddingLeft: 3},
+    }
     return (
-      <StyledContainer bg={bg}>
-      { !this.state.finishedReading ?
-        <Header
-          ref={r => this.header = r}
-          content={this.state.content}
-          fullScreenMode={fullScreenMode}
-          navigation={this.props.navigation}
-          toggleModal={this._toggleModalCalendar}
-          navigateTo={this.navigateTo}
-          closeFooterActionButton={this.closeFooterActionButton}
-        />
-        : null
-      }
-        <StyledMain
-          ref={r => this.contentView = r}
-          bg={bg} 
-          onScroll={this._handleScroll.bind(this)}
-          // onTouchStart={this._onMomentumScrollBegin.bind(this)}
-          scrollEventThrottle={16}
-        >
-          <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
-            <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
-              <DiaryContent
-                ref={ r => this.diaryContent = r}
-                fontColor={this.state.setting.fontColor}
-                fontSize={this.state.setting.fontSize}
-                lineHeight={this.state.setting.lineHeight}
-                fontFamily={this.state.setting.fontFamily}
-                readingMode={this.state.setting.readingMode}
-                content={this.state.content}
-                defaultLang={this.state.defaultLang}
-                date={this.state.date}
-                contentView={this.state.contentView}
-                marked={this.state.markedDates[this.state.currentDate].marked}
-                highlightList={this.state.highlightList}
-                toggleModalTooltip={this._toggleModalTooltip}
-                isTooltipModalVisible={this.state.isTooltipModalVisible}
-                checkBookmark={this.checkBookmark}
-                handleDoublePress={this._handleDoublePress}
-                closeActionButton={this.closeActionButton}
-              />
-            </View>
-          </StyledMainContent>
-        </StyledMain>
-        <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-        { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> : null}
-        { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-        { !this.state.finishedReading ? <Footer
-            ref={r => this.footer = r}
-            handleNextDay={this._handleNextDay}
-            handlePreviousDay={this._handlePreviousDay}
-            handeleChangeLang={this._handeleChangeLang}
-            defaultLang={this.state.defaultLang}
-            getDiaryBiblePhrase={this._getDiaryBiblePhrase}
-            navigation={this.props.navigation}
-            toggleModal={this._toggleModalFontSetting}
-            fullScreenMode={fullScreenMode}
-            generateContent={this.generateContent}
+      <Drawer
+        type="overlay"
+        content={<ControlPanel closeControlPanel={this.closeControlPanel} />}
+        tapToClose={true}
+        openDrawerOffset={0.2} // 20% gap on the right side of drawer
+        panCloseMask={0.2}
+        closedDrawerOffset={-3}
+        styles={drawerStyles}
+        tweenHandler={(ratio) => ({
+          main: { opacity:(2-ratio)/2 }
+        })}
+        ref={(ref) => this._drawer = ref}
+      >
+        <StyledContainer bg={bg}>
+        { !this.state.finishedReading ?
+          <Header
+            ref={r => this.header = r}
             content={this.state.content}
-            closeHeaderActionButton={this.closeHeaderActionButton}
+            fullScreenMode={fullScreenMode}
+            navigation={this.props.navigation}
+            toggleModal={this._toggleModalCalendar}
+            navigateTo={this.navigateTo}
+            closeFooterActionButton={this.closeFooterActionButton}
+            openControlPanel={this.openControlPanel}
           />
           : null
         }
-       { !this.state.finishedReading ?
-        <CalendarModal
-          isCalendarModalVisible={this.state.isCalendarModalVisible}
-          currentDate={this.state.currentDate}
-          handleChangeDay={this._handleChangeDay}
-          toggleModalCalendar={this._toggleModalCalendar}
-          markedDates={this.state.markedDates}
-          handleMonthChange={this._handleMonthChange}
-        />
-        : null
-       }
-       { !this.state.finishedReading ?
-        <Tooltip
-          isTooltipModalVisible={this.state.isTooltipModalVisible}
-          toggleModalTooltip={this._toggleModalTooltip}
-          closeTooltip={this._closeTooltip}
-          handleHighlight={this._handleHighlight}
-          handleBookmark={this._handleBookmark}
-          handleCopyVerse={this._handleCopyVerse}
-          handleShare={this._handleShare}
-          bookmarkIsMatch={this.state.bookmarkIsMatch}
-        />
-        : null
-       }
-       { !this.state.finishedReading ?
-        <FontPanelModal 
-          isFontSettingModalVisible={this.state.isFontSettingModalVisible}
-          toggleModalFontSetting={this._toggleModalFontSetting}
-          handleSettingFontFamily={this._handleSettingFontFamily}
-          handleSettingFontSize={this._handleSettingFontSize}
-          handleSettingLineHeight={this._handleSettingLineHeight}
-          handleSettingReadingMode={this._handleSettingReadingMode}
-          handleSliderValueChange={this._handleSliderValueChange}
-          setting={this.state.setting}
-        />
-        : null
-       }
-      </StyledContainer>
+          <StyledMain
+            ref={r => this.contentView = r}
+            bg={bg} 
+            onScroll={this._handleScroll.bind(this)}
+            // onTouchStart={this._onMomentumScrollBegin.bind(this)}
+            scrollEventThrottle={16}
+          >
+            <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
+              <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
+                <DiaryContent
+                  ref={ r => this.diaryContent = r}
+                  fontColor={this.state.setting.fontColor}
+                  fontSize={this.state.setting.fontSize}
+                  lineHeight={this.state.setting.lineHeight}
+                  fontFamily={this.state.setting.fontFamily}
+                  readingMode={this.state.setting.readingMode}
+                  content={this.state.content}
+                  defaultLang={this.state.defaultLang}
+                  date={this.state.date}
+                  contentView={this.state.contentView}
+                  marked={this.state.markedDates[this.state.currentDate].marked}
+                  highlightList={this.state.highlightList}
+                  toggleModalTooltip={this._toggleModalTooltip}
+                  isTooltipModalVisible={this.state.isTooltipModalVisible}
+                  checkBookmark={this.checkBookmark}
+                  handleDoublePress={this._handleDoublePress}
+                  closeActionButton={this.closeActionButton}
+                />
+              </View>
+            </StyledMainContent>
+          </StyledMain>
+          <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
+          { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> : null}
+          { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
+          { !this.state.finishedReading ? <Footer
+              ref={r => this.footer = r}
+              handleNextDay={this._handleNextDay}
+              handlePreviousDay={this._handlePreviousDay}
+              handeleChangeLang={this._handeleChangeLang}
+              defaultLang={this.state.defaultLang}
+              getDiaryBiblePhrase={this._getDiaryBiblePhrase}
+              navigation={this.props.navigation}
+              toggleModal={this._toggleModalFontSetting}
+              fullScreenMode={fullScreenMode}
+              generateContent={this.generateContent}
+              content={this.state.content}
+              closeHeaderActionButton={this.closeHeaderActionButton}
+            />
+            : null
+          }
+        { !this.state.finishedReading ?
+          <CalendarModal
+            isCalendarModalVisible={this.state.isCalendarModalVisible}
+            currentDate={this.state.currentDate}
+            handleChangeDay={this._handleChangeDay}
+            toggleModalCalendar={this._toggleModalCalendar}
+            markedDates={this.state.markedDates}
+            handleMonthChange={this._handleMonthChange}
+          />
+          : null
+        }
+        { !this.state.finishedReading ?
+          <Tooltip
+            isTooltipModalVisible={this.state.isTooltipModalVisible}
+            toggleModalTooltip={this._toggleModalTooltip}
+            closeTooltip={this._closeTooltip}
+            handleHighlight={this._handleHighlight}
+            handleBookmark={this._handleBookmark}
+            handleCopyVerse={this._handleCopyVerse}
+            handleShare={this._handleShare}
+            bookmarkIsMatch={this.state.bookmarkIsMatch}
+          />
+          : null
+        }
+        { !this.state.finishedReading ?
+          <FontPanelModal 
+            isFontSettingModalVisible={this.state.isFontSettingModalVisible}
+            toggleModalFontSetting={this._toggleModalFontSetting}
+            handleSettingFontFamily={this._handleSettingFontFamily}
+            handleSettingFontSize={this._handleSettingFontSize}
+            handleSettingLineHeight={this._handleSettingLineHeight}
+            handleSettingReadingMode={this._handleSettingReadingMode}
+            handleSliderValueChange={this._handleSliderValueChange}
+            setting={this.state.setting}
+          />
+          : null
+        }
+        </StyledContainer>
+      </Drawer>
     );
   }
 }

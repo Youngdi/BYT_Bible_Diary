@@ -20,5 +20,8 @@
   "popup_bookmark_successed": "已加入书签",
   "popup_bookmark_removed": "移除书签",
   "popup_share_successed": "分享成功",
-  "bookmark_isempty": "目前没有书签"
+  "bookmark_search": "搜寻",
+  "bookmark_isempty": "目前没有书签",
+  "bookmark_no_searchKey": "没有bookmark_no_searchKey的书签",
+  "bookmark_number": "目前书签经文有bookmark_number个"
 }

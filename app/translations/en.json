@@ -20,5 +20,8 @@
   "popup_bookmark_successed": "Added to Bookmark",
   "popup_bookmark_removed": "Removed the Bookmark",
   "popup_share_successed": "Shared Successfully",
-  "bookmark_isempty": "No bookmarks have added"
+  "bookmark_search": "Search",
+  "bookmark_isempty": "No bookmarks to show",
+  "bookmark_no_searchKey": "No bookmarks match to bookmark_no_searchKey",
+  "bookmark_number": "bookmark_number bookmark is found"
 }

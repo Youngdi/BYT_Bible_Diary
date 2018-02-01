@@ -156,7 +156,8 @@ class MyHomeScreen extends Component {
   }
   render() {
     return (
-      <View style={{opacity:0}}></View>
+      <View style={{opacity:0}}>
+      </View>
     );
   }
 }
