@@ -58,15 +58,7 @@ const StyledContainer = styled.View`
   flex: 1;
   background-color: ${props => props.bg};
 `;
-const StyledDiaryText = styled.Text`
-  margin-left:15px;
-  margin-right:15px;
-  font-size: ${props => props.fontSize}px;
-  color: ${props => props.fontColor};
-  line-height: ${props => props.lineHeight};
-  font-weight: 600;
-  font-family: ${props => props.fontFamily};
-`;
+
 I18n.fallbacks = true
 // Available languages
 I18n.translations = {
@@ -127,7 +119,6 @@ export default class DiaryRead extends Component {
       highlightList: {},
     };
     this.initData();
-    
   }
   initData = async () => {
       try {
@@ -142,9 +133,10 @@ export default class DiaryRead extends Component {
         if(lang == 'en') I18n.locale = 'en';
         if(lang == 'ja') I18n.locale = 'ja';
         if(lang == 'cht_en') I18n.locale = 'zh-hant';
-        this.generateContent();
-        this.generateBooks(lang);
+        await this.generateContent();
+        await this.generateBooks(lang);
         this.setState({
+          contentView: this.contentView,
           defaultLang: lang,
           bg: BgColor,
           setting:{
@@ -190,9 +182,10 @@ export default class DiaryRead extends Component {
               expires: null,
             });
             const readingRecord = await global.storage.load({key:'@readingSchdule'});
-            this.generateContent();
-            this.generateBooks('cht');
-            this.setState({
+            await this.generateContent();
+            await this.generateBooks('cht');
+            await this.setState({
+              contentView: this.contentView,
               markedDates: {
                 ...readingRecord,
                 [this.state.date.dateString]: {
@@ -207,11 +200,13 @@ export default class DiaryRead extends Component {
         }
       }
   }
-  componentDidMount = () => {
-    this.setState({
-      contentView: this.contentView,
-    });
-  }
+  // componentDidMount = () => {
+  //   setTimeout(() => {
+  //     this.setState({
+  //       contentView: this.contentView,
+  //     });
+  //   }, 100);
+  // }
   closeControlPanel = () => {
     this._drawer.close()
   };
@@ -239,7 +234,7 @@ export default class DiaryRead extends Component {
       bookmarkIsMatch : isMatch,
     });
   }
-  generateBooks = (lang) => {
+  generateBooks = async (lang) => {
     // const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
     // let bibleVersion = realm_bible_cht;
     // if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
@@ -614,6 +609,7 @@ export default class DiaryRead extends Component {
     const drawerStyles = {
       drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
       main: {paddingLeft: 3},
+      drawerOverlay: { opacity: 0.1}
     }
     if(R.isEmpty(this.state.content)) {
       return (
@@ -633,7 +629,11 @@ export default class DiaryRead extends Component {
         closedDrawerOffset={-3}
         styles={drawerStyles}
         tweenHandler={(ratio) => ({
-          main: { opacity:(2-ratio)/2 }
+          main: { opacity:( 2 - ratio) /2 },
+          mainOverlay: {
+            opacity: ratio / 1.2,
+            backgroundColor: 'black',
+          },
         })}
         ref={(ref) => this._drawer = ref}
       >

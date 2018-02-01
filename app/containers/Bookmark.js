@@ -81,7 +81,7 @@ class FlatListItem extends React.Component {
                       });
                     }}
                   >
-                    <Ionicons name='ios-bookmark' size={25} />
+                    <Ionicons color='#777' name='ios-bookmark' size={30} />
                   </TouchableOpacity>
                 :
                 <TouchableOpacity
@@ -93,7 +93,7 @@ class FlatListItem extends React.Component {
                     });
                   }}
                 >
-                  <Ionicons name='ios-bookmark-outline' size={25} />
+                  <Ionicons color='#ccc' name='ios-bookmark-outline' size={30} />
                 </TouchableOpacity>
               }
             </View>

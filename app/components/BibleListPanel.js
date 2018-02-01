@@ -26,11 +26,11 @@ const StyledBookListText = styled.Text`
 `;
 const StyledDivider = styled.View`
   width: 100%;
-  height: 30;
+  height: 15px;
   background-color: #262626;
 `;
 //this.props.closeControlPanel()
-export default class BibleListPanel extends Component {
+export default class BibleListPanel extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
@@ -106,7 +106,8 @@ export default class BibleListPanel extends Component {
     );
     return(
       <View style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-        <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
+        <StyledDivider />
+        <View style={{padding:20, paddingTop:0, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
           {oldBooks}
         </View>
         <StyledDivider />
@@ -161,7 +162,7 @@ export default class BibleListPanel extends Component {
   render() {
     return (
       <ScrollView style={{flex:1, backgroundColor:'black'}}>
-        <View style={{flex:1, padding:20, paddingBottom:0, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <View style={{flex:1, padding:20, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <View><Text>{'      '}</Text></View>
           <Text style={{fontSize:24, fontWeight:'900',color:'#FCE6B0'}}>{this.state.title}</Text>
           <View>

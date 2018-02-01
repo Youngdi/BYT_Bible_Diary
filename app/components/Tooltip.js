@@ -68,7 +68,7 @@ export default class Tooltip extends Component {
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => this.props.handleBookmark()}
               >
-              {this.props.bookmarkIsMatch ? <Ionicons name='ios-bookmark' size={35} />: <Ionicons name='ios-bookmark-outline' size={35} />}
+              {this.props.bookmarkIsMatch ? <Ionicons name='ios-bookmark' color="#777" size={35} />: <Ionicons name='ios-bookmark-outline' size={35} />}
               </TouchableOpacity>
               <TouchableOpacity
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
