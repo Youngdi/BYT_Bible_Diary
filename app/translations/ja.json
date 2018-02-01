@@ -21,7 +21,7 @@
   "popup_bookmark_removed": "ブックマークを削除しました。",
   "popup_share_successed": "共有しました。",
   "bookmark_search": "検索",
-  "bookmark_isempty": "現在ブックマークはありません",
-  "bookmark_no_searchKey": "bookmark_no_searchKeyブックマークなし",
-  "bookmark_number": "現在bookmark_numberつのブックマークされた聖典があります"
+  "bookmark_isempty": "まだブックマークはありません。",
+  "bookmark_no_searchKey": "bookmark_no_searchKeyのブックマークはありません",
+  "bookmark_number": "ブックマークにお経はbookmark_number本あります。"
 }

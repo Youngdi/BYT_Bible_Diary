@@ -100,7 +100,7 @@ export default class BibleListPanel extends Component {
       </StyledBookListTextView>
     );
     const newBooks = this.props.newBooks.map((item, index) => 
-    <StyledBookListTextView onPress={() => this.findChapterLength(index + 1)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+    <StyledBookListTextView onPress={() => this.findChapterLength((index + 1) + 39)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
       <StyledBookListText>{item}</StyledBookListText>
       </StyledBookListTextView>
     );
