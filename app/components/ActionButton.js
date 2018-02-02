@@ -184,7 +184,7 @@ import React, {
               style={this.getActionContainerStyle()}
             >
               <ActionButtonItem
-                offsetY={(-50 * index) - 60}
+                offsetY={(-50 * index) - 70}
                 offsetX={0}
                 key={index}
                 position={this.props.position}
@@ -290,15 +290,11 @@ import React, {
     btnOutRange: 'rgba(0,0,0,1)',
     btnOutRangeTxt: 'rgba(255,255,255,1)',
   };
-  let bottom = 1;
-  if(deviceHeight > 700) {
-    bottom = isIphoneX() ? 8 : 2.5;
-  }
-  if(deviceHeight < 570) bottom = -3;
+
   const styles = StyleSheet.create({
     overlay: {
       position: 'absolute',
-      bottom: bottom,
+      bottom: isIphoneX() ? 8 : -2.5,
       left: deviceWidth / 4.7,
       right: 0,
       top: 0,

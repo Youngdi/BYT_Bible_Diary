@@ -133,11 +133,13 @@ export default class DiaryRead extends Component {
         if(lang == 'en') I18n.locale = 'en';
         if(lang == 'ja') I18n.locale = 'ja';
         if(lang == 'cht_en') I18n.locale = 'zh-hant';
+        await this.setState({
+          defaultLang: lang,
+        });
         await this.generateContent();
         await this.generateBooks(lang);
         this.setState({
           contentView: this.contentView,
-          defaultLang: lang,
           bg: BgColor,
           setting:{
             ...this.state.setting,
@@ -200,13 +202,6 @@ export default class DiaryRead extends Component {
         }
       }
   }
-  // componentDidMount = () => {
-  //   setTimeout(() => {
-  //     this.setState({
-  //       contentView: this.contentView,
-  //     });
-  //   }, 100);
-  // }
   closeControlPanel = () => {
     this._drawer.close()
   };
@@ -268,7 +263,7 @@ export default class DiaryRead extends Component {
       }
       return _acc;
     }, []);
-    const content = _schedule_results.map(item => {
+    const content = await _schedule_results.map(item => {
       const results = bibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
       return results.sorted('verse_nr', false);
     });
@@ -470,9 +465,9 @@ export default class DiaryRead extends Component {
       }
     });
   }
-  _handleChangeDay = (day) => {
+  _handleChangeDay = async (day) => {
     this.closeActionButton();
-    this.setState({
+    await this.setState({
       isCalendarModalVisible: !this.state.isCalendarModalVisible,
       date: day,
       markedDates: {
@@ -485,9 +480,9 @@ export default class DiaryRead extends Component {
     });
     this.contentView.root.scrollTo({y: 10, animated: true});
     this.diaryContent.resetHighlight();
-    setTimeout(() => {
+    setTimeout( () => {
       this.generateContent();
-    }, 800);
+    }, 10);
   }
   _handleMonthChange = (month) => {
     if(month.year > 2018) {
@@ -510,18 +505,16 @@ export default class DiaryRead extends Component {
     const paddingToBottom = 20;
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
     if(this.state.isTooltipModalVisible) return;
-    if(direction == 'down' && contentOffset.y > 100) {
-      this.setState({
-        fullScreenMode: true,
-      });
-    } else {
-      this.setState({
-        fullScreenMode: false,
-      });
-    }
-    this.setState({
-      scrollPosition: contentOffset.y,
-    });
+    if(contentOffset.y < 200) this.setState({fullScreenMode: false});
+    // if(direction == 'down' && contentOffset.y > 100) {
+    //   this.setState({
+    //     fullScreenMode: true,
+    //   });
+    // } else {
+    //   this.setState({
+    //     fullScreenMode: false,
+    //   });
+    // }
     if(layoutMeasurement.height + contentOffset.y >= contentSize.height + 120) {
       if(this.state.hasRead) return;
       if(this.state.markedDates[this.state.currentDate].marked) return;
@@ -557,7 +550,11 @@ export default class DiaryRead extends Component {
     this.setState({
       defaultLang: lang,
     });
-    this.diaryContent.resetHighlight();
+    if(lang == 'cht_en'){
+      this.setState({content: []});
+    } else {
+      this.diaryContent.resetHighlight();
+    }
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -622,7 +619,15 @@ export default class DiaryRead extends Component {
     return (
       <Drawer
         type="overlay"
-        content={<BibleListPanel defaultLang={this.state.defaultLang} oldBooks={this.state.oldBooks} newBooks={this.state.newBooks} closeControlPanel={this.closeControlPanel} />}
+        content={
+          <BibleListPanel
+            navigation={this.props.navigation}
+            defaultLang={this.state.defaultLang}
+            oldBooks={this.state.oldBooks}
+            newBooks={this.state.newBooks}
+            closeControlPanel={this.closeControlPanel}
+          />
+        }
         tapToClose={true}
         openDrawerOffset={0.2} // 20% gap on the right side of drawer
         panCloseMask={0.2}
@@ -685,7 +690,8 @@ export default class DiaryRead extends Component {
           <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
           { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> : null}
           { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-          { !this.state.finishedReading ? <Footer
+          { !this.state.finishedReading ? 
+            <Footer
               ref={r => this.footer = r}
               handleNextDay={this._handleNextDay}
               handlePreviousDay={this._handlePreviousDay}
@@ -695,7 +701,6 @@ export default class DiaryRead extends Component {
               navigation={this.props.navigation}
               toggleModal={this._toggleModalFontSetting}
               fullScreenMode={fullScreenMode}
-              generateContent={this.generateContent}
               content={this.state.content}
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
@@ -703,6 +708,7 @@ export default class DiaryRead extends Component {
           }
         { !this.state.finishedReading ?
           <CalendarModal
+            defaultLang={this.state.defaultLang}
             isCalendarModalVisible={this.state.isCalendarModalVisible}
             currentDate={this.state.currentDate}
             handleChangeDay={this._handleChangeDay}
@@ -726,7 +732,7 @@ export default class DiaryRead extends Component {
           : null
         }
         { !this.state.finishedReading ?
-          <FontPanelModal 
+          <FontPanelModal
             isFontSettingModalVisible={this.state.isFontSettingModalVisible}
             toggleModalFontSetting={this._toggleModalFontSetting}
             handleSettingFontFamily={this._handleSettingFontFamily}

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { View, Dimensions, TouchableOpacity, Text } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from "styled-components/native";
@@ -51,7 +51,7 @@ const CloseRow = styled.View`
   justify-content: center;
   align-items: center;
 `;
-export default class Tooltip extends Component {
+export default class Tooltip extends PureComponent {
   render() {
     return (
       <ModalWrapper

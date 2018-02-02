@@ -29,7 +29,25 @@ const StyledArrowUp = Animated.createAnimatedComponent(styled.View`
   margin-bottom: ${isIphoneX() ? 90 : 60};
   height: 6%;
 `)
-
+const shadowStyle = {
+  shadowOpacity: 0.35,
+  shadowOffset: {
+    width: 0,
+    height: 5
+  },
+  shadowColor: "#000",
+  shadowRadius: 3,
+  elevation: 5,
+  backgroundColor:'#1E1E1E',
+  width: 36,
+  height: 36,
+  borderColor:'#1E1E1E',
+  borderWidth:4,
+  borderStyle:'solid',
+  borderRadius: 18,
+  marginRight:20,
+  marginTop:15,
+};
 export default class ArrowUp extends PureComponent {
   constructor(props) {
     super(props);
@@ -38,8 +56,7 @@ export default class ArrowUp extends PureComponent {
       transformY: new Animated.Value(deviceHeight),
     };
   }
-  render() {
-    if(this.props.content.length == 0) return (<View></View>);
+  componentDidMount() {
     this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 0 : 1);
     this.state.transformY.setValue(this.props.fullScreenMode ? -10 : 0);
     Animated.parallel([
@@ -54,6 +71,25 @@ export default class ArrowUp extends PureComponent {
         easing: Easing.linear
       })
     ]).start();
+  }
+  componentDidUpdate() {
+    this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 0 : 1);
+    this.state.transformY.setValue(this.props.fullScreenMode ? -10 : 0);
+    Animated.parallel([
+      Animated.timing(this.state.fadeInOpacity, {
+        toValue: this.props.fullScreenMode ? 1 : 0,
+        duration: 500,
+        easing: Easing.linear
+      }),
+      Animated.timing(this.state.transformY, {
+        toValue: this.props.fullScreenMode ? 0 : -10,
+        duration: 500,
+        easing: Easing.linear
+      })
+    ]).start();
+  }
+  render() {
+    if(this.props.content.length == 0) return (<View></View>);
     return (
       <StyledArrowUp style={{
           opacity: this.state.fadeInOpacity,
@@ -64,13 +100,13 @@ export default class ArrowUp extends PureComponent {
           ],
         }}
       >
-        <View style={{backgroundColor:'#111', width: 36, height: 36, borderColor:'#111', borderWidth:4, borderStyle:'solid', borderRadius: 18, marginRight:20, marginTop:15}}>
+        <View style={shadowStyle}>
         <TouchableOpacity onPress={ () => this.props.handeleScrollTop()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
           <Ionicons
             name='md-arrow-round-up'
             size={30}
             color="#bbb"
-            style={{zIndex:999,width: 26, height: 26, marginLeft:4, backgroundColor:'transparent'}}
+            style={{zIndex:10,width: 26, height: 26, marginLeft:4, backgroundColor:'transparent'}}
           />
         </TouchableOpacity>
         </View>

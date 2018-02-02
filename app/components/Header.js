@@ -11,10 +11,12 @@ import {
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styled from "styled-components/native";
 import ActionButton from 'react-native-action-button';
 var {
@@ -45,10 +47,10 @@ const shadowStyle = {
   shadowColor: "#000",
   shadowRadius: 3,
   elevation: 5,
-  backgroundColor:'#111',
+  backgroundColor:'#1E1E1E',
   width: 36,
   height: 36,
-  borderColor:'#111',
+  borderColor:'#1E1E1E',
   borderWidth:4,
   borderStyle:'solid',
   borderRadius: 18,
@@ -64,14 +66,7 @@ export default class Header extends PureComponent {
       active: false,
     };
   }
-  closeActionButton = () => {
-    this.actionButton.reset();
-  }
-  navigateTo =(toWhere) => {
-    this.props.navigateTo(toWhere);
-  }
-  render() {
-    if(this.props.content.length == 0) return (<View></View>);
+  componentDidMount() {
     this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
     this.state.transformY.setValue(this.props.fullScreenMode ? 0 : -10);
     Animated.parallel([
@@ -86,6 +81,31 @@ export default class Header extends PureComponent {
         easing: Easing.linear
       })
     ]).start();
+  }
+  componentDidUpdate() {
+    this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
+    this.state.transformY.setValue(this.props.fullScreenMode ? 0 : -10);
+    Animated.parallel([
+      Animated.timing(this.state.fadeInOpacity, {
+        toValue: this.props.fullScreenMode ? 0 : 1,
+        duration: 500,
+        easing: Easing.linear
+      }),
+      Animated.timing(this.state.transformY, {
+        toValue: this.props.fullScreenMode ? -10 : 0,
+        duration: 500,
+        easing: Easing.linear
+      })
+    ]).start();
+  }
+  closeActionButton = () => {
+    this.actionButton.reset();
+  }
+  navigateTo =(toWhere) => {
+    this.props.navigateTo(toWhere);
+  }
+  render() {
+    if(this.props.content.length == 0) return (<View></View>);
     return (
       <StyledHeader style={{
           opacity: this.state.fadeInOpacity,
@@ -98,7 +118,8 @@ export default class Header extends PureComponent {
       >
       <View></View>
         <ActionButton
-          renderIcon={() => <SimpleLineIcons name='drawer' size={20} color='#ddd' />}
+          buttonColor="rgba(30,30,30,1)"
+          renderIcon={() => <SimpleLineIcons name='drawer' size={20} color='#bbb' />}
           verticalOrientation={'down'}
           onPress={this.props.closeFooterActionButton}
           ref={r => this.actionButton = r}
@@ -110,36 +131,36 @@ export default class Header extends PureComponent {
           offsetX={20}
           degrees={0}
         >
-          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('More')}>
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('More')}>
             <Ionicons
-              name='ios-more'
+              name='ios-more-outline'
               size={30}
-              color='#ddd'
+              color='#bbb'
               style={{width: 26, height: 26, marginTop:-4, marginLeft:7, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('Bookmark')}>
-            <Foundation
-              name='book-bookmark'
-              size={28}
-              color='#ddd'
-              style={{width: 26, height: 26, marginTop:-4, marginLeft:9, backgroundColor:'transparent'}}
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Note')}>
+            <Ionicons
+              name='ios-create-outline'
+              size={24}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:0, marginLeft:12, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' onPress={() => this.props.navigateTo('Note')}>
-            <SimpleLineIcons
-              name='note'
-              size={21}
-              color='#ddd'
-              style={{width: 26, height: 26, marginTop:0, marginLeft:8, backgroundColor:'transparent'}}
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Bookmark')}>
+            <Ionicons
+              name='ios-bookmarks-outline'
+              size={24}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:2, marginLeft:8, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#000' onPress={() => this.props.openControlPanel()}>
-            <MaterialCommunityIcons
-              name='book-open-page-variant'
-              size={21}
-              color='#ddd'
-              style={{width: 26, height: 26, marginTop:0, marginLeft:8, backgroundColor:'transparent'}}
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.openControlPanel()}>
+            <Ionicons
+              name='ios-book-outline'
+              size={24}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:2, marginLeft:9, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
         </ActionButton>

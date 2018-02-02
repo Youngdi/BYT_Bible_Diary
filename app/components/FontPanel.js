@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import Modal from 'react-native-modal';
 import Triangle from 'react-native-triangle';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { isIphoneX } from 'react-native-iphone-x-helper';
@@ -19,7 +20,7 @@ const {
 } = Dimensions.get('window');
 
 const StyledFontSettingModalContainer = styled.View`
-  background-color: black;
+  background-color: #1E1E1E;
   display: flex;
   flex-direction: column;
 `;
@@ -79,8 +80,8 @@ const StyledSliderContainer = styled.View`
   flex: 1;
   align-items: stretch;
   justify-content: center;
-  margin-left: 15;
-  margin-right: 15;
+  margin-left: 15px;
+  margin-right: 15px;
 `;
 const styles = StyleSheet.create({
   thumb: {
@@ -185,15 +186,15 @@ export default class CalendarModal extends Component {
         <StyledFontSettingModalRow3>
           <TouchableOpacity onPress={() => this.props.handleSettingReadingMode()} style={{backgroundColor:'white', width:35, height:35, borderColor: this.props.setting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
             <Ionicons
-              name='ios-moon-outline'
+              name='ios-moon'
               size={30}
               color={this.props.setting.readingMode == 1 ? '#F7B633': '#000'}
               style={{marginLeft:6, marginTop:1, backgroundColor:'transparent'}}
             />
           </TouchableOpacity>
-          <View style={{marginLeft:30}}>
+          <View style={{marginLeft:40}}>
             <Ionicons
-              name='ios-sunny-outline'
+              name='ios-sunny'
               size={20}
               color='#bbb'
             />
@@ -212,7 +213,7 @@ export default class CalendarModal extends Component {
           </StyledSliderContainer>
           <View style={{marginRight:7}}>
             <Ionicons
-              name='ios-sunny-outline'
+              name='ios-sunny'
               size={30}
               color='#ddd'
             />
@@ -223,7 +224,7 @@ export default class CalendarModal extends Component {
           style={{position:'relative', left: deviceWidth * 0.39}}
           width={20}
           height={10}
-          color={'black'}
+          color={'#1E1E1E'}
           direction={'down'}
       />
     </Modal>

@@ -85,22 +85,33 @@ export default class BibleListPanel extends PureComponent {
     if(this.props.defaultLang == 'chs') bibleVersion = realm_bible_chs;
     if(this.props.defaultLang == 'en') bibleVersion = realm_bible_kjv;
     if(this.props.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr} AND verse_nr = ${verse_nr}`);
+    // const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr} AND verse_nr = ${verse_nr}`);
+    // this.setState({
+    //   mode: 'book',
+    //   title: 'Books',
+    // });
+    const raw_results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr}`);
+    const results = raw_results.sorted('verse_nr', false);
     this.setState({
       mode: 'book',
       title: 'Books',
     });
     this.props.closeControlPanel();
-    alert(results[0].verse);
+    this.props.navigation.navigate('Bible', {
+      content: [results],
+      verse_nr: verse_nr,
+      title: `${results[0].book_name}${' '}${results[0].chapter_nr}`,
+      lang: this.props.defaultLang,
+    })
   }
   renderBooks = () => {
     const oldBooks = this.props.oldBooks.map((item, index) => 
-    <StyledBookListTextView onPress={() => this.findChapterLength(index + 1)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+    <StyledBookListTextView key={`${item}-${index}`} onPress={() => this.findChapterLength(index + 1)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
       <StyledBookListText>{item}</StyledBookListText>
       </StyledBookListTextView>
     );
     const newBooks = this.props.newBooks.map((item, index) => 
-    <StyledBookListTextView onPress={() => this.findChapterLength((index + 1) + 39)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+    <StyledBookListTextView key={`${item}-${index}`} onPress={() => this.findChapterLength((index + 1) + 39)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
       <StyledBookListText>{item}</StyledBookListText>
       </StyledBookListTextView>
     );
@@ -123,6 +134,7 @@ export default class BibleListPanel extends PureComponent {
       R.map((item) => {
         return (
           <StyledBookListTextView
+            key={`chapter-${item}`}
             onPress={() => this.findVerseLength(item)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
             <StyledBookListText>{item}</StyledBookListText>
@@ -144,6 +156,7 @@ export default class BibleListPanel extends PureComponent {
       R.map((item) => {
         return (
           <StyledBookListTextView
+            key={`verse-${item}`}
             onPress={() => this.goBible(item)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
             <StyledBookListText>{item}</StyledBookListText>

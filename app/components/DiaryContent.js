@@ -192,7 +192,6 @@ export default class DiaryContent extends PureComponent {
     this.resetHighlight();
   }
   renderTitle = () => {
-
     const renderDay = () =>
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
         <Title 
@@ -206,6 +205,7 @@ export default class DiaryContent extends PureComponent {
       this.props.content.map( (item, i) => {
         return(
           <TouchableOpacity
+            key={`${item[0].version}-${item[0].book_name_short}${item[0].chapter_nr}`}
             style={{height:40, display:'flex', justifyContent:'flex-end', borderBottomWidth: 1, borderBottomColor:'#0881A3', paddingBottom:1}}
             hitSlop={{top: 40, bottom: 40, left: 10, right: 10}}
             onPress={(e) => {
@@ -247,7 +247,7 @@ export default class DiaryContent extends PureComponent {
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
                 const delta = new Date().getTime() - this.state.lastPress;
-                if(delta < 300) {
+                if(delta < 600) {
                   if(this.props.isTooltipModalVisible){
                     setTimeout(() => {
                       this.props.handleDoublePress();
@@ -297,7 +297,7 @@ export default class DiaryContent extends PureComponent {
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + item[0].book_name +item[0].chapter_nr + verseItem.verse_nr] = r}
               >
-                {this.props.defaultLang == 'cht_en' ? '\n': ''}{`${verseItem.verse_nr}`}{'  '}
+                {this.props.defaultLang == 'cht_en' ? '\n': ''}{this.props.defaultLang == 'en' ? '  ': ''}{`${verseItem.verse_nr}`}{'  '}
               </PharseNumber>
               {`${verseItem.verse}`}{this.props.defaultLang == 'cht_en' ? '\n' : ''}
             </Text>

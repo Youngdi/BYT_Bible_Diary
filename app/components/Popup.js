@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import I18n, { getLanguages } from 'react-native-i18n';
 import LottieView from 'lottie-react-native';
 import PopupDialog, { SlideAnimation, FadeAnimation } from 'react-native-popup-dialog';
 
-export default class Popup extends Component {
+export default class Popup extends PureComponent {
     constructor(props) {
       super(props);
     }
@@ -18,7 +18,7 @@ export default class Popup extends Component {
     render() {
       const fadeAnimation = new FadeAnimation({
         animationDuration: 800,
-      })
+      });
       return (
         <PopupDialog
           width={0.6}
