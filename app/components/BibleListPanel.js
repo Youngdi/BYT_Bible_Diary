@@ -83,7 +83,8 @@ export default class BibleListPanel extends PureComponent {
       title: `${results[0].book_name} ${chapter_nr}`,
     });
   }
-  goBible = (verse_nr) => {
+  goBible = async (verse_nr) => {
+    const setting = await global.storage.load({key: '@setting',});
     const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
     let bibleVersion = realm_bible_cht;
     if(this.props.defaultLang == 'cht') bibleVersion = realm_bible_cht;
@@ -104,6 +105,8 @@ export default class BibleListPanel extends PureComponent {
       title: `${results[0].book_name}${' '}${results[0].chapter_nr}`,
       lang: this.props.defaultLang,
       version: results[0].version,
+      setting: setting,
+      bg: setting.readingMode ? '#333' : '#fff',
     });
   }
   renderBooks = () => {

@@ -27,7 +27,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Tooltip from '../components/Tooltip';
 import Pupup from '../components/Popup';
 import bibleFlag from '../constants/bible';
-
+import FontPanelModal from '../components/FontPanel';
 const {
   height: deviceHeight,
   width: deviceWidth
@@ -47,6 +47,7 @@ const StyledHeaderTitle = styled.Text`
   font-size:20;
   font-family: 'Times New Roman';
   font-weight: 900;
+  color: ${props => props.color};
 `;
 const Title = styled.Text`
   height: 23px;
@@ -88,20 +89,22 @@ export default class Bible extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
     return {
-      headerTintColor: '#333',
-      title: <StyledHeaderTitle>{state.params.title}</StyledHeaderTitle>,
+      headerStyle: {
+        backgroundColor: state.params.bg,
+      },
+      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{state.params.title}</StyledHeaderTitle>,
       gesturesEnabled: true,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color='#333' />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
                   </TouchableOpacity>
       ,headerRight: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
-                    onPress={() => navigation.navigate('BibleSearch', {lang: state.params.lang})}
+                    onPress={() => navigation.navigate('BibleSearch', {lang: state.params.lang, setting:state.params.setting, bg:state.params.bg})}
                   >
-                    <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color='#333' />
+                    <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color={state.params.setting.fontColor} />
                   </TouchableOpacity>
     };
   };
@@ -113,6 +116,7 @@ export default class Bible extends PureComponent {
       fullScreenMode: false,
       popupText: '',
       isTooltipModalVisible: false,
+      isFontSettingModalVisible: false,
       bookmarkIsMatch: false,
       lang: 'cht',
       bg: '#fff',
@@ -162,6 +166,10 @@ export default class Bible extends PureComponent {
       version: this.props.navigation.state.params.version,
     });
     await this.generateContent();
+    this.props.navigation.setParams({
+      setting: this.state.setting,
+      bg: BgColor,
+    });
     setTimeout(() => {
       const wordNumbers = R.pipe(
         R.map(R.prop('verse')),
@@ -492,7 +500,7 @@ export default class Bible extends PureComponent {
     }, 500);
     this.props.navigation.setParams({ title: `${content[0].book_name}${' '}${content[0].chapter_nr}`});
   }
-  _handleNextDay = async () => {
+  _handleNext = async () => {
     this.resetHighlight();
     if(this.state.chapterLength == this.state.chapter_nr){
       if(this.state.book_nr == 66) {
@@ -513,7 +521,7 @@ export default class Bible extends PureComponent {
     }
     await this.generateContent();
   }
-  _handlePreviousDay = async () => {
+  _handlePrevious = async () => {
     this.resetHighlight();
     if(this.state.chapter_nr == 1){
       if(this.state.book_nr == 1) {
@@ -554,23 +562,22 @@ export default class Bible extends PureComponent {
     if(lang == 'en') I18n.locale = 'en';
     if(lang == 'ja') I18n.locale = 'ja';
     if(lang == 'cht_en') I18n.locale = 'zh-hant';
-    this.setState({
-      defaultLang: lang,
+    await this.setState({
+      lang: lang,
     });
-    if(lang == 'cht_en'){
-      this.setState({content: []});
+    if(lang == 'cht_en') {
+      this.setState({content: [[]]});
     } else {
-      this.diaryContent.resetHighlight();
+      this.resetHighlight();
     }
+    // await global.storage.save({
+    //   key: '@lang',
+    //   data: lang,
+    //   expires: null,
+    // });
     setTimeout(() => {
       this.generateContent();
     }, 0);
-    await global.storage.save({
-      key: '@lang',
-      data: lang,
-      expires: null,
-    });
-    this.generateBooks(lang);
   }
   _handleScroll = async (e) => {
     // this.closeActionButton();
@@ -579,6 +586,85 @@ export default class Bible extends PureComponent {
     const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
     if(this.state.isTooltipModalVisible) return;
     if(contentOffset.y < 200) this.setState({fullScreenMode: false});
+  }
+  _toggleModalFontSetting = () => {
+    // this.closeActionButton();
+    this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
+  }
+  _handleSettingFontFamily = async (font) => {
+    await this.setState({
+      setting:{
+        ...this.state.setting,
+        fontFamily: font,
+      },
+    });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
+  }
+  _handleSettingFontSize = async (value) => {
+    if(this.state.setting.fontSize >= 28 && value == 2) return null;
+    if(this.state.setting.fontSize <= 12 && value == -2) return null;
+    await this.setState({
+      setting:{
+        ...this.state.setting,
+        fontSize: this.state.setting.fontSize + value,
+      },
+    });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
+  }
+  _handleSettingLineHeight = async (value) => {
+    await this.setState({
+      setting:{
+        ...this.state.setting,
+        lineHeight: value,
+      },
+    });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
+  }
+  _handleSettingReadingMode = async () => {
+    const FontColor = !this.state.setting.readingMode ? '#ccc' : '#000';
+    const BgColor = !this.state.setting.readingMode ? '#333' : '#fff';
+    await this.setState({
+      bg: BgColor,
+      setting:{
+        ...this.state.setting,
+        readingMode: !this.state.setting.readingMode,
+        fontColor: FontColor,
+      },
+    });
+    await global.storage.save({
+      key: '@setting',
+      data: this.state.setting,
+      expires: null,
+    });
+    await this.props.navigation.setParams({
+      setting:{
+        ...this.state.setting,
+        readingMode: !this.state.setting.readingMode,
+        fontColor: FontColor,
+      },
+      bg: BgColor,
+    });
+  }
+  _handleSliderValueChange = (value) => {
+    ScreenBrightness.setBrightness(value);
+    this.setState({
+      setting:{
+        ...this.state.setting,
+        brightnessValue: value,
+      }
+    });
   }
   render() {
     return (
@@ -602,8 +688,8 @@ export default class Bible extends PureComponent {
           </StyledMainContent>
         </StyledMain>
         <Footer
-          handleNextDay={this._handleNextDay}
-          handlePreviousDay={this._handlePreviousDay}
+          handleNextDay={this._handleNext}
+          handlePreviousDay={this._handlePrevious}
           handeleChangeLang={this._handeleChangeLang}
           defaultLang={this.state.lang}
           getDiaryBiblePhrase={this._getDiaryBiblePhrase}
@@ -622,6 +708,16 @@ export default class Bible extends PureComponent {
           handleCopyVerse={this._handleCopyVerse}
           handleShare={this._handleShare}
           bookmarkIsMatch={this.state.bookmarkIsMatch}
+        />
+        <FontPanelModal
+          isFontSettingModalVisible={this.state.isFontSettingModalVisible}
+          toggleModalFontSetting={this._toggleModalFontSetting}
+          handleSettingFontFamily={this._handleSettingFontFamily}
+          handleSettingFontSize={this._handleSettingFontSize}
+          handleSettingLineHeight={this._handleSettingLineHeight}
+          handleSettingReadingMode={this._handleSettingReadingMode}
+          handleSliderValueChange={this._handleSliderValueChange}
+          setting={this.state.setting}
         />
       </StyledContainer>
     );

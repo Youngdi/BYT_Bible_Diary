@@ -27,6 +27,7 @@ const StyledHeaderTitle = styled.Text`
   font-size:20;
   font-family: 'Times New Roman';
   font-weight: 900;
+  color: ${props => props.color};
 `;
 class FlatListItem extends React.Component {
   constructor(props) {
@@ -37,6 +38,11 @@ class FlatListItem extends React.Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
+    const searchKeyLength = R.length(this.props.searchKey);
+    const findFirst = R.converge(R.slice(0), [R.indexOf(this.props.searchKey), R.identity]);
+    const findLast = R.converge(R.slice, [R.pipe(R.indexOf(this.props.searchKey), R.add(searchKeyLength)), R.length, R.identity]);
+    const firstPart = findFirst(verse);
+    const lastPart = findLast(verse);
     return (
         <View
           style={{
@@ -68,43 +74,15 @@ class FlatListItem extends React.Component {
           >
             <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:10}}>
               <Text style={{ fontSize: 18, fontWeight:'800' }}>
-                {`${book_name}${chapter_nr}:${verse_nr}`}
+                {`${book_name}${' '}${chapter_nr}:${verse_nr}`}
               </Text>
-              {
-                this.state.bookmarkEnable ?
-                  <TouchableOpacity 
-                    hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
-                    onPress={() => {
-                      this.props.deleteBookmark(keyId);
-                      this.setState({
-                        bookmarkEnable: !this.state.bookmarkEnable,
-                      });
-                    }}
-                  >
-                    <Ionicons color='#777' name='ios-bookmark' size={30} />
-                  </TouchableOpacity>
-                :
-                <TouchableOpacity
-                  hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
-                  onPress={() => {
-                    this.props.addBookmark(this.props.item);
-                    this.setState({
-                      bookmarkEnable: !this.state.bookmarkEnable,
-                    });
-                  }}
-                >
-                  <Ionicons color='#ccc' name='ios-bookmark-outline' size={30} />
-                </TouchableOpacity>
-              }
             </View>
             <View>
-              <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
+              <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25, marginBottom:10 }}>
                 {`${verse}`}
-              </Text>
-            </View>
-            <View style={{display:'flex', justifyContent:'flex-end', flexDirection:'row'}}>
-              <Text style={{ fontSize: 14, fontWeight:'200'}}>
-                {`${createdTime}`}
+                {/* <Text>{`${firstPart}`}</Text>
+                <Text style={{color:'red'}}>{`${this.props.searchKey}`}</Text>
+                <Text>{`${lastPart}`}</Text> */}
               </Text>
             </View>
           </View>
@@ -117,14 +95,16 @@ export default class BibleSearch extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
-      headerTintColor: '#333',
-      title: <StyledHeaderTitle>Bookmarks</StyledHeaderTitle>,
+      headerStyle: {
+        backgroundColor: state.params.bg,
+      },
       gesturesEnabled: true,
+      title: <StyledHeaderTitle color={state.params.setting.fontColor}>搜尋</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color='#333' />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
                   </TouchableOpacity>
     };
   };
@@ -136,6 +116,8 @@ export default class BibleSearch extends Component {
       bookmarkListfilter: [],
       refreshing: false,
       lang:'en',
+      searchKey: '',
+      filterKey: '',
     }
   }
   componentDidMount = () => {
@@ -212,6 +194,7 @@ export default class BibleSearch extends Component {
       results.sorted('verse_nr', false);
       this.setState({
         verseList: results,
+        searchKey: text,
       });
     } catch (error) {
       console.log(error);
@@ -241,6 +224,7 @@ export default class BibleSearch extends Component {
   renderItem = ({item, index}) => {
     return (
       <FlatListItem
+        searchKey={this.state.searchKey}
         key={item.keyId}
         addBookmark={this.addBookmark}
         deleteBookmark={this.deleteBookmark}
