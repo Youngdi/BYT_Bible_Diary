@@ -153,7 +153,7 @@ class MyHomeScreen extends Component {
     super(props);
   }
   componentDidMount() {
-    this.props.navigation.navigate('BibleSearch');
+    this.props.navigation.navigate('Diary');
   }
   render() {
     return (

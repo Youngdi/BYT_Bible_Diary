@@ -114,7 +114,7 @@ export default class Bible extends PureComponent {
       popupText: '',
       isTooltipModalVisible: false,
       bookmarkIsMatch: false,
-      lang:'cht',
+      lang: 'cht',
       bg: '#fff',
       highlightList: [],
       selectVerse: {},
@@ -122,7 +122,10 @@ export default class Bible extends PureComponent {
       selectVerseRef: {},
       lastPress: 0,
       lastPress1: 0,
-      content: [],
+      content: [[]],
+      book_name: '',
+      book_nr: 0,
+      chapter_nr: 0,
       verse_nr: 0,
       setting: {
         fontFamily: 'Avenir',
@@ -142,7 +145,7 @@ export default class Bible extends PureComponent {
     const brightness = await ScreenBrightness.getBrightness();
     const FontColor = setting.readingMode ? '#ccc' : '#000';
     const BgColor = setting.readingMode ? '#333' : '#fff';
-    this.setState({
+    await this.setState({
       lang: this.props.navigation.state.params.lang,
       bg: BgColor,
       setting:{
@@ -152,35 +155,39 @@ export default class Bible extends PureComponent {
         fontColor: FontColor,
       },
       highlightList: highlightList,
-      content: this.props.navigation.state.params.content,
       verse_nr: this.props.navigation.state.params.verse_nr,
+      chapter_nr: this.props.navigation.state.params.chapter_nr,
+      book_nr: this.props.navigation.state.params.book_nr,
+      chapterLength: this.props.navigation.state.params.chapterLength,
+      version: this.props.navigation.state.params.version,
     });
+    await this.generateContent();
     setTimeout(() => {
       const wordNumbers = R.pipe(
         R.map(R.prop('verse')),
         R.map(R.length),
         R.reduce(R.add, 0)
-      )(this.props.navigation.state.params.content[0]);
+      )(this.state.content[0]);
       const targetVerse = R.pipe(
         R.filter((item) => item.verse_nr < this.props.navigation.state.params.verse_nr),
         R.map(R.prop('verse')),
         R.map(R.length),
         R.reduce(R.add, 0)
-      )(this.props.navigation.state.params.content[0]);
+      )(this.state.content[0]);
       const targetVerse1 = R.pipe(
         R.filter((item) => item.verse_nr == this.props.navigation.state.params.verse_nr),
         R.map(R.prop('verse')),
         R.map(R.length),
         R.reduce(R.add, 0)
-      )(this.props.navigation.state.params.content[0]);
+      )(this.state.content[0]);
       const eachHeight = (this.state.pharseContainerHeight / wordNumbers * targetVerse + (targetVerse1 * 0.05)) - 70;
       if(this.props.navigation.state.params.verse_nr < 5) return;
       if(eachHeight > this.state.pharseContainerHeight - deviceHeight) {
         this.contentView.root.scrollToEnd();
       } else {
-        this.contentView.root.scrollTo({y: eachHeight, animated: true});
+        this.contentView.root.scrollTo({y: eachHeight, animated: false});
       }
-    }, 1500);
+    }, 200);
   }
   handlelayout = (e) => {
     this.setState({
@@ -377,11 +384,11 @@ export default class Bible extends PureComponent {
   }
   renderVerse = () => {
     const {fontSize, lineHeight, fontColor, fontFamily} = this.state.setting;
-    if(this.state.content.length == 0) return;
+    if(R.isEmpty(this.state.content[0])) return;
     return (
       this.state.content.map( (item, i) => {
         const Verse = () => item.map(verseItem => {
-          return(
+          return (
             <Text
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
@@ -441,7 +448,6 @@ export default class Bible extends PureComponent {
               {`${verseItem.verse}`}
             </Text>
         )});
-
         return (
           <View onLayout={this.handlelayout}>
             <PharseCantainer
@@ -452,14 +458,12 @@ export default class Bible extends PureComponent {
             >
             {Verse()}
             </PharseCantainer>
-          </View> 
+          </View>
          );
       })
     );
   }
-  generateContent = async (action) => {
-    const { book_nr, chapter_nr} = this.props.navigation.state.params.content[0][0];
-    const verse_nr = this.props.navigation.state.params.verse_nr;
+  generateContent = async (chapter_index, book_nr_index = 0) => {
     const highlightList = await global.storage.load({key:'@highlightList'});
     const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
     let bibleVersion = realm_bible_cht;
@@ -467,62 +471,80 @@ export default class Bible extends PureComponent {
     if(this.state.lang == 'chs') bibleVersion = realm_bible_chs;
     if(this.state.lang == 'en') bibleVersion = realm_bible_kjv;
     if(this.state.lang == 'ja') bibleVersion = realm_bible_japan;
-    const results = bibleVersion.filtered(`book_nr = ${book_nr} AND chapter_nr = ${chapter_nr + action}`);
+    const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr}`);
     const content = results.sorted('verse_nr', false);
+    const results_findLength = bibleVersion.filtered(`book_nr = ${this.state.book_nr}`);
+    const length = R.pipe(
+      R.map(R.prop('chapter_nr')),
+      R.uniq(),
+      R.length(),
+    )(results_findLength);
     this.setState({
       content: [content],
       highlightList: highlightList,
+      chapterLength: length,
+      book_name: content[0].book_name,
     });
     setTimeout(() => {
       this.setState({
         loadContent: false,
       });
     }, 500);
+    this.props.navigation.setParams({ title: `${content[0].book_name}${' '}${content[0].chapter_nr}`});
   }
-  _handleNextDay = () => {
+  _handleNextDay = async () => {
     this.resetHighlight();
-    // this.closeActionButton();
-    if(this.state.fullScreenMode) return null;
-    if(this.state.loadContent) return null;
-    this.setState({
-      loadContent: true,
-    });
-    this.contentView.root.scrollTo({y: 10, animated: true});
-    setTimeout(() => {
-      this.generateContent(1);
-    }, 0);
-  }
-  _handlePreviousDay = () => {
-    // this.closeActionButton();
-    if(this.state.fullScreenMode) return null;
-    if(this.state.loadContent) return null;
-    if(this.state.currentDate == '2018-01-01') {
-      Alert.alert('去年已經不能回頭！');
-      return null;
+    if(this.state.chapterLength == this.state.chapter_nr){
+      if(this.state.book_nr == 66) {
+        await this.setState({
+          chapter_nr: 1,
+          book_nr: 1,
+        });
+      } else {
+        await this.setState({
+          chapter_nr: 1,
+          book_nr: this.state.book_nr + 1,
+        });
+      }
+    } else {
+      await this.setState({
+        chapter_nr: this.state.chapter_nr + 1,
+      });
     }
-    this.diaryContent.resetHighlight();
-    const previousDate = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("YYYY-MM-DD");
-    const previousMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("M");
-    const previousDay = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("D");
-    this.setState({
-      date: {
-        ...this.state.date,
-        month: Number(previousMonth),
-        day: Number(previousDay),
-      },
-      markedDates: {
-        ...this.state.markedDates,
-        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], selected: false},
-        [previousDate]: {...this.state.markedDates[previousDate], selected: true},
-      },
-      currentDate: previousDate,
-      finishedReading: false,
-      loadContent: true,
-    });
-    this.contentView.root.scrollTo({y: 10, animated: true});
-    setTimeout(() => {
-      this.generateContent();
-    }, 0);
+    await this.generateContent();
+  }
+  _handlePreviousDay = async () => {
+    this.resetHighlight();
+    if(this.state.chapter_nr == 1){
+      if(this.state.book_nr == 1) {
+        const results_findLength = global.db.realm_bible_kjv.filtered(`book_nr = 66`);
+        const length = R.pipe(
+          R.map(R.prop('chapter_nr')),
+          R.uniq(),
+          R.length(),
+        )(results_findLength);
+        await this.setState({
+          chapter_nr: length,
+          book_nr: 66,
+        });
+      } else {
+        const results_findLength = global.db.realm_bible_kjv.filtered(`book_nr = ${this.state.book_nr - 1}`);
+        const length = R.pipe(
+          R.map(R.prop('chapter_nr')),
+          R.uniq(),
+          R.length(),
+        )(results_findLength);
+        await this.setState({
+          chapter_nr: length,
+          book_nr: this.state.book_nr - 1,
+        });
+      }
+    } else {
+      await this.setState({
+        chapter_nr: this.state.chapter_nr - 1,
+      });
+    }
+    await this.generateContent();
   }
   _handeleChangeLang = async (lang) => {
     // this.closeActionButton();

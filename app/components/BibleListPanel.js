@@ -6,16 +6,21 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   View,
+  Dimensions,
 } from 'react-native';
 import styled from "styled-components/native";
 import Feather from 'react-native-vector-icons/Feather';
 import * as R from 'ramda';
+var {
+  height: deviceHeight,
+  width: deviceWidth,
+} = Dimensions.get('window');
 
 const StyledBookListTextView = styled.TouchableHighlight`
   display: flex;
   justify-content: center;
   align-items: center;
-  width:52px;
+  width:${deviceWidth / 7.25}px;
   height:45px;
   border-bottom-color: #373331;
   border-bottom-width:1px;
@@ -85,24 +90,21 @@ export default class BibleListPanel extends PureComponent {
     if(this.props.defaultLang == 'chs') bibleVersion = realm_bible_chs;
     if(this.props.defaultLang == 'en') bibleVersion = realm_bible_kjv;
     if(this.props.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    // const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr} AND verse_nr = ${verse_nr}`);
-    // this.setState({
-    //   mode: 'book',
-    //   title: 'Books',
-    // });
     const raw_results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr}`);
-    const results = raw_results.sorted('verse_nr', false);
+    const results = raw_results.slice(0, 1);
     this.setState({
       mode: 'book',
       title: 'Books',
     });
     this.props.closeControlPanel();
     this.props.navigation.navigate('Bible', {
-      content: [results],
+      book_nr: this.state.book_nr,
+      chapter_nr: this.state.chapter_nr,
       verse_nr: verse_nr,
       title: `${results[0].book_name}${' '}${results[0].chapter_nr}`,
       lang: this.props.defaultLang,
-    })
+      version: results[0].version,
+    });
   }
   renderBooks = () => {
     const oldBooks = this.props.oldBooks.map((item, index) => 
@@ -141,12 +143,10 @@ export default class BibleListPanel extends PureComponent {
           </StyledBookListTextView>
         );
       })
-    )(this.state.chapterLength == 1 ? 2 : this.state.chapterLength);
+    )(this.state.chapterLength == 1 ? 2 : this.state.chapterLength + 1);
     return(
-      <View>
-        <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
-          {chapters}
-        </View>
+      <View style={{padding:20, paddingTop:0, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
+        {chapters}
       </View>
     );
   }
@@ -163,12 +163,10 @@ export default class BibleListPanel extends PureComponent {
           </StyledBookListTextView>
         );
       })
-    )(this.state.verseLength == 1 ? 2 : this.state.verseLength);
+    )(this.state.verseLength == 1 ? 2 : this.state.verseLength + 1);
     return(
-      <View>
-        <View style={{padding:20, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
-          {chapters}
-        </View>
+      <View style={{padding:20, paddingTop:0, display:'flex', flexWrap:'wrap', width:'100%', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}>
+        {chapters}
       </View>
     );
   }
@@ -176,13 +174,17 @@ export default class BibleListPanel extends PureComponent {
     return (
       <ScrollView style={{flex:1, backgroundColor:'black'}}>
         <View style={{flex:1, padding:20, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <View><Text>{'      '}</Text></View>
-          <Text style={{fontSize:24, fontWeight:'900',color:'#FCE6B0'}}>{this.state.title}</Text>
+          <View><Text>{'           '}</Text></View>
+          <View>
+            <Text style={{fontSize:24, fontWeight:'900',color:'#FCE6B0'}}>
+              {this.state.title}
+            </Text>
+          </View>
           <View>
             {this.state.mode == 'book' ?
               <TouchableHighlight onPress={() => this.props.closeControlPanel()} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
                 <Feather
-                  style={{marginTop:7,marginRight:15}}
+                  style={{marginTop:7,marginRight:25}}
                   name='x-circle'
                   size={20}
                   color="#FCE6B0"
@@ -212,7 +214,7 @@ export default class BibleListPanel extends PureComponent {
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               >
                 <Feather
-                  style={{marginTop:7,marginRight:15}}
+                  style={{marginTop:7,marginRight:25}}
                   name='corner-up-left'
                   size={20}
                   color="#FCE6B0"

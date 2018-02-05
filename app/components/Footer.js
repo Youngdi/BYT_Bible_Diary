@@ -32,7 +32,7 @@ const StyledFooter = Animated.createAnimatedComponent(styled.View`
   justify-content: space-around;
   align-items: center;
   padding-bottom: ${isIphoneX() ? '16' : '0'}px;
-  height: ${deviceHeight / 12.5};
+  height: ${deviceHeight / 17};
   background-color: #1E1E1E;
 `)
 const StyledLangListText = styled.Text`

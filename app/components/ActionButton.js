@@ -294,8 +294,8 @@ import React, {
   const styles = StyleSheet.create({
     overlay: {
       position: 'absolute',
-      bottom: isIphoneX() ? 8 : -2.5,
-      left: deviceWidth / 4.7,
+      bottom: isIphoneX() ? 8 : -5,
+      left: deviceWidth / 4.5,
       right: 0,
       top: 0,
       backgroundColor: 'transparent',
