@@ -69,6 +69,7 @@ const PharseCantainer = styled.Text`
   line-height: ${props => props.lineHeight};
   font-family: ${props => props.fontFamily};
   font-weight: 300;
+  padding-Bottom: 80px;
 `;
 const PharseNumber = styled.Text`
   font-size: ${props => props.fontSize}px;
@@ -125,6 +126,7 @@ export default class Bible extends PureComponent {
         brightnessValue: 1,
         readingMode: false, // 0 -> day, 1 -> night
       },
+      pharseContainerHeight: 0,
     }
     this.initData();
   }
@@ -147,7 +149,39 @@ export default class Bible extends PureComponent {
       content: this.props.navigation.state.params.content,
       verse_nr: this.props.navigation.state.params.verse_nr,
     });
+    setTimeout(() => {
+      const wordNumbers = R.pipe(
+        R.map(R.prop('verse')),
+        R.map(R.length),
+        R.reduce(R.add, 0)
+      )(this.props.navigation.state.params.content[0]);
+      const targetVerse = R.pipe(
+        R.filter((item) => item.verse_nr < this.props.navigation.state.params.verse_nr),
+        R.map(R.prop('verse')),
+        R.map(R.length),
+        R.reduce(R.add, 0)
+      )(this.props.navigation.state.params.content[0]);
+      const targetVerse1 = R.pipe(
+        R.filter((item) => item.verse_nr == this.props.navigation.state.params.verse_nr),
+        R.map(R.prop('verse')),
+        R.map(R.length),
+        R.reduce(R.add, 0)
+      )(this.props.navigation.state.params.content[0]);
+      const eachHeight = (this.state.pharseContainerHeight / wordNumbers * targetVerse + (targetVerse1 * 0.05)) - 70;
+      if(this.props.navigation.state.params.verse_nr < 5) return;
+      if(eachHeight > this.state.pharseContainerHeight - deviceHeight) {
+        this.contentView.root.scrollToEnd();
+      } else {
+        this.contentView.root.scrollTo({y: eachHeight, animated: true});
+      }
+    }, 1500);
   }
+  handlelayout = (e) => {
+    this.setState({
+      pharseContainerWidth: e.nativeEvent.layout.width,
+      pharseContainerHeight: e.nativeEvent.layout.height
+    });
+  } 
   closeHeaderActionButton = () => {
 
   }
@@ -403,7 +437,7 @@ export default class Bible extends PureComponent {
         )});
 
         return (
-          <View>
+          <View onLayout={this.handlelayout}>
             <PharseCantainer
               fontSize={fontSize}
               fontColor={fontColor}
