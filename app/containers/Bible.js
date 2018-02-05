@@ -97,6 +97,12 @@ export default class Bible extends PureComponent {
                    >
                     <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color='#333' />
                   </TouchableOpacity>
+      ,headerRight: <TouchableOpacity
+                    hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
+                    onPress={() => navigation.navigate('BibleSearch', {lang: state.params.lang})}
+                  >
+                    <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color='#333' />
+                  </TouchableOpacity>
     };
   };
   

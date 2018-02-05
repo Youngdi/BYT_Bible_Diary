@@ -7,9 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
 const {
@@ -102,11 +100,11 @@ export default class ArrowUp extends PureComponent {
       >
         <View style={shadowStyle}>
         <TouchableOpacity onPress={ () => this.props.handeleScrollTop()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
-          <Ionicons
-            name='md-arrow-round-up'
-            size={30}
+          <MaterialCommunityIcons
+            name='arrow-collapse-up'
+            size={23}
             color="#bbb"
-            style={{zIndex:10,width: 26, height: 26, marginLeft:4, backgroundColor:'transparent'}}
+            style={{marginTop:4,marginLeft:3,backgroundColor:'transparent'}}
           />
         </TouchableOpacity>
         </View>

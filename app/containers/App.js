@@ -12,6 +12,7 @@ import BookmarkScreen from './Bookmark';
 import BibleScreen from './Bible';
 import MoreScreen from './More';
 import NoteScreen from './Note';
+import BibleSearchScreen from './BibleSearch';
 
 const bible_chs = {
   name: 'bible_chs',
@@ -152,7 +153,7 @@ class MyHomeScreen extends Component {
     super(props);
   }
   componentDidMount() {
-    this.props.navigation.navigate('Diary');
+    this.props.navigation.navigate('BibleSearch');
   }
   render() {
     return (
@@ -257,6 +258,9 @@ const App = StackNavigator(
   },
   Note: {
     screen: NoteScreen,
+  },
+  BibleSearch: {
+    screen: BibleSearchScreen,
   }
 },
   {
