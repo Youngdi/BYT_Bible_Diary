@@ -137,7 +137,7 @@ export default class BibleSearch extends Component {
         backgroundColor: state.params.bg,
       },
       gesturesEnabled: true,
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>搜尋</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{I18n.t('bible_search_title')}</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
@@ -157,8 +157,8 @@ export default class BibleSearch extends Component {
       searchKey: '',
       bookFilterKey: 0,
       chapterFilterKey: 0,
-      bookOptionsPlaceHolder: '所有',
-      chapterOptionPlaceHolder: '所有',
+      bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
+      chapterOptionPlaceHolder: I18n.t('bible_search_placeholder'),
       bookOptions: [],
       chapterOption: [],
     }
@@ -218,8 +218,8 @@ export default class BibleSearch extends Component {
     const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
     //const bookNameList = R.values(bookName['cht']);
     this.setState({
-      bookOptions: ['所有', '舊約', '新約', ...bookNameList],
-      chapterOption: ['所有', ...R.range(1,150)],
+      bookOptions: [I18n.t('bible_search_placeholder'), I18n.t('bible_search_old_testament'), I18n.t('bible_search_new_testament'), ...bookNameList],
+      chapterOption: [I18n.t('bible_search_placeholder'), ...R.range(1,150)],
     });
   }
   renderHeader = () => {
@@ -257,7 +257,7 @@ export default class BibleSearch extends Component {
           >
             <StyledOptionBoxRow>
               <StyledOptionRow>
-                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>書卷</Text>
+                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>{I18n.t('bible_search_book')}</Text>
                 <Text style={{fontSize:14, fontWeight:'500', color:'#000'}}>{this.state.bookOptionsPlaceHolder}</Text>
               </StyledOptionRow>
               <View>
@@ -287,7 +287,7 @@ export default class BibleSearch extends Component {
           >
             <StyledOptionBoxRow>
               <StyledOptionRow>
-                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>章節</Text>
+                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>{I18n.t('bible_search_chapter')}</Text>
                 <Text style={{fontSize:14, fontWeight:'500', color:'#000'}}>{this.state.chapterOptionPlaceHolder}</Text>
               </StyledOptionRow>
               <View>
@@ -298,7 +298,7 @@ export default class BibleSearch extends Component {
       </StyledOptionBox>
       <View style={{flex:1, justifyContent:'flex-start', alignItems:'center'}}>
         <Text style={{fontSize:14, fontWeight:'400'}}>
-          {R.replace('bookmark_number', this.state.verseList.length, I18n.t('bookmark_number'))}
+          {R.replace('verse_number', this.state.verseList.length, I18n.t('bible_verse_number'))}
         </Text>
       </View>
     </View>
@@ -317,7 +317,6 @@ export default class BibleSearch extends Component {
     );
   }
   _handeleScrollTop = (e) => {
-    // if(!this.state.fullScreenMode) return null;
     this.contentView.scrollToOffset({x: 0, y: 0, animated: true})
   }
   render() {

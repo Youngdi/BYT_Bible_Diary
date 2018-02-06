@@ -24,5 +24,12 @@
   "bookmark_isempty": "目前没有书签",
   "bookmark_no_searchKey": "没有bookmark_no_searchKey的书签",
   "bookmark_number": "目前书签经文有bookmark_number个",
-  "bible_searchKey_limit": "搜寻不能是空的"
+  "bible_searchKey_limit": "搜寻不能是空的",
+  "bible_search_chapter": "章节",
+  "bible_search_book": "书卷",
+  "bible_search_placeholder": "所有",
+  "bible_search_old_testament": "旧约",
+  "bible_search_new_testament": "新约",
+  "bible_search_title": "搜寻",
+  "bible_verse_number": "目前经文有verse_number个"
 }

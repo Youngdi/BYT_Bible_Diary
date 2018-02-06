@@ -23,6 +23,13 @@
   "bookmark_search": "Search",
   "bookmark_isempty": "No bookmarks to show",
   "bookmark_no_searchKey": "No bookmarks match to bookmark_no_searchKey",
-  "bookmark_number": "bookmark_number bookmark is found",
-  "bible_searchKey_limit": "Search can not be empty characters"
+  "bookmark_number": "bookmark_number bookmarks is found",
+  "bible_searchKey_limit": "Searching characters can not be empty",
+  "bible_search_chapter": "CHPT",
+  "bible_search_book": "BK",
+  "bible_search_placeholder": "All",
+  "bible_search_old_testament": "OT",
+  "bible_search_new_testament": "NT",
+  "bible_search_title": "Search",
+  "bible_verse_number": "verse_number verses is found"
 }

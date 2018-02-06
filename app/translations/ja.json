@@ -24,5 +24,12 @@
   "bookmark_isempty": "まだブックマークはありません。",
   "bookmark_no_searchKey": "bookmark_no_searchKeyのブックマークはありません",
   "bookmark_number": "ブックマークにお経はbookmark_number個あります。",
-  "bible_searchKey_limit": "検索を空にすることはできません"
+  "bible_searchKey_limit": "検索を空にすることはできません",
+  "bible_search_chapter": "章",
+  "bible_search_book": "書",
+  "bible_search_placeholder": "すべて",
+  "bible_search_old_testament": "旧約",
+  "bible_search_new_testament": "新約",
+  "bible_search_title": "検索",
+  "bible_verse_number": "ブックマークにお経はbookmark_number個あります。"
 }
