@@ -23,5 +23,6 @@
   "bookmark_search": "搜尋",
   "bookmark_isempty": "目前沒有書籤",
   "bookmark_no_searchKey": "沒有bookmark_no_searchKey的書籤",
-  "bookmark_number": "目前書籤經文有bookmark_number個"
+  "bookmark_number": "目前書籤經文有bookmark_number個",
+  "bible_searchKey_limit": "搜尋不能是空的"
 }

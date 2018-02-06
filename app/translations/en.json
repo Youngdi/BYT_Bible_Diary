@@ -23,5 +23,6 @@
   "bookmark_search": "Search",
   "bookmark_isempty": "No bookmarks to show",
   "bookmark_no_searchKey": "No bookmarks match to bookmark_no_searchKey",
-  "bookmark_number": "bookmark_number bookmark is found"
+  "bookmark_number": "bookmark_number bookmark is found",
+  "bible_searchKey_limit": "Search can not be empty characters"
 }

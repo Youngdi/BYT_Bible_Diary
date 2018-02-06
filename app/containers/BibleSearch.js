@@ -11,23 +11,51 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Swipeout from "react-native-swipeout";
+import ModalDropdown from 'react-native-modal-dropdown';
 import * as R from 'ramda';
 import I18n from 'react-native-i18n';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from "styled-components/native";
 import { SearchBar } from 'react-native-elements';
-
+import ArrowUp from '../components/ArrowUp';
+import { bookName } from '../constants/bibleBookList';
 const {
   height: deviceHeight,
   width: deviceWidth,
 } = Dimensions.get('window');
-
 const StyledHeaderTitle = styled.Text`
   font-size:20;
   font-family: 'Times New Roman';
   font-weight: 900;
   color: ${props => props.color};
+`;
+const StyledOptionBox = styled.View`
+  margin-top:10px;
+  margin-bottom:10px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+`;
+const StyledOptionBoxRow = styled.View`
+  padding: 10px;
+  padding-top: 5px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100px;
+  height: 60px;
+  border-color: #ccc;
+  border-width:1px;
+`;
+const StyledOptionRow = styled.View`
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 class FlatListItem extends React.Component {
   constructor(props) {
@@ -38,11 +66,19 @@ class FlatListItem extends React.Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
-    const searchKeyLength = R.length(this.props.searchKey);
-    const findFirst = R.converge(R.slice(0), [R.indexOf(this.props.searchKey), R.identity]);
-    const findLast = R.converge(R.slice, [R.pipe(R.indexOf(this.props.searchKey), R.add(searchKeyLength)), R.length, R.identity]);
-    const firstPart = findFirst(verse);
-    const lastPart = findLast(verse);
+    const sperateVerse = (verse, searchKey) => [
+      ...(verse.indexOf(searchKey) == -1)
+      ? [verse] 
+      : [verse.slice(0, verse.indexOf(searchKey)),
+          searchKey,
+          ...sperateVerse(
+            verse.slice(verse.indexOf(searchKey) + searchKey.length),
+            searchKey
+           )
+         ].filter(v => v != "")
+    ];
+    const verseArray = sperateVerse(verse, this.props.searchKey);
+
     return (
         <View
           style={{
@@ -79,10 +115,12 @@ class FlatListItem extends React.Component {
             </View>
             <View>
               <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25, marginBottom:10 }}>
-                {`${verse}`}
-                {/* <Text>{`${firstPart}`}</Text>
-                <Text style={{color:'red'}}>{`${this.props.searchKey}`}</Text>
-                <Text>{`${lastPart}`}</Text> */}
+              {
+                verseArray.map(item =>
+                  item.indexOf(this.props.searchKey) > -1
+                  ? <Text style={{color:'red'}}>{item}</Text>
+                  : <Text>{item}</Text>)
+              }
               </Text>
             </View>
           </View>
@@ -117,80 +155,44 @@ export default class BibleSearch extends Component {
       refreshing: false,
       lang:'en',
       searchKey: '',
-      filterKey: '',
+      bookFilterKey: 0,
+      chapterFilterKey: 0,
+      bookOptionsPlaceHolder: '所有',
+      chapterOptionPlaceHolder: '所有',
+      bookOptions: [],
+      chapterOption: [],
     }
   }
-  componentDidMount = () => {
-    //const { lang } = this.props.navigation.state.params;
-    // this.setState({
-    //   lang: lang,
-    // });
-  }
-  search = (event) => {
-    const matchKey = key => item => 
-      R.concat(item.book_name, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.book_name_short, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.replace(/-/g, '', item.createdTime).indexOf(key) != -1
-      || item.createdTime.indexOf(key) != -1
-      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.createdTime, `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || item.verse.indexOf(key) != -1
-      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.createdTime, `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1;
-    const find = R.curry((bookmarkList, key) =>
-      R.pipe(
-        R.filter(matchKey(key)),
-        R.map(R.prop('keyId')),
-      )(bookmarkList),
-    );
-    const matchs = find(this.state.bookmarkList, event);
-    this.setState({
-      searchKey: event,
-      bookmarkListfilter: R.isEmpty(event) ? R.map(R.prop('keyId'), this.state.bookmarkList) : matchs.length ? matchs : [],
-    });
-  }
-  refresh = (keyId) => {
-    this.setState({
-      refreshing: true,
-    });
-    setTimeout(async () => {
-      const bookmarkList = await global.storage.load({key:'@bookmark'});
-      const _bookmarkList = R.pipe(
-        R.values(),
-        R.sort(R.descend(R.prop('createdTime'))),
-      )(bookmarkList);
-      await this.setState({
-        bookmarkList: _bookmarkList,
-        bookmarkListfilter: this.state.bookmarkListfilter,
-        refreshing: false,
-      });
-    }, 1000);
-  }
-  deleteBookmark = async (keyId) => {
-    const bookmarkList = await global.storage.load({key:'@bookmark'});
-    delete bookmarkList[keyId];
-    await global.storage.save({key:'@bookmark', data:bookmarkList, expires: null});
-    this.state.bookmarkListfilter = R.without([keyId], this.state.bookmarkListfilter);
-  }
-  addBookmark = async (item) => {
-    this.state.bookmarkListfilter = R.concat([item.keyId], this.state.bookmarkListfilter);
-    const bookmarkList = await global.storage.load({key:'@bookmark'});
-    const _bookmark = {
-      ...bookmarkList,
-      [item.keyId]: item,
-    }
-    await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
+  componentWillMount = () => {
+    this.generateOptions();
   }
   searchVerse = (e) => {
     try {
       const text = e.nativeEvent.text;
+      let results;
+      if(text.length == 0) {
+        Alert.alert(I18n.t('bible_searchKey_limit'));
+        return;
+      }
       const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
       let bibleVersion = realm_bible_cht;
-      if(this.state.lang == 'cht') bibleVersion = realm_bible_cht;
-      if(this.state.lang == 'chs') bibleVersion = realm_bible_chs;
-      if(this.state.lang == 'en') bibleVersion = realm_bible_kjv;
-      if(this.state.lang == 'ja') bibleVersion = realm_bible_japan;
-      const results = bibleVersion.filtered(`verse CONTAINS[c] '${text}'`);
+      if(this.props.navigation.state.params.lang == 'cht') bibleVersion = realm_bible_cht;
+      if(this.props.navigation.state.params.lang == 'chs') bibleVersion = realm_bible_chs;
+      if(this.props.navigation.state.params.lang == 'en') bibleVersion = realm_bible_kjv;
+      if(this.props.navigation.state.params.lang == 'ja') bibleVersion = realm_bible_japan;
+      if(this.state.bookFilterKey == 1){ //舊約
+        results = bibleVersion.filtered(`testament = 0 AND verse CONTAINS '${text}'`);
+      } else if(this.state.bookFilterKey == 2){ // 新約
+        results = bibleVersion.filtered(`testament = 1 AND verse CONTAINS '${text}'`);
+      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0){ // 所有
+        results = bibleVersion.filtered(`verse CONTAINS '${text}'`);
+      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0){ // 指定書卷
+        results = bibleVersion.filtered(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS '${text}'`);
+      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0){ // 指定章節
+        results = bibleVersion.filtered(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`);
+      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0){ // 指定書卷及章節
+        results = bibleVersion.filtered(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`);
+      }
       results.sorted('verse_nr', false);
       this.setState({
         verseList: results,
@@ -200,20 +202,101 @@ export default class BibleSearch extends Component {
       console.log(error);
     }
   }
+  onSelectBook_nr = (index, value) => {
+    this.setState({
+      bookFilterKey: index, // 0 所有, 1舊約, 2新約
+      bookOptionsPlaceHolder: value,
+    });
+  }
+  onSelectChapter_nr = (index, value) => {
+    this.setState({
+      chapterFilterKey: index, // 0 所有
+      chapterOptionPlaceHolder: value,
+    });
+  }
+  generateOptions = () => {
+    const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
+    //const bookNameList = R.values(bookName['cht']);
+    this.setState({
+      bookOptions: ['所有', '舊約', '新約', ...bookNameList],
+      chapterOption: ['所有', ...R.range(1,150)],
+    });
+  }
   renderHeader = () => {
     return (
-    <View style={{flex:1, width:'100%',height:80, justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
+    <View style={{flex:1, width:'100%', flexDirection:'column', justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
       <SearchBar
         onEndEditing={this.searchVerse}
         platform={`${Platform.OS}`}
         cancelButtonTitle={'Cancel'}
-        onChangeText={this.search.bind(this)}
         clearIcon
         lightTheme
         placeholder={`${I18n.t('bookmark_search')}...`}
         round
       />
-      <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:10, marginBottom:20}}>
+      <StyledOptionBox>
+          <ModalDropdown
+            dropdownStyle={{
+              width: 100,
+              height: 300,
+              borderColor: '#ccc',
+              borderWidth: 2,
+              borderRadius: 3,
+            }}
+            dropdownTextStyle={{
+              fontSize: 16,
+              color: '#000',
+              backgroundColor:'transparent'
+            }}
+            dropdownTextHighlightStyle={{
+              backgroundColor: '#000',
+              color: '#fff'
+            }}
+            onSelect={this.onSelectBook_nr}
+            options={this.state.bookOptions}
+          >
+            <StyledOptionBoxRow>
+              <StyledOptionRow>
+                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>書卷</Text>
+                <Text style={{fontSize:14, fontWeight:'500', color:'#000'}}>{this.state.bookOptionsPlaceHolder}</Text>
+              </StyledOptionRow>
+              <View>
+                <MaterialCommunityIcons name='menu-down' size={25} color={'#333'} /> 
+              </View>
+            </StyledOptionBoxRow>
+          </ModalDropdown>
+          <ModalDropdown
+            dropdownStyle={{
+              width: 100,
+              height: 300,
+              borderColor: '#ccc',
+              borderWidth: 2,
+              borderRadius: 3,
+            }}
+            dropdownTextStyle={{
+              fontSize: 16,
+              color: '#000',
+              backgroundColor:'transparent'
+            }}
+            dropdownTextHighlightStyle={{
+              backgroundColor: '#000',
+              color: '#fff'
+            }}
+            onSelect={this.onSelectChapter_nr}
+            options={this.state.chapterOption}
+          >
+            <StyledOptionBoxRow>
+              <StyledOptionRow>
+                <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>章節</Text>
+                <Text style={{fontSize:14, fontWeight:'500', color:'#000'}}>{this.state.chapterOptionPlaceHolder}</Text>
+              </StyledOptionRow>
+              <View>
+                <MaterialCommunityIcons name='menu-down' size={25} color={'#333'} /> 
+              </View>
+            </StyledOptionBoxRow>
+          </ModalDropdown>
+      </StyledOptionBox>
+      <View style={{flex:1, justifyContent:'flex-start', alignItems:'center'}}>
         <Text style={{fontSize:14, fontWeight:'400'}}>
           {R.replace('bookmark_number', this.state.verseList.length, I18n.t('bookmark_number'))}
         </Text>
@@ -233,27 +316,21 @@ export default class BibleSearch extends Component {
       />
     );
   }
+  _handeleScrollTop = (e) => {
+    // if(!this.state.fullScreenMode) return null;
+    this.contentView.scrollToOffset({x: 0, y: 0, animated: true})
+  }
   render() {
-    // const isMatch = key => item => R.contains(item.keyId, key);
-    // const bookmarkList = R.curry((bookmarkList, key) =>
-    //   R.pipe(
-    //     R.filter(isMatch(key)),
-    //   )(bookmarkList),
-    // )(this.state.bookmarkList, this.state.bookmarkListfilter);
     return (
       <View style={{flex:1, backgroundColor:'#eee'}}>
         <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.refresh.bind(this)}
-            />
-          }
+          ref={r => this.contentView = r}
           extraData={this.state}
           ListHeaderComponent={this.renderHeader}
           data={this.state.verseList}
           renderItem={this.renderItem}
         />
+        <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.verseList} fullScreenMode={true} />
       </View>
     );
   }

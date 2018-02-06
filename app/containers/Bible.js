@@ -565,6 +565,9 @@ export default class Bible extends PureComponent {
     await this.setState({
       lang: lang,
     });
+    this.props.navigation.setParams({
+      lang: lang,
+    });
     if(lang == 'cht_en') {
       this.setState({content: [[]]});
     } else {

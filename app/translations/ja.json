@@ -23,5 +23,6 @@
   "bookmark_search": "検索",
   "bookmark_isempty": "まだブックマークはありません。",
   "bookmark_no_searchKey": "bookmark_no_searchKeyのブックマークはありません",
-  "bookmark_number": "ブックマークにお経はbookmark_number個あります。"
+  "bookmark_number": "ブックマークにお経はbookmark_number個あります。",
+  "bible_searchKey_limit": "検索を空にすることはできません"
 }

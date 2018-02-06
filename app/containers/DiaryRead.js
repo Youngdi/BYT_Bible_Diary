@@ -175,7 +175,14 @@ export default class DiaryRead extends Component {
             });
             await global.storage.save({
               key: '@setting',
-              data: {},
+              data: {
+                fontFamily: 'Avenir',
+                fontSize: 18,
+                fontColor: '#000',
+                lineHeight: 28,
+                brightnessValue: 1,
+                readingMode: false, // 0 -> day, 1 -> night
+              },
               expires: null,
             });
             await global.storage.save({
