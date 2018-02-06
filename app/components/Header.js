@@ -131,12 +131,20 @@ export default class Header extends PureComponent {
           offsetX={20}
           degrees={0}
         >
-          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('More')}>
+          {/* <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('More')}>
             <Ionicons
               name='ios-more-outline'
               size={30}
               color='#bbb'
               style={{width: 26, height: 26, marginTop:-4, marginLeft:7, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item> */}
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('BibleSearch')}>
+            <Ionicons
+              name='ios-search-outline'
+              size={24}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:3, marginLeft:8, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Note')}>
