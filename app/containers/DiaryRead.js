@@ -557,11 +557,7 @@ export default class DiaryRead extends Component {
     this.setState({
       defaultLang: lang,
     });
-    if(lang == 'cht_en'){
-      this.setState({content: []});
-    } else {
-      this.diaryContent.resetHighlight();
-    }
+    this.diaryContent.resetHighlight();
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -607,6 +603,10 @@ export default class DiaryRead extends Component {
   navigateTo = (toWhere) => {
     this.reset();
     if(toWhere == 'BibleSearch') {
+      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
+      return
+    }
+    if(toWhere == 'Bookmark') {
       this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
       return
     }

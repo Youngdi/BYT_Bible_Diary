@@ -66,6 +66,10 @@ class FlatListItem extends React.Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
+    const setting = this.props.setting;
+    let lang = version;
+    if(version == 'japan') lang = 'ja';
+    if(version == 'kjv') lang = 'en';
     const sperateVerse = (verse, searchKey) => [
       ...(verse.indexOf(searchKey) == -1)
       ? [verse] 
@@ -80,7 +84,7 @@ class FlatListItem extends React.Component {
     const verseArray = sperateVerse(verse, this.props.searchKey);
 
     return (
-        <View
+        <TouchableOpacity
           style={{
             flex: 1,
             flexDirection: "column",
@@ -97,6 +101,18 @@ class FlatListItem extends React.Component {
             marginTop:2.5,
             marginLeft:5,
             marginRight:5,
+          }}
+          onPress={() => {
+            this.props.navigation.navigate('Bible', {
+              book_nr: book_nr,
+              chapter_nr: chapter_nr,
+              verse_nr: verse_nr,
+              title: `${book_name}${' '}${chapter_nr}`,
+              lang: lang,
+              version: version,
+              setting: setting,
+              bg: setting.readingMode ? '#333' : '#fff',
+            });
           }}
         >
           <View
@@ -124,7 +140,7 @@ class FlatListItem extends React.Component {
               </Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
     );
   }
 }
@@ -133,10 +149,10 @@ export default class BibleSearch extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
+      gesturesEnabled: true,
       headerStyle: {
         backgroundColor: state.params.bg,
       },
-      gesturesEnabled: true,
       title: <StyledHeaderTitle color={state.params.setting.fontColor}>{I18n.t('bible_search_title')}</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
@@ -325,6 +341,8 @@ export default class BibleSearch extends Component {
         deleteBookmark={this.deleteBookmark}
         item={item}
         index={index}
+        setting={this.props.navigation.state.params.setting}
+        navigation={this.props.navigation}
       />
     );
   }
