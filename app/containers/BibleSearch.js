@@ -150,11 +150,9 @@ export default class BibleSearch extends Component {
     super(props);
     this.state = {
       verseList: [],
-      bookmarkList: [],
-      bookmarkListfilter: [],
       refreshing: false,
-      lang:'en',
       searchKey: '',
+      lang: 'cht',
       bookFilterKey: 0,
       chapterFilterKey: 0,
       bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
@@ -176,10 +174,11 @@ export default class BibleSearch extends Component {
       }
       const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
       let bibleVersion = realm_bible_cht;
-      if(this.props.navigation.state.params.lang == 'cht') bibleVersion = realm_bible_cht;
-      if(this.props.navigation.state.params.lang == 'chs') bibleVersion = realm_bible_chs;
-      if(this.props.navigation.state.params.lang == 'en') bibleVersion = realm_bible_kjv;
-      if(this.props.navigation.state.params.lang == 'ja') bibleVersion = realm_bible_japan;
+      if(this.state.lang == 'cht') bibleVersion = realm_bible_cht;
+      if(this.state.lang == 'cht_en') bibleVersion = realm_bible_cht;
+      if(this.state.lang == 'chs') bibleVersion = realm_bible_chs;
+      if(this.state.lang == 'en') bibleVersion = realm_bible_kjv;
+      if(this.state.lang == 'ja') bibleVersion = realm_bible_japan;
       if(this.state.bookFilterKey == 1){ //舊約
         results = bibleVersion.filtered(`testament = 0 AND verse CONTAINS '${text}'`);
       } else if(this.state.bookFilterKey == 2){ // 新約
@@ -202,31 +201,44 @@ export default class BibleSearch extends Component {
       console.log(error);
     }
   }
-  onSelectBook_nr = (index, value) => {
-    this.setState({
+  onSelectBook_nr = async (index, value) => {
+    await this.setState({
       bookFilterKey: index, // 0 所有, 1舊約, 2新約
       bookOptionsPlaceHolder: value,
     });
+    if(this.state.searchKey.length != 0) {
+      await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
+    }
   }
-  onSelectChapter_nr = (index, value) => {
-    this.setState({
+  onSelectChapter_nr = async (index, value) => {
+    await this.setState({
       chapterFilterKey: index, // 0 所有
       chapterOptionPlaceHolder: value,
     });
+    if(this.state.searchKey.length != 0) {
+      await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
+    }
   }
   generateOptions = () => {
     const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
-    //const bookNameList = R.values(bookName['cht']);
     this.setState({
+      lang: this.props.navigation.state.params.lang,
       bookOptions: [I18n.t('bible_search_placeholder'), I18n.t('bible_search_old_testament'), I18n.t('bible_search_new_testament'), ...bookNameList],
       chapterOption: [I18n.t('bible_search_placeholder'), ...R.range(1,150)],
     });
+  }
+  onClearText = () => {
+    this.setState({
+      verseList: [],
+      searchKey: '',
+    })
   }
   renderHeader = () => {
     return (
     <View style={{flex:1, width:'100%', flexDirection:'column', justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
       <SearchBar
         onEndEditing={this.searchVerse}
+        onClearText={this.onClearText}
         platform={`${Platform.OS}`}
         cancelButtonTitle={'Cancel'}
         clearIcon

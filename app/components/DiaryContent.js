@@ -271,7 +271,7 @@ export default class DiaryContent extends PureComponent {
           lineHeight={this.props.lineHeight}
           fontFamily={this.props.fontFamily}
         >
-        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}
+        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item.length == 1 ? '' : item[item.length -1].verse_nr}`}
         </BookTitle>
         <PharseCantainer
           fontSize={this.props.fontSize}
@@ -335,7 +335,7 @@ export default class DiaryContent extends PureComponent {
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr] = r}
               >
-                {this.props.defaultLang == 'cht_en' ? '\n': ''}{this.props.defaultLang == 'en' ? '  ': ''}{`${verseItem.verse_nr}`}{'  '}
+                {this.props.defaultLang == 'en' ? '  ': ''} {`${verseItem.verse_nr}`}{'  '}
               </PharseNumber>
               {`${verseItem.verse}`}{this.props.defaultLang == 'cht_en' ? '\n' : ''}
             </Text>
@@ -350,6 +350,7 @@ export default class DiaryContent extends PureComponent {
       <FlatList
         data={[item]}
         renderItem={({item}) => this.renderItem(item, i)}
+        keyExtractor={(item, index) => index}
       />
     </View>
   );

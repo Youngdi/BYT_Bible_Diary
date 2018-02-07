@@ -607,7 +607,7 @@ export default class DiaryRead extends Component {
   navigateTo = (toWhere) => {
     this.reset();
     if(toWhere == 'BibleSearch') {
-      this.props.navigation.navigate(toWhere, {lang: this.state.lang, setting:this.state.setting, bg: this.state.bg});
+      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
       return
     }
     this.props.navigation.navigate(toWhere);
