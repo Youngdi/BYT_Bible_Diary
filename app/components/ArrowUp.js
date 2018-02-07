@@ -87,7 +87,6 @@ export default class ArrowUp extends PureComponent {
     ]).start();
   }
   render() {
-    if(this.props.content.length == 0) return (<View></View>);
     return (
       <StyledArrowUp style={{
           opacity: this.state.fadeInOpacity,

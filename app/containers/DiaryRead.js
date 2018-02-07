@@ -657,7 +657,6 @@ export default class DiaryRead extends Component {
         { !this.state.finishedReading ?
           <Header
             ref={r => this.header = r}
-            content={this.state.content}
             fullScreenMode={fullScreenMode}
             navigation={this.props.navigation}
             toggleModal={this._toggleModalCalendar}
@@ -699,7 +698,7 @@ export default class DiaryRead extends Component {
             </StyledMainContent>
           </StyledMain>
           <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-          { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.content} fullScreenMode={fullScreenMode} /> : null}
+          { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={fullScreenMode} /> : null}
           { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
           { !this.state.finishedReading ? 
             <Footer
@@ -712,7 +711,6 @@ export default class DiaryRead extends Component {
               navigation={this.props.navigation}
               toggleModal={this._toggleModalFontSetting}
               fullScreenMode={fullScreenMode}
-              content={this.state.content}
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
             : null

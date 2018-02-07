@@ -105,7 +105,6 @@ export default class Header extends PureComponent {
     this.props.navigateTo(toWhere);
   }
   render() {
-    if(this.props.content.length == 0) return (<View></View>);
     return (
       <StyledHeader style={{
           opacity: this.state.fadeInOpacity,

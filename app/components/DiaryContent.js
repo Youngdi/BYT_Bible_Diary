@@ -44,6 +44,7 @@ const BookTitle = styled.Text`
   color: ${props => props.fontColor};
   line-height: ${props => props.lineHeight};
   font-family: ${props => props.fontFamily};
+  margin-bottom:10px;
 `;
 const PharseCantainer = styled.Text`
   font-size: ${props => props.fontSize}px;
@@ -261,16 +262,16 @@ export default class DiaryContent extends PureComponent {
       </View>
     );
   }
-  renderItem = ({item, index}) => {
+  renderItem = (item, i) => {
     return (
       <View>
         <BookTitle
-        fontSize={this.props.fontSize + 2}
-        fontColor={this.props.fontColor}
-        lineHeight={this.props.lineHeight}
-        fontFamily={this.props.fontFamily}
+          fontSize={this.props.fontSize + 2}
+          fontColor={this.props.fontColor}
+          lineHeight={this.props.lineHeight}
+          fontFamily={this.props.fontFamily}
         >
-        {'\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}{this.props.defaultLang == 'cht_en' ? '': '\n'}
+        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item[0].verse_nr == '1' ? item.length : item[item.length -1].verse_nr}`}
         </BookTitle>
         <PharseCantainer
           fontSize={this.props.fontSize}
@@ -344,11 +345,11 @@ export default class DiaryContent extends PureComponent {
       </View>
     );
   }
-  renderVerse = () => this.props.content.map(item =>
+  renderVerse = () => this.props.content.map((item, i) =>
     <View ref={r => this[item[0].book_name + item[0].chapter_nr] = r}>
       <FlatList
         data={[item]}
-        renderItem={this.renderItem}
+        renderItem={({item}) => this.renderItem(item, i)}
       />
     </View>
   );

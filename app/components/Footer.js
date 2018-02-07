@@ -98,7 +98,6 @@ export default class Footer extends PureComponent {
     this.actionButton.reset();
   }
   render() {
-    if(this.props.content.length == 0) return (<View></View>);
     let selectLangText = 'cht';
     let langList = [
       <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.handeleChangeLang('chs')}><StyledLangText>簡</StyledLangText></ActionButton.Item>,
