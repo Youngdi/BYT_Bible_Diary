@@ -17,6 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import styled from "styled-components/native";
 import { SearchBar } from 'react-native-elements';
+import ArrowUp from '../components/ArrowUp';
 
 const {
   height: deviceHeight,
@@ -159,6 +160,7 @@ export default class Bookmark extends Component {
       bookmarkList: [],
       bookmarkListfilter: [],
       refreshing: false,
+      fullScreenMode: false,
     }
   }
   componentDidMount = async () => {
@@ -270,6 +272,14 @@ export default class Bookmark extends Component {
       />
     );
   }
+  _handeleScrollTop = (e) => {
+    this.contentView.scrollToOffset({x: 0, y: 0, animated: true});
+  }
+  _handleScroll = (e) => {
+    const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
+    if(contentOffset.y > 600) this.setState({fullScreenMode: true});
+    if(contentOffset.y < 600) this.setState({fullScreenMode: false});
+  }
   render() {
     const isMatch = key => item => R.contains(item.keyId, key);
     const bookmarkList = R.curry((bookmarkList, key) =>
@@ -285,6 +295,7 @@ export default class Bookmark extends Component {
       :
       <View style={{flex:1, backgroundColor:'#eee'}}>
         <FlatList
+          ref={r => this.contentView = r}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -295,7 +306,9 @@ export default class Bookmark extends Component {
           ListHeaderComponent={this.renderHeader}
           data={bookmarkList}
           renderItem={this.renderItem}
+          keyExtractor={(item, index) => index}
         />
+        <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={true} />
       </View>
     );
   }

@@ -175,6 +175,7 @@ export default class BibleSearch extends Component {
       chapterOptionPlaceHolder: I18n.t('bible_search_placeholder'),
       bookOptions: [],
       chapterOption: [],
+      fullScreenMode: false,
     }
   }
   componentWillMount = () => {
@@ -212,6 +213,7 @@ export default class BibleSearch extends Component {
       this.setState({
         verseList: results,
         searchKey: text,
+        fullScreenMode: results.length > 10 ? true : false,
       });
     } catch (error) {
       console.log(error);
@@ -247,7 +249,8 @@ export default class BibleSearch extends Component {
     this.setState({
       verseList: [],
       searchKey: '',
-    })
+      fullScreenMode: false,
+    });
   }
   renderHeader = () => {
     return (
@@ -347,7 +350,7 @@ export default class BibleSearch extends Component {
     );
   }
   _handeleScrollTop = (e) => {
-    this.contentView.scrollToOffset({x: 0, y: 0, animated: true})
+    this.contentView.scrollToOffset({x: 0, y: 0, animated: true});
   }
   render() {
     return (
@@ -358,8 +361,9 @@ export default class BibleSearch extends Component {
           ListHeaderComponent={this.renderHeader}
           data={this.state.verseList}
           renderItem={this.renderItem}
+          
         />
-        <ArrowUp handeleScrollTop={this._handeleScrollTop} content={this.state.verseList} fullScreenMode={true} />
+        { this.state.fullScreenMode ? <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={this.state.fullScreenMode} /> : null}
       </View>
     );
   }

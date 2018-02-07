@@ -12,7 +12,7 @@ export default class Popup extends PureComponent {
 			this.popupDialog.show();
 			this.animation.play();
 			setTimeout(() => {
-					this.popupDialog.dismiss();
+        if(this.popupDialog) this.popupDialog.dismiss();
 			}, 2000);
     }
     render() {

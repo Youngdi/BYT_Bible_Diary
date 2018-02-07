@@ -190,6 +190,11 @@ export default class DiaryRead extends Component {
               data: 'cht',
               expires: null,
             });
+            await global.storage.save({
+              key: '@note',
+              data: {},
+              expires: null,
+            });
             const readingRecord = await global.storage.load({key:'@readingSchdule'});
             await this.generateContent();
             await this.generateBooks('cht');
@@ -544,6 +549,7 @@ export default class DiaryRead extends Component {
   _handleFinished = () => {
     this.setState({
       finishedReading: false,
+      fullScreenMode: true,
     });
   }
   _handeleChangeLang = async (lang) => {
@@ -610,6 +616,10 @@ export default class DiaryRead extends Component {
       this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
       return
     }
+    if(toWhere == 'Note') {
+      this.props.navigation.navigate(toWhere, {done: false, currentDate: this.state.currentDate, setting:this.state.setting, bg: this.state.bg});
+      return
+    } 
     this.props.navigation.navigate(toWhere);
   }
   render() {
