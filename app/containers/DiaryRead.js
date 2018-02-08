@@ -612,26 +612,26 @@ export default class DiaryRead extends Component {
     });
   }
   _handeleChangeLang = async (lang) => {
-    this.closeActionButton();
     if(this.state.loadContent) return null;
     if(lang == 'cht') I18n.locale = 'zh-hant';
     if(lang == 'chs') I18n.locale = 'zh-hans';
     if(lang == 'en') I18n.locale = 'en';
     if(lang == 'ja') I18n.locale = 'ja';
     if(lang == 'cht_en') I18n.locale = 'zh-hant';
-    this.setState({
+    await this.setState({
       defaultLang: lang,
     });
-    this.diaryContent.resetHighlight();
-    setTimeout(() => {
-      this.generateContent();
-    }, 0);
     await global.storage.save({
       key: '@lang',
       data: lang,
       expires: null,
     });
-    this.generateBooks(lang);
+    setTimeout(() => {
+      this.generateContent();
+    }, 200);
+    setTimeout(() => {
+      this.generateBooks(lang);
+    }, 1500);
   }
   _handleHighlight = (color) => {
     this.diaryContent.setHighlight(color);
@@ -708,9 +708,11 @@ export default class DiaryRead extends Component {
             closeControlPanel={this.closeControlPanel}
           />
         }
+        captureGestures={true}
         tapToClose={true}
         openDrawerOffset={0.2} // 20% gap on the right side of drawer
         panCloseMask={0.2}
+        panOpenMask={30}
         closedDrawerOffset={-3}
         styles={drawerStyles}
         tweenHandler={(ratio) => ({
@@ -865,6 +867,7 @@ export default class DiaryRead extends Component {
 
 const styles = StyleSheet.create({
   fixedHeader: {
+    zIndex: 1,
     position: 'absolute',
     left: 0,
     right: 0,
@@ -873,6 +876,7 @@ const styles = StyleSheet.create({
   },
   fixedFooter: {
     position: 'absolute',
+    zIndex: 3,
     bottom: 0,
     left: 0,
     right: 0,
@@ -883,7 +887,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    left: 0,
+    width: 50,
     marginBottom: isIphoneX() ? 90 : 60,
     height: 50,
   }

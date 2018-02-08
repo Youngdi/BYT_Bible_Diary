@@ -336,7 +336,7 @@ export default class DiaryContent extends PureComponent {
                 fontSize={this.props.fontSize - 6}
                 ref={ r => this['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr] = r}
               >
-                {this.props.defaultLang == 'en' ? '  ': ''} {`${verseItem.verse_nr}`}{'  '}
+                {this.props.defaultLang == 'en' ? '  ': ''} {`${verseItem.verse_nr}.`}{'  '}
               </PharseNumber>
               {`${verseItem.verse}`}{this.props.defaultLang == 'cht_en' ? '\n' : ''}
             </Text>

@@ -156,7 +156,7 @@ class MyHomeScreen extends Component {
     super(props);
   }
   componentDidMount() {
-    // this.props.navigation.navigate('Diary');
+    this.props.navigation.navigate('Diary');
     FCM.requestPermissions();
 
     FCM.getFCMToken().then(token => {

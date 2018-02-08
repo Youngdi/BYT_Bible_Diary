@@ -175,7 +175,7 @@ export default class BibleListPanel extends PureComponent {
   }
   render() {
     return (
-      <ScrollView style={{flex:1, backgroundColor:'black'}}>
+      <ScrollView style={{flex:1, backgroundColor:'#1E1E1E'}}>
         <View style={{flex:1, padding:20, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <View><Text>{'           '}</Text></View>
           <View>
