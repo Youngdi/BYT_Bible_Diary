@@ -245,8 +245,8 @@ export default class DiaryContent extends PureComponent {
             onPress={(e) => {
               this.props.closeActionButton();
               this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
-                const offsetHeight = this.props.lineHeight == 28 ? 80 : 100;
-                this.props.contentView.root.scrollTo({y: pageY + offsetHeight, animated: true});
+                this.props.contentView.root.scrollTo({y: pageY, animated: true});
+                this.props.setFullScreenMode();
               });
             }}
           >

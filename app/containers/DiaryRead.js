@@ -10,6 +10,9 @@ import {
   Share,
   AsyncStorage,
   Dimensions,
+  StyleSheet,
+  Animated,
+  Easing,
 } from 'react-native';
 import Spinner from 'react-native-spinkit';
 import Drawer from 'react-native-drawer'
@@ -81,6 +84,11 @@ export default class DiaryRead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      arrowUpScrollY: new Animated.Value(0),
+      footerScrollY: new Animated.Value(0),
+      headerScrollY: new Animated.Value(0),
+      fadeInOpacity: new Animated.Value(1),
+      arrowFadeInOpacity: new Animated.Value(0),
       oldBooks: [],
       newBooks: [],
       popupText: '',
@@ -307,10 +315,36 @@ export default class DiaryRead extends Component {
   _handleDoublePress = () => {
     var delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
+      this.state.fadeInOpacity.setValue(this.state.fullScreenMode ? 0 : 1);
+      this.state.footerScrollY.setValue(this.state.fullScreenMode ? 50 : 0);
+      this.state.headerScrollY.setValue(this.state.fullScreenMode ? -50 : 0);
+      this.state.arrowFadeInOpacity.setValue(this.state.fullScreenMode ? 1 : 0);
+      Animated.parallel([
+        Animated.timing(this.state.fadeInOpacity, {
+          toValue: this.state.fullScreenMode ? 1 : 0,
+          duration: 500,
+          easing: Easing.linear,
+        }),
+        Animated.timing(this.state.footerScrollY, {
+          toValue: this.state.fullScreenMode ? 0 : 50,
+          duration: 500,
+          easing: Easing.linear,
+        }),
+        Animated.timing(this.state.headerScrollY, {
+          toValue: this.state.fullScreenMode ? 0 : -50,
+          duration: 500,
+          easing: Easing.linear,
+        }),
+        Animated.timing(this.state.arrowFadeInOpacity, {
+          toValue: this.state.fullScreenMode ? 0 : 1,
+          duration: 500,
+          easing: Easing.linear,
+        })
+      ]).start();
+      this.closeActionButton();
       this.setState({
         fullScreenMode: !this.state.fullScreenMode,
       });
-      this.closeActionButton();
     }
     this.closeActionButton();
     this.setState({
@@ -511,22 +545,47 @@ export default class DiaryRead extends Component {
     if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
-  _handleScroll = async (e) => {
+  _setFullScreenMode = () => {
+    this.setState({
+      fullScreenMode: true,
+    });
+  }
+  async _handleScroll(event) {
     this.closeActionButton();
-    const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
-    const paddingToBottom = 20;
-    const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
     if(this.state.isTooltipModalVisible) return;
-    if(contentOffset.y < 200) this.setState({fullScreenMode: false});
-    // if(direction == 'down' && contentOffset.y > 100) {
-    //   this.setState({
-    //     fullScreenMode: true,
-    //   });
-    // } else {
-    //   this.setState({
-    //     fullScreenMode: false,
-    //   });
-    // }
+    const paddingToBottom = 20;
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const direction = currentOffset > this.offset ? 'down' : 'up';
+    const distance = this.offset ? (this.offset - currentOffset) : 0;
+    const footerNewPosition = this.state.footerScrollY._value - distance;
+    if (currentOffset > 0 && currentOffset < (this.contentHeight - this.scrollViewHeight)) {
+      if (direction === 'down') { //往下滑
+        this.setState({
+          fullScreenMode: true,
+        });
+        this.state.arrowFadeInOpacity.setValue(1);
+        if (this.state.footerScrollY._value < 50) {
+          this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition > 50 ? -100 : -footerNewPosition);
+        }
+        if (this.state.footerScrollY._value < 200) {
+          this.state.fadeInOpacity.setValue(footerNewPosition > 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      if (direction === 'up') { //往上滑
+        this.setState({
+          fullScreenMode: footerNewPosition == 50 ? true : false,
+        });
+        this.state.arrowFadeInOpacity.setValue(footerNewPosition == 50 ? 1 : 0);
+        if (this.state.footerScrollY._value >= 0) {
+          this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : -footerNewPosition);
+          this.state.fadeInOpacity.setValue(footerNewPosition < 0 ? 1 : footerNewPosition == 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      this.offset = currentOffset;
+    }
     if(layoutMeasurement.height + contentOffset.y >= contentSize.height + 120) {
       if(this.state.hasRead) return;
       if(this.state.markedDates[this.state.currentDate].marked) return;
@@ -664,23 +723,12 @@ export default class DiaryRead extends Component {
         ref={(ref) => this._drawer = ref}
       >
         <StyledContainer bg={bg}>
-        { !this.state.finishedReading ?
-          <Header
-            ref={r => this.header = r}
-            fullScreenMode={fullScreenMode}
-            navigation={this.props.navigation}
-            toggleModal={this._toggleModalCalendar}
-            navigateTo={this.navigateTo}
-            closeFooterActionButton={this.closeFooterActionButton}
-            openControlPanel={this.openControlPanel}
-          />
-          : null
-        }
           <StyledMain
             ref={r => this.contentView = r}
             bg={bg} 
             onScroll={this._handleScroll.bind(this)}
-            // onTouchStart={this._onMomentumScrollBegin.bind(this)}
+            onContentSizeChange={(w, h) => { this.contentHeight = h }}
+            onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
             scrollEventThrottle={16}
           >
             <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
@@ -703,14 +751,42 @@ export default class DiaryRead extends Component {
                   checkBookmark={this.checkBookmark}
                   handleDoublePress={this._handleDoublePress}
                   closeActionButton={this.closeActionButton}
+                  setFullScreenMode={this._setFullScreenMode}
                 />
               </View>
             </StyledMainContent>
           </StyledMain>
-          <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-          { !this.state.finishedReading ? <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={fullScreenMode} /> : null}
-          { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-          { !this.state.finishedReading ? 
+        { !this.state.finishedReading ?
+          <Animated.View
+            style={[
+              styles.fixedHeader,
+              { 
+                opacity: this.state.fadeInOpacity,
+                transform: [{ translateY: this.state.headerScrollY }]
+              },
+            ]}
+          >
+            <Header
+              ref={r => this.header = r}
+              fullScreenMode={false}
+              navigation={this.props.navigation}
+              toggleModal={this._toggleModalCalendar}
+              navigateTo={this.navigateTo}
+              closeFooterActionButton={this.closeFooterActionButton}
+              openControlPanel={this.openControlPanel}
+            />
+          </Animated.View>
+          : null
+        }
+        { !this.state.finishedReading ?
+          <Animated.View
+            style={[
+              styles.fixedFooter,
+              { opacity: this.state.fadeInOpacity,
+                transform: [{ translateY: this.state.footerScrollY }] 
+              },
+            ]}
+          >
             <Footer
               ref={r => this.footer = r}
               handleNextDay={this._handleNextDay}
@@ -723,8 +799,26 @@ export default class DiaryRead extends Component {
               fullScreenMode={fullScreenMode}
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
-            : null
-          }
+          </Animated.View>
+          : null
+        }
+        { !this.state.finishedReading ?
+          <Animated.View
+            style={[
+              styles.fixedArrowUp,
+              { 
+                opacity: this.state.arrowFadeInOpacity,
+              },
+            ]}
+          >
+            <ArrowUp
+              handeleScrollTop={this._handeleScrollTop}
+            />
+          </Animated.View>
+          : null
+        }
+        <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
+        { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
         { !this.state.finishedReading ?
           <CalendarModal
             defaultLang={this.state.defaultLang}
@@ -768,3 +862,29 @@ export default class DiaryRead extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  fixedHeader: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 50,
+  },
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+  },
+  fixedArrowUp: {
+    zIndex: 2,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    left: 0,
+    marginBottom: isIphoneX() ? 90 : 60,
+    height: 50,
+  }
+})

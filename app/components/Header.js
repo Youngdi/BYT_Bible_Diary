@@ -24,7 +24,7 @@ var {
   width: deviceWidth,
 } = Dimensions.get('window');
 
-const StyledHeader = Animated.createAnimatedComponent(styled.View`
+const StyledHeader = styled.View`
   z-index: 2;
   position: absolute;
   top: 0;
@@ -36,7 +36,7 @@ const StyledHeader = Animated.createAnimatedComponent(styled.View`
   justify-content: space-between;
   margin-top: ${Platform.OS == 'ios' ? 25 : 0};
   height: 6%;
-`);
+`;
 
 const shadowStyle = {
   shadowOpacity: 0.35,
@@ -61,42 +61,8 @@ export default class Header extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      fadeInOpacity: new Animated.Value(0),
-      transformY: new Animated.Value(0),
       active: false,
     };
-  }
-  componentDidMount() {
-    this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
-    this.state.transformY.setValue(this.props.fullScreenMode ? 0 : -10);
-    Animated.parallel([
-      Animated.timing(this.state.fadeInOpacity, {
-        toValue: this.props.fullScreenMode ? 0 : 1,
-        duration: 500,
-        easing: Easing.linear
-      }),
-      Animated.timing(this.state.transformY, {
-        toValue: this.props.fullScreenMode ? -10 : 0,
-        duration: 500,
-        easing: Easing.linear
-      })
-    ]).start();
-  }
-  componentDidUpdate() {
-    this.state.fadeInOpacity.setValue(this.props.fullScreenMode ? 1 : 0);
-    this.state.transformY.setValue(this.props.fullScreenMode ? 0 : -10);
-    Animated.parallel([
-      Animated.timing(this.state.fadeInOpacity, {
-        toValue: this.props.fullScreenMode ? 0 : 1,
-        duration: 500,
-        easing: Easing.linear
-      }),
-      Animated.timing(this.state.transformY, {
-        toValue: this.props.fullScreenMode ? -10 : 0,
-        duration: 500,
-        easing: Easing.linear
-      })
-    ]).start();
   }
   closeActionButton = () => {
     this.actionButton.reset();
@@ -106,15 +72,7 @@ export default class Header extends PureComponent {
   }
   render() {
     return (
-      <StyledHeader style={{
-          opacity: this.state.fadeInOpacity,
-          transform: [
-            {
-              translateY: this.state.transformY,
-            }
-          ],
-        }}
-      >
+      <StyledHeader>
       <View></View>
         <ActionButton
           buttonColor="rgba(30,30,30,1)"
@@ -126,6 +84,7 @@ export default class Header extends PureComponent {
           size={36}
           position={'left'}
           hideShadow={false}
+          
           offsetY={15}
           offsetX={20}
           degrees={0}
