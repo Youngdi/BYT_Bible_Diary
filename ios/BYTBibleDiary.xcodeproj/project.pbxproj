@@ -41,6 +41,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* BYTBibleDiaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BYTBibleDiaryTests.m */; };
+		2F4D6ABF202C82DB002DA407 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F4D6A87202C82A7002DA407 /* libCodePush.a */; };
 		2F7C6C69202C4BE800EF8F0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F7C6C68202C4BE800EF8F0A /* GoogleService-Info.plist */; };
 		2F86A933201844DB0005FACB /* byt.realm in Resources */ = {isa = PBXBuildFile; fileRef = 2F86A8CF20183C350005FACB /* byt.realm */; };
 		2F86AB4C20188F880005FACB /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F86AAF820188BE50005FACB /* Lottie.framework */; };
@@ -161,6 +162,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
 			remoteInfo = "fishhook-tvOS";
+		};
+		2F4D6A86202C82A7002DA407 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F4D6A81202C82A7002DA407 /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = CodePush;
+		};
+		2F4D6A88202C82A7002DA407 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2F4D6A81202C82A7002DA407 /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F886647B1F4ADB500036D01B;
+			remoteInfo = "CodePush-tvOS";
 		};
 		2F7C6BDF202C488800EF8F0A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -514,6 +529,7 @@
 		2D02E47B1E0B4A5D006451C7 /* BYTBibleDiary-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BYTBibleDiary-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BYTBibleDiary-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BYTBibleDiary-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F4D6A81202C82A7002DA407 /* CodePush.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
 		2F7C6C68202C4BE800EF8F0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2F7C6CC9202C4E4100EF8F0A /* BYTBibleDiary.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BYTBibleDiary.entitlements; path = BYTBibleDiary/BYTBibleDiary.entitlements; sourceTree = "<group>"; };
 		2F86A8CF20183C350005FACB /* byt.realm */ = {isa = PBXFileReference; lastKnownFileType = file; name = byt.realm; path = ../db/byt.realm; sourceTree = "<group>"; };
@@ -575,6 +591,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55C9EF680C7B4745B6A24973 /* libz.tbd in Frameworks */,
+				2F4D6ABF202C82DB002DA407 /* libCodePush.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -597,7 +615,6 @@
 				3FD369A4AF7A4BB789128A70 /* libRNVectorIcons.a in Frameworks */,
 				75C4013381474C28919F4B89 /* libRealmReact.a in Frameworks */,
 				17A10DEA45F84BC39E75A127 /* libc++.tbd in Frameworks */,
-				55C9EF680C7B4745B6A24973 /* libz.tbd in Frameworks */,
 				E7110B75ACD447FCAF6B9FD8 /* libLottie.a in Frameworks */,
 				B2EF10B1E9F647A68532C656 /* libLottieReactNative.a in Frameworks */,
 				F7AB40B81C7641489BCA53A9 /* libRNFetchBlob.a in Frameworks */,
@@ -759,6 +776,15 @@
 				338158E702D65CEDDFDEAC55 /* libPods-BYTBibleDiaryTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2F4D6A82202C82A7002DA407 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F4D6A87202C82A7002DA407 /* libCodePush.a */,
+				2F4D6A89202C82A7002DA407 /* libCodePush.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2F7C6BDC202C488800EF8F0A /* Products */ = {
@@ -933,6 +959,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				2F4D6A81202C82A7002DA407 /* CodePush.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -1139,6 +1166,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 2F4D6A82202C82A7002DA407 /* Products */;
+					ProjectRef = 2F4D6A81202C82A7002DA407 /* CodePush.xcodeproj */;
+				},
+				{
 					ProductGroup = 2F86AAF120188BE50005FACB /* Products */;
 					ProjectRef = 496ACC1868F14834A897FF13 /* Lottie.xcodeproj */;
 				},
@@ -1321,6 +1352,20 @@
 			fileType = archive.ar;
 			path = "libfishhook-tvOS.a";
 			remoteRef = 2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F4D6A87202C82A7002DA407 /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = 2F4D6A86202C82A7002DA407 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F4D6A89202C82A7002DA407 /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = 2F4D6A88202C82A7002DA407 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2F7C6BE0202C488800EF8F0A /* libRNFIRMessaging.a */ = {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet, Share, Platform } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
+import CodePush from "react-native-code-push";
 import DiaryScreen from './DiaryRead';
 import I18n, { getLanguages } from 'react-native-i18n';
 import RNFS from 'react-native-fs';
@@ -14,6 +15,7 @@ import BibleScreen from './Bible';
 import MoreScreen from './More';
 import NoteScreen from './Note';
 import BibleSearchScreen from './BibleSearch';
+
 
 const bible_chs = {
   name: 'bible_chs',
@@ -155,7 +157,6 @@ class MyHomeScreen extends Component {
   }
   componentDidMount() {
     // this.props.navigation.navigate('Diary');
-    
     FCM.requestPermissions();
 
     FCM.getFCMToken().then(token => {
@@ -198,41 +199,25 @@ class MyHomeScreen extends Component {
       this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, token => {
         console.log("TOKEN (refreshUnsubscribe)", token);
       });
-    })
-    // this.socket.on('notification', (message) => {
-    //   alert(message.data);
-      // FCM.presentLocalNotification({
-      //     id: "UNIQ_ID_STRING",                               // (optional for instant notification)
-      //     title: "大會通知",                     // as FCM payload
-      //     body: '555555555',                    // as FCM payload (required)
-      //     sound: "default",                                   // as FCM payload
-      //     priority: "high",                                   // as FCM payload
-      //     click_action: "ACTION",                             // as FCM payload
-      //     badge: 0,                                           // as FCM payload IOS only, set 0 to clear badges
-      //     icon: "ic_launcher",                                // as FCM payload, you can relace this with custom icon you put in mipmap
-      //     my_custom_data:'my_custom_field_value',             // extra data you want to throw
-      //     show_in_foreground:true                             // notification when app is in foreground (local & remote)
-      // });
-    // });
-
-    // CodePush.sync({ updateDialog: false, installMode: CodePush.InstallMode.IMMEDIATE },
-    //   (status) => {
-    //     switch (status) {
-    //       case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
-    //         this.setState({showDownloadingModal: false});
-    //         break;
-    //       case CodePush.SyncStatus.INSTALLING_UPDATE:
-    //         this.setState({showInstalling: true});
-    //         break;
-    //       case CodePush.SyncStatus.UPDATE_INSTALLED:
-    //         this.setState({showDownloadingModal: false});
-    //         break;
-    //     }
-    //   },
-    //   ({ receivedBytes, totalBytes, }) => {
-    //       this.setState({downloadProgress: receivedBytes / totalBytes * 100});
-    //   }
-    // );
+    });
+    CodePush.sync({ updateDialog: false, installMode: CodePush.InstallMode.IMMEDIATE },
+      (status) => {
+        switch (status) {
+          case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+            this.setState({showDownloadingModal: false});
+            break;
+          case CodePush.SyncStatus.INSTALLING_UPDATE:
+            this.setState({showInstalling: true});
+            break;
+          case CodePush.SyncStatus.UPDATE_INSTALLED:
+            this.setState({showDownloadingModal: false});
+            break;
+        }
+      },
+      ({ receivedBytes, totalBytes, }) => {
+          this.setState({downloadProgress: receivedBytes / totalBytes * 100});
+      }
+    );
     // setTimeout(() => {
     //   FCM.presentLocalNotification({
     //     id: "UNIQ_ID_STRING",                               // (optional for instant notification)

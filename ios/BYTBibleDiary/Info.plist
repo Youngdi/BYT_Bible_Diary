@@ -35,8 +35,10 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>CodePushDeploymentKey</key>
+	<string>mUeHS6A8_RfO4MekUbtUGzQiQgPQc5a64ba8-c46e-44a1-a546-41de22ffbd48</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
