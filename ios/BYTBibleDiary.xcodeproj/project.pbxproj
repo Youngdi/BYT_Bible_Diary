@@ -14,6 +14,7 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* BYTBibleDiaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BYTBibleDiaryTests.m */; };
 		031992A215A34D0BBE1815D4 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DB2231AF1A545F1A0B068AF /* MaterialCommunityIcons.ttf */; };
+		0ECE685D018964128654C650 /* libPods-BYTBibleDiaryTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 338158E702D65CEDDFDEAC55 /* libPods-BYTBibleDiaryTests.a */; };
 		0F0F27DACBC94782A32D4184 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6167EACA3A5A4C6C86C158E0 /* Octicons.ttf */; };
 		124CE1A4E9944D8B8354C630 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 915E456177064F13B2800779 /* MaterialIcons.ttf */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -40,6 +41,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* BYTBibleDiaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BYTBibleDiaryTests.m */; };
+		2F7C6C69202C4BE800EF8F0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F7C6C68202C4BE800EF8F0A /* GoogleService-Info.plist */; };
 		2F86A933201844DB0005FACB /* byt.realm in Resources */ = {isa = PBXBuildFile; fileRef = 2F86A8CF20183C350005FACB /* byt.realm */; };
 		2F86AB4C20188F880005FACB /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F86AAF820188BE50005FACB /* Lottie.framework */; };
 		2F86AB4D20188F880005FACB /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2F86AAF820188BE50005FACB /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -58,8 +60,10 @@
 		92324C75ADF142748C6639FD /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79EEAF123E854BE8A856CE49 /* SimpleLineIcons.ttf */; };
 		925B650614BE432C9B905329 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 586BAC40FBF548C2AD75C0D4 /* Zocial.ttf */; };
 		9562BE1290C34BB9A47058BE /* libScreenBrightness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64C63465F0BC42EBA2C15B38 /* libScreenBrightness.a */; };
+		9D244F4C2695491DA12330C1 /* libRNFIRMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF2BDE28846490694E81D58 /* libRNFIRMessaging.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B2EF10B1E9F647A68532C656 /* libLottieReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EF17A626F1E34E2CBEAAAC0B /* libLottieReactNative.a */; };
+		B98D18E61B186D51EFE2A294 /* libPods-BYTBibleDiary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9200CF89A9FA43F404C38822 /* libPods-BYTBibleDiary.a */; };
 		C913EBDCE34A4BF9AAF1C859 /* libRNSpinkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FADA87A6A5264AD1830F83AD /* libRNSpinkit.a */; };
 		D51C82F2BA404AF2BD3ED920 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2B4F2F8C5F470CAD547F67 /* libRNFS.a */; };
 		E7110B75ACD447FCAF6B9FD8 /* libLottie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 42C2BF9A6CE74614AA6F0DC8 /* libLottie.a */; };
@@ -157,6 +161,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
 			remoteInfo = "fishhook-tvOS";
+		};
+		2F7C6BDF202C488800EF8F0A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51D2B296C9C644D8A135C533 /* RNFIRMessaging.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFIRMessaging;
 		};
 		2F86A8C320183BE00005FACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -498,18 +509,24 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BYTBibleDiary/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1A5D979A7E124727B161E922 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
+		1FF2BDE28846490694E81D58 /* libRNFIRMessaging.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRMessaging.a; sourceTree = "<group>"; };
 		245977A3FACE4421ABBA47A1 /* RNFS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* BYTBibleDiary-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BYTBibleDiary-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BYTBibleDiary-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BYTBibleDiary-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F7C6C68202C4BE800EF8F0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2F7C6CC9202C4E4100EF8F0A /* BYTBibleDiary.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BYTBibleDiary.entitlements; path = BYTBibleDiary/BYTBibleDiary.entitlements; sourceTree = "<group>"; };
 		2F86A8CF20183C350005FACB /* byt.realm */ = {isa = PBXFileReference; lastKnownFileType = file; name = byt.realm; path = ../db/byt.realm; sourceTree = "<group>"; };
 		305540E0298E4A2680AE93D5 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		338158E702D65CEDDFDEAC55 /* libPods-BYTBibleDiaryTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BYTBibleDiaryTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		368F488924A64E5E9B1378DD /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		3E301BAB65CA5CA9DECCCBBA /* Pods-BYTBibleDiary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BYTBibleDiary.release.xcconfig"; path = "Pods/Target Support Files/Pods-BYTBibleDiary/Pods-BYTBibleDiary.release.xcconfig"; sourceTree = "<group>"; };
 		42C2BF9A6CE74614AA6F0DC8 /* libLottie.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLottie.a; sourceTree = "<group>"; };
 		441C465C129442B6B7CA2150 /* React-Native-Webview-Bridge.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = "React-Native-Webview-Bridge.xcodeproj"; path = "../node_modules/react-native-webview-bridge-updated/ios/React-Native-Webview-Bridge.xcodeproj"; sourceTree = "<group>"; };
 		4693848A7E3A4D3BAC7FD5B5 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
 		496ACC1868F14834A897FF13 /* Lottie.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
 		4DB2231AF1A545F1A0B068AF /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		51D2B296C9C644D8A135C533 /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
 		57A5C2102C16439291B5CCD2 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		586BAC40FBF548C2AD75C0D4 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
@@ -517,6 +534,7 @@
 		64C63465F0BC42EBA2C15B38 /* libScreenBrightness.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libScreenBrightness.a; sourceTree = "<group>"; };
 		662C668BAE3F427E82B7099E /* ScreenBrightness.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ScreenBrightness.xcodeproj; path = "../node_modules/react-native-screen-brightness/ios/ScreenBrightness.xcodeproj"; sourceTree = "<group>"; };
 		69009DA8895A4FB0BE1AB0BE /* RealmReact.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RealmReact.xcodeproj; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; };
+		70028F2AD5B0C4C75432D46D /* Pods-BYTBibleDiaryTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BYTBibleDiaryTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BYTBibleDiaryTests/Pods-BYTBibleDiaryTests.debug.xcconfig"; sourceTree = "<group>"; };
 		715CF1DB019C4BB2ABF97C95 /* RNI18n.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/ios/RNI18n.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		79A11EEB1C194928BD02EDE9 /* libReact-Native-Webview-Bridge.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libReact-Native-Webview-Bridge.a"; sourceTree = "<group>"; };
@@ -526,8 +544,11 @@
 		8F4509732093400D8BAB9C38 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBlur.xcodeproj; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; };
 		8F626895E5124AED8482BC10 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		915E456177064F13B2800779 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		9200CF89A9FA43F404C38822 /* libPods-BYTBibleDiary.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BYTBibleDiary.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8226D0FAB8A202CD8E889F8 /* Pods-BYTBibleDiary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BYTBibleDiary.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BYTBibleDiary/Pods-BYTBibleDiary.debug.xcconfig"; sourceTree = "<group>"; };
 		AC3504157C1E48ACBEEE2D10 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		B96C073E5F630E587D430344 /* Pods-BYTBibleDiaryTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BYTBibleDiaryTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BYTBibleDiaryTests/Pods-BYTBibleDiaryTests.release.xcconfig"; sourceTree = "<group>"; };
 		C26066B50BD94A229792E71F /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		C4E55436B0254D3B80698C72 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		DD2F5CA62834467D9F5996AE /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
@@ -546,6 +567,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+				0ECE685D018964128654C650 /* libPods-BYTBibleDiaryTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,6 +602,8 @@
 				B2EF10B1E9F647A68532C656 /* libLottieReactNative.a in Frameworks */,
 				F7AB40B81C7641489BCA53A9 /* libRNFetchBlob.a in Frameworks */,
 				3D33112AA6804C5EB62A7280 /* libReact-Native-Webview-Bridge.a in Frameworks */,
+				9D244F4C2695491DA12330C1 /* libRNFIRMessaging.a in Frameworks */,
+				B98D18E61B186D51EFE2A294 /* libPods-BYTBibleDiary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +714,8 @@
 		13B07FAE1A68108700A75B9A /* BYTBibleDiary */ = {
 			isa = PBXGroup;
 			children = (
+				2F7C6CC9202C4E4100EF8F0A /* BYTBibleDiary.entitlements */,
+				2F7C6C68202C4BE800EF8F0A /* GoogleService-Info.plist */,
 				2F86A8CF20183C350005FACB /* byt.realm */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -729,8 +755,18 @@
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				C26066B50BD94A229792E71F /* libc++.tbd */,
 				368F488924A64E5E9B1378DD /* libz.tbd */,
+				9200CF89A9FA43F404C38822 /* libPods-BYTBibleDiary.a */,
+				338158E702D65CEDDFDEAC55 /* libPods-BYTBibleDiaryTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2F7C6BDC202C488800EF8F0A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F7C6BE0202C488800EF8F0A /* libRNFIRMessaging.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2F86A8DD20183F270005FACB /* Recovered References */ = {
@@ -747,6 +783,7 @@
 				EF17A626F1E34E2CBEAAAC0B /* libLottieReactNative.a */,
 				C4E55436B0254D3B80698C72 /* libRNFetchBlob.a */,
 				79A11EEB1C194928BD02EDE9 /* libReact-Native-Webview-Bridge.a */,
+				1FF2BDE28846490694E81D58 /* libRNFIRMessaging.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -864,6 +901,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		5B7B038638209C21E654D6B7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A8226D0FAB8A202CD8E889F8 /* Pods-BYTBibleDiary.debug.xcconfig */,
+				3E301BAB65CA5CA9DECCCBBA /* Pods-BYTBibleDiary.release.xcconfig */,
+				70028F2AD5B0C4C75432D46D /* Pods-BYTBibleDiaryTests.debug.xcconfig */,
+				B96C073E5F630E587D430344 /* Pods-BYTBibleDiaryTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -908,6 +956,7 @@
 				0DB4D9D22249441EA73D3BB6 /* LottieReactNative.xcodeproj */,
 				1A5D979A7E124727B161E922 /* RNFetchBlob.xcodeproj */,
 				441C465C129442B6B7CA2150 /* React-Native-Webview-Bridge.xcodeproj */,
+				51D2B296C9C644D8A135C533 /* RNFIRMessaging.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -931,6 +980,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				3290DD0FEA694283B6E12B50 /* Resources */,
 				2F86A8DD20183F270005FACB /* Recovered References */,
+				5B7B038638209C21E654D6B7 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -964,9 +1014,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "BYTBibleDiaryTests" */;
 			buildPhases = (
+				FF97AEE14266D43F8E0AC6E8 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				4383096140F40F729C13C00C /* [CP] Embed Pods Frameworks */,
+				8D3CDF7C5C3C3CDE4ED0DA0E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -982,11 +1035,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "BYTBibleDiary" */;
 			buildPhases = (
+				E18645F68817A1E36302E2BC /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				2F86AB5020188F880005FACB /* Embed Frameworks */,
+				B77D791D79B639C81258D958 /* [CP] Embed Pods Frameworks */,
+				92703EE6EEB2C966A372AF04 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1050,6 +1106,14 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = P2ADEVT9YH;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1145,6 +1209,10 @@
 				{
 					ProductGroup = 2FF07E62202AF3E200091B21 /* Products */;
 					ProjectRef = 1A5D979A7E124727B161E922 /* RNFetchBlob.xcodeproj */;
+				},
+				{
+					ProductGroup = 2F7C6BDC202C488800EF8F0A /* Products */;
+					ProjectRef = 51D2B296C9C644D8A135C533 /* RNFIRMessaging.xcodeproj */;
 				},
 				{
 					ProductGroup = 2F86A90420183F2A0005FACB /* Products */;
@@ -1253,6 +1321,13 @@
 			fileType = archive.ar;
 			path = "libfishhook-tvOS.a";
 			remoteRef = 2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F7C6BE0202C488800EF8F0A /* libRNFIRMessaging.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFIRMessaging.a;
+			remoteRef = 2F7C6BDF202C488800EF8F0A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2F86A8C420183BE00005FACB /* libthird-party.a */ = {
@@ -1565,6 +1640,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				2F7C6C69202C4BE800EF8F0A /* GoogleService-Info.plist in Resources */,
 				5476C3E88A6440869F29EDBC /* Entypo.ttf in Resources */,
 				25863FB71873436283AB51E0 /* EvilIcons.ttf in Resources */,
 				76B1C11AE65E4367945A99CF /* Feather.ttf in Resources */,
@@ -1625,6 +1701,102 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		4383096140F40F729C13C00C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BYTBibleDiaryTests/Pods-BYTBibleDiaryTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8D3CDF7C5C3C3CDE4ED0DA0E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BYTBibleDiaryTests/Pods-BYTBibleDiaryTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		92703EE6EEB2C966A372AF04 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BYTBibleDiary/Pods-BYTBibleDiary-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B77D791D79B639C81258D958 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BYTBibleDiary/Pods-BYTBibleDiary-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E18645F68817A1E36302E2BC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BYTBibleDiary-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FF97AEE14266D43F8E0AC6E8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BYTBibleDiaryTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1698,6 +1870,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70028F2AD5B0C4C75432D46D /* Pods-BYTBibleDiaryTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = P2ADEVT9YH;
@@ -1718,12 +1891,14 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = BYTBibleDiaryTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1747,6 +1922,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B96C073E5F630E587D430344 /* Pods-BYTBibleDiaryTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -1764,12 +1940,14 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = BYTBibleDiaryTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1793,8 +1971,10 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8226D0FAB8A202CD8E889F8 /* Pods-BYTBibleDiary.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BYTBibleDiary/BYTBibleDiary.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = P2ADEVT9YH;
@@ -1811,6 +1991,7 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = BYTBibleDiary/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1827,8 +2008,10 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3E301BAB65CA5CA9DECCCBBA /* Pods-BYTBibleDiary.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BYTBibleDiary/BYTBibleDiary.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2ADEVT9YH;
 				HEADER_SEARCH_PATHS = (
@@ -1844,6 +2027,7 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = BYTBibleDiary/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1883,11 +2067,13 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = "BYTBibleDiary-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1937,11 +2123,13 @@
 					"$(SRCROOT)/../node_modules/lottie-react-native/lib/ios/LottieReactNative",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-webview-bridge-updated/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = "BYTBibleDiary-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1992,6 +2180,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.BYTBibleDiary-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2016,6 +2205,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

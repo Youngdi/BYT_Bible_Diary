@@ -3,6 +3,7 @@ package com.bytbiblediary;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.evollu.react.fcm.FIRMessagingPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
             new LottiePackage(),

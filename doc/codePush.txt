@@ -1,0 +1,24 @@
+
+Project name:byt.bible.diary.ios 
+
+Code Push IOS key
+
+ Name       │ Deployment Key                                                   │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Production │ _xnfKjAXD9UL8gfgInf92bv-pu04c5a64ba8-c46e-44a1-a546-41de22ffbd48 │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Staging    │ mUeHS6A8_RfO4MekUbtUGzQiQgPQc5a64ba8-c46e-44a1-a546-41de22ffbd48 
+
+
+
+
+Project name:byt.bible.diary.an 
+
+Code Push IOS key
+
+│ Name       │ Deployment Key                                                   │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Production │ h66c1t38byxIsORFis7KicgXdTSdc5a64ba8-c46e-44a1-a546-41de22ffbd48 │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Staging    │ wjDehiEoZkysspJnEoQVXo-xtA3kc5a64ba8-c46e-44a1-a546-41de22ffbd48 │
+└────────────┴──────────────────────────────────────────────────────────────────┘

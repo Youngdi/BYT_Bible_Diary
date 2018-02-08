@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fcm')
     compile project(':react-native-webview-bridge-updated')
     compile project(':react-native-fetch-blob')
     compile project(':lottie-react-native')

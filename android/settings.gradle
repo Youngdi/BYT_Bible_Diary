@@ -1,4 +1,6 @@
 rootProject.name = 'BYTBibleDiary'
+include ':react-native-fcm'
+project(':react-native-fcm').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fcm/android')
 include ':react-native-webview-bridge-updated'
 project(':react-native-webview-bridge-updated').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webview-bridge-updated/android')
 include ':react-native-fetch-blob'
