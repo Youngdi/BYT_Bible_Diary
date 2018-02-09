@@ -18,6 +18,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import styled from "styled-components/native";
 import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 const {
   height: deviceHeight,
@@ -29,6 +30,15 @@ const StyledHeaderTitle = styled.Text`
   font-size:20;
   font-family: 'Times New Roman';
   font-weight: 900;
+`;
+const ArrowUpFixedContainer = styled.View`
+  z-index: 2;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  margin-bottom: ${isIphoneX() ? '90px' : '60px'};
+  height: 50px;
 `;
 class FlatListItem extends React.Component {
   constructor(props) {
@@ -308,7 +318,9 @@ export default class Bookmark extends Component {
           renderItem={this.renderItem}
           keyExtractor={(item, index) => index}
         />
-        <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={true} />
+        <ArrowUpFixedContainer>
+          <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={true} />
+        </ArrowUpFixedContainer>
       </View>
     );
   }

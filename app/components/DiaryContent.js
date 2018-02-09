@@ -286,7 +286,7 @@ export default class DiaryContent extends PureComponent {
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
               onPress={(e) => {
                 const delta = new Date().getTime() - this.state.lastPress;
-                if(delta < 600) {
+                if(delta < 400) {
                   if(this.props.isTooltipModalVisible){
                     setTimeout(() => {
                       this.props.handleDoublePress();

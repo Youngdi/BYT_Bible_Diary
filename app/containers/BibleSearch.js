@@ -20,6 +20,8 @@ import styled from "styled-components/native";
 import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
 import { bookName } from '../constants/bibleBookList';
+import { isIphoneX } from 'react-native-iphone-x-helper';
+
 const {
   height: deviceHeight,
   width: deviceWidth,
@@ -57,6 +59,16 @@ const StyledOptionRow = styled.View`
   justify-content: flex-start;
   align-items: flex-start;
 `;
+const ArrowUpFixedContainer = styled.View`
+  z-index: 2;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  margin-bottom: ${isIphoneX() ? '90px' : '60px'};
+  height: 50px;
+`;
+
 class FlatListItem extends React.Component {
   constructor(props) {
     super(props);
@@ -363,7 +375,12 @@ export default class BibleSearch extends Component {
           renderItem={this.renderItem}
           
         />
-        { this.state.fullScreenMode ? <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={this.state.fullScreenMode} /> : null}
+        { this.state.fullScreenMode ?
+          <ArrowUpFixedContainer>
+            <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={this.state.fullScreenMode} />
+          </ArrowUpFixedContainer>
+          : null
+        }
       </View>
     );
   }

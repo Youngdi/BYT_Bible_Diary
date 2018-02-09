@@ -891,4 +891,4 @@ const styles = StyleSheet.create({
     marginBottom: isIphoneX() ? 90 : 60,
     height: 50,
   }
-})
+});
