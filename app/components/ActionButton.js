@@ -290,11 +290,13 @@ import React, {
     btnOutRange: 'rgba(0,0,0,1)',
     btnOutRangeTxt: 'rgba(255,255,255,1)',
   };
-
+  let bottomOffest = -6;
+  if(deviceHeight < 569) bottomOffest = -7.5;
+  if(deviceHeight > 735) bottomOffest = -5;
   const styles = StyleSheet.create({
     overlay: {
       position: 'absolute',
-      bottom: isIphoneX() ? 8 : -6,
+      bottom: isIphoneX() ? 3.5 : bottomOffest,
       left: deviceWidth / 4.5,
       right: 0,
       top: 0,

@@ -362,7 +362,7 @@ export default class DiaryContent extends PureComponent {
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:100, marginTop:30}}>
         <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('finishe_today')}</Text>
       </View> :
-      <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:300, marginTop:50}}>
+      <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:200, marginTop:30}}>
         <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
         <MaterialCommunityIcons
           style={{marginTop:20}}

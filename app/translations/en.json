@@ -31,5 +31,7 @@
   "bible_search_old_testament": "OT",
   "bible_search_new_testament": "NT",
   "bible_search_title": "Search",
-  "bible_verse_number": "verse_number verses is found"
+  "bible_verse_number": "verse_number verses is found",
+  "note_title_placeholder": "Write a title for the Note",
+  "note_content_placeholder": "Something I want to say..."
 }

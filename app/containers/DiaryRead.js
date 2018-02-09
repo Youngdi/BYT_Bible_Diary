@@ -388,7 +388,6 @@ export default class DiaryRead extends Component {
       Alert.alert('今年還沒過完呢！');
       return null;
     }
-    this.diaryContent.resetHighlight();
     const nextDate = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
     const nextMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("M");
     const nextDay = moment(this.state.currentDate, "YYYY-MM-DD").add(1, 'days').format("D");
@@ -407,7 +406,7 @@ export default class DiaryRead extends Component {
       finishedReading: false,
       loadContent: true,
     });
-    this.contentView.root.scrollTo({y: 10, animated: true});
+    this.contentView.root.scrollTo({y: 0, animated: true});
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -420,7 +419,6 @@ export default class DiaryRead extends Component {
       Alert.alert('去年已經不能回頭！');
       return null;
     }
-    this.diaryContent.resetHighlight();
     const previousDate = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("YYYY-MM-DD");
     const previousMonth = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("M");
     const previousDay = moment(this.state.currentDate, "YYYY-MM-DD").add(-1, 'days').format("D");
@@ -439,7 +437,7 @@ export default class DiaryRead extends Component {
       finishedReading: false,
       loadContent: true,
     });
-    this.contentView.root.scrollTo({y: 10, animated: true});
+    this.contentView.root.scrollTo({y: 0, animated: true});
     setTimeout(() => {
       this.generateContent();
     }, 0);
@@ -523,8 +521,9 @@ export default class DiaryRead extends Component {
       },
       currentDate: day.dateString,
       finishedReading: false,
+      isTooltipModalVisible: false,
     });
-    this.contentView.root.scrollTo({y: 10, animated: true});
+    this.contentView.root.scrollTo({y: 0, animated: true});
     this.diaryContent.resetHighlight();
     setTimeout( () => {
       this.generateContent();
@@ -698,7 +697,7 @@ export default class DiaryRead extends Component {
     }
     return (
       <Drawer
-        type="overlay"
+        type="displace"
         content={
           <BibleListPanel
             navigation={this.props.navigation}
@@ -712,7 +711,7 @@ export default class DiaryRead extends Component {
         tapToClose={true}
         openDrawerOffset={0.2} // 20% gap on the right side of drawer
         panCloseMask={0.2}
-        panOpenMask={30}
+        panOpenMask={25}
         closedDrawerOffset={-3}
         styles={drawerStyles}
         tweenHandler={(ratio) => ({
@@ -734,7 +733,7 @@ export default class DiaryRead extends Component {
             scrollEventThrottle={16}
           >
             <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
-              <View style={{marginTop:60, marginBottom:isIphoneX() ? 65 : 40}}>
+              <View style={{marginTop:60, marginBottom:isIphoneX() ? 20 : 10}}>
                 <DiaryContent
                   ref={ r => this.diaryContent = r}
                   fontColor={this.state.setting.fontColor}
@@ -888,7 +887,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     width: 50,
-    marginBottom: isIphoneX() ? 90 : 60,
+    marginBottom: isIphoneX() ? 70 : 60,
     height: 50,
   }
 });

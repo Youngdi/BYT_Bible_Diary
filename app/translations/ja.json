@@ -31,5 +31,7 @@
   "bible_search_old_testament": "旧約",
   "bible_search_new_testament": "新約",
   "bible_search_title": "検索",
-  "bible_verse_number": "ブックマークにお経はbookmark_number個あります。"
+  "bible_verse_number": "ブックマークにお経はbookmark_number個あります。",
+  "note_title_placeholder": "この精神的な日誌のタイトルを書いてください！",
+  "note_content_placeholder": "何かを書く......"
 }

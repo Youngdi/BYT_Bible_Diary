@@ -72,8 +72,8 @@ export default class Note extends Component {
     super(props);
     this.state = {
       title: null,
-      titlePlaceholder: `為這天靈修日記訂個標題！`,
-      contentPlaceholder: `寫得什麼...`,
+      titlePlaceholder: `${I18n.t('note_title_placeholder')}`,
+      contentPlaceholder: `${I18n.t('note_content_placeholder')}`,
       content: null,
       currentDate: '',
     }

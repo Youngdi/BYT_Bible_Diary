@@ -30,7 +30,7 @@ const StyledFooter = styled.View`
   justify-content: space-around;
   align-items: center;
   padding-bottom: ${isIphoneX() ? '16' : '0'}px;
-  height: ${deviceHeight / 17};
+  height: ${isIphoneX() ? 60 : deviceHeight / 17};
   background-color: #1E1E1E;
 `;
 const StyledLangListText = styled.Text`

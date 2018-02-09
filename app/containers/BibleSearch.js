@@ -65,7 +65,7 @@ const ArrowUpFixedContainer = styled.View`
   right: 0;
   bottom: 0;
   width: 50px;
-  margin-bottom: ${isIphoneX() ? '90px' : '60px'};
+  margin-bottom: ${isIphoneX() ? '70px' : '60px'};
   height: 50px;
 `;
 

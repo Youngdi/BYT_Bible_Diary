@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import styled from "styled-components/native";
 import Feather from 'react-native-vector-icons/Feather';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 import * as R from 'ramda';
 var {
   height: deviceHeight,
@@ -20,7 +21,7 @@ const StyledBookListTextView = styled.TouchableHighlight`
   display: flex;
   justify-content: center;
   align-items: center;
-  width:${deviceWidth / 7.25}px;
+  width:${deviceWidth / 6}px;
   height:45px;
   border-bottom-color: #373331;
   border-bottom-width:1px;
@@ -33,6 +34,14 @@ const StyledDivider = styled.View`
   width: 100%;
   height: 15px;
   background-color: #262626;
+`;
+const StyledTitleContainer = styled.View`
+  flex:1;
+  padding:20px;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:${isIphoneX() ? '16px' : '0px'};
 `;
 //this.props.closeControlPanel()
 export default class BibleListPanel extends PureComponent {
@@ -176,7 +185,7 @@ export default class BibleListPanel extends PureComponent {
   render() {
     return (
       <ScrollView style={{flex:1, backgroundColor:'#1E1E1E'}}>
-        <View style={{flex:1, padding:20, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <StyledTitleContainer>
           <View><Text>{'           '}</Text></View>
           <View>
             <Text style={{fontSize:24, fontWeight:'900',color:'#FCE6B0'}}>
@@ -225,7 +234,7 @@ export default class BibleListPanel extends PureComponent {
               </TouchableHighlight>
             }
           </View>
-        </View>
+        </StyledTitleContainer>
         {this.state.mode == 'book' ? this.renderBooks() : null}
         {this.state.mode == 'chapter'? this.renderChapters() : null}
         {this.state.mode == 'verse' ? this.renderVerse() : null}

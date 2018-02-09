@@ -31,5 +31,7 @@
   "bible_search_old_testament": "旧约",
   "bible_search_new_testament": "新约",
   "bible_search_title": "搜寻",
-  "bible_verse_number": "目前经文有verse_number个"
+  "bible_verse_number": "目前经文有verse_number个",
+  "note_title_placeholder": "为这天灵修日记订个标题！",
+  "note_content_placeholder": "写点什么..."
 }

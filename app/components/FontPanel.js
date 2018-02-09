@@ -112,7 +112,7 @@ export default class CalendarModal extends Component {
       animationIn={'fadeIn'}
       animationOut={'fadeOut'}
       backdropOpacity={0}
-      style={{position:'absolute', bottom: isIphoneX() ? 50 : 20, width: deviceWidth * 0.8, left: deviceWidth * 0.045}}
+      style={{position:'absolute', bottom: isIphoneX() ? 40 : 20, width: deviceWidth * 0.8, left: deviceWidth * 0.045}}
     >
       <StyledFontSettingModalContainer>
         <StyledFontSettingModalRow1>

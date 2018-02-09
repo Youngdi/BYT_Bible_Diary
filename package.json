@@ -17,7 +17,13 @@
     "d-ios": "react-native run-ios --device 'Youngdi' ",
     "r-ios": "react-native run-ios --configuration Release --device 'Youngdi'",
     "e-an": "react-native run-android",
-    "r-an": "sh ./doc/buildSignedApk.sh"
+    "r-an": "sh ./doc/buildSignedApk.sh",
+    "code-push-ios-d": "code-push release-react byt.bible.diary.ios ios",
+    "code-push-ios-p": "code-push release-react byt.bible.diary.ios ios -d Production",
+    "code-push-an-d": "code-push release-react byt.bible.diary.an android",
+    "code-push-an-p": "code-push release-react byt.bible.diary.an android -d Production",
+    "code-push-look-ios": "code-push deployment ls byt.bible.diary.ios  -k",
+    "code-push-look-an": "code-push deployment ls byt.bible.diary.an  -k"
   },
   "dependencies": {
     "cheerio-without-node-native": "^0.20.2",
