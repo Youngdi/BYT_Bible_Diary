@@ -566,7 +566,7 @@ export default class DiaryRead extends Component {
         this.state.arrowFadeInOpacity.setValue(1);
         if (this.state.footerScrollY._value < 50) {
           this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
-          this.state.headerScrollY.setValue(footerNewPosition > 50 ? -100 : -footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition > 30 ? -100 : -footerNewPosition);
         }
         if (this.state.footerScrollY._value < 200) {
           this.state.fadeInOpacity.setValue(footerNewPosition > 50 ? 0 : 1 - footerNewPosition / 100);
@@ -579,7 +579,7 @@ export default class DiaryRead extends Component {
         this.state.arrowFadeInOpacity.setValue(footerNewPosition == 50 ? 1 : 0);
         if (this.state.footerScrollY._value >= 0) {
           this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
-          this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : -footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition > 30 ? -150 : -footerNewPosition);
           this.state.fadeInOpacity.setValue(footerNewPosition < 0 ? 1 : footerNewPosition == 50 ? 0 : 1 - footerNewPosition / 100);
         }
       }
