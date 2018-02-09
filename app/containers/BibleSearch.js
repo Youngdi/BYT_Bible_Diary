@@ -21,6 +21,7 @@ import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
 import { bookName } from '../constants/bibleBookList';
 import { isIphoneX } from 'react-native-iphone-x-helper';
+import { dbCustomizeSearch } from '../api/api';
 
 const {
   height: deviceHeight,
@@ -193,7 +194,7 @@ export default class BibleSearch extends Component {
   componentWillMount = () => {
     this.generateOptions();
   }
-  searchVerse = (e) => {
+  searchVerse = async (e) => {
     try {
       const text = e.nativeEvent.text;
       let results;
@@ -201,27 +202,19 @@ export default class BibleSearch extends Component {
         Alert.alert(I18n.t('bible_searchKey_limit'));
         return;
       }
-      const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-      let bibleVersion = realm_bible_cht;
-      if(this.state.lang == 'cht') bibleVersion = realm_bible_cht;
-      if(this.state.lang == 'cht_en') bibleVersion = realm_bible_cht;
-      if(this.state.lang == 'chs') bibleVersion = realm_bible_chs;
-      if(this.state.lang == 'en') bibleVersion = realm_bible_kjv;
-      if(this.state.lang == 'ja') bibleVersion = realm_bible_japan;
       if(this.state.bookFilterKey == 1){ //舊約
-        results = bibleVersion.filtered(`testament = 0 AND verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 2){ // 新約
-        results = bibleVersion.filtered(`testament = 1 AND verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0){ // 所有
-        results = bibleVersion.filtered(`verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`verse CONTAINS '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0){ // 指定書卷
-        results = bibleVersion.filtered(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0){ // 指定章節
-        results = bibleVersion.filtered(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0){ // 指定書卷及章節
-        results = bibleVersion.filtered(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`, this.state.lang);
       }
-      results.sorted('verse_nr', false);
       this.setState({
         verseList: results,
         searchKey: text,

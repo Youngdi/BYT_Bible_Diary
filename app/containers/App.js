@@ -15,142 +15,9 @@ import BibleScreen from './Bible';
 import MoreScreen from './More';
 import NoteScreen from './Note';
 import BibleSearchScreen from './BibleSearch';
-
-
-const bible_chs = {
-  name: 'bible_chs',
-  primaryKey: 'id',
-  properties: {
-    id: 'int',
-    version: 'string?',
-    testament: 'int?',
-    book_ref: 'string?',
-    book_name: 'string?',
-    book_name_short: 'string?',
-    book_nr: 'int?',
-    chapter_nr: 'int?',
-    verse_nr: 'int?',
-    verse: 'string?',
-    highlight_color: 'string?'
-  }
-}
-const bible_cht = {
-  name: 'bible_cht',
-  primaryKey: 'id',
-  properties: {
-    id: 'int',
-    version: 'string?',
-    testament: 'int?',
-    book_ref: 'string?',
-    book_name: 'string?',
-    book_name_short: 'string?',
-    book_nr: 'int?',
-    chapter_nr: 'int?',
-    verse_nr: 'int?',
-    verse: 'string?',
-    highlight_color: 'string?'
-  }
-}
-const bible_japan = {
-  name: 'bible_japan',
-  primaryKey: 'id',
-  properties: {
-    id: 'int',
-    version: 'string?',
-    testament: 'int?',
-    book_ref: 'string?',
-    book_name: 'string?',
-    book_name_short: 'string?',
-    book_nr: 'int?',
-    chapter_nr: 'int?',
-    verse_nr: 'int?',
-    verse: 'string?',
-    highlight_color: 'string?'
-  }
-}
-const bible_kjv = {
-  name: 'bible_kjv',
-  primaryKey: 'id',
-  properties: {
-    id: 'int',
-    version: 'string?',
-    testament: 'int?',
-    book_ref: 'string?',
-    book_name: 'string?',
-    book_name_short: 'string?',
-    book_nr: 'int?',
-    chapter_nr: 'int?',
-    verse_nr: 'int?',
-    verse: 'string?',
-    highlight_color: 'string?'
-  }
-}
-const schedule = {
-  name: 'schedule',
-  primaryKey: 'id',
-  properties: {
-    id: 'int?',
-    month: 'int?',
-    day: 'int?',
-    book_id: 'int?',
-    chapter_from: 'int?',
-    verse_from: 'int?',
-    chapter_to: 'int?',
-    verse_to: 'int?'
-  }
-}
+import { test_db } from '../api/api';
 Realm.copyBundledRealmFiles();
-const realm = new Realm({
-  path: 'byt.realm',
-  schema:[schedule, bible_kjv, bible_japan, bible_cht, bible_chs],
-  schemaVersion: 13,
-  // migration: (oldRealm, newRealm) => {
-  //     var nextID1 = 0;
-  //     var nextID2 = 0;
-  //     var nextID3 = 0;
-  //     var nextID4 = 0;
-  //     // only apply this change if upgrading to schemaVersion 1
-  //     const oldObjects1 = oldRealm.objects('bible_chs');
-  //     const newObjects1 = newRealm.objects('bible_chs');
-  //     const oldObjects2 = oldRealm.objects('bible_cht');
-  //     const newObjects2 = newRealm.objects('bible_cht');
-  //     const oldObjects3 = oldRealm.objects('bible_kjv');
-  //     const newObjects3 = newRealm.objects('bible_kjv');
-  //     const oldObjects4 = oldRealm.objects('bible_japan');
-  //     const newObjects4 = newRealm.objects('bible_japan');
-  //     // loop through all objects and set the name property in the new schema
-  //     for (let i = 0; i < oldObjects1.length; i++) {
-  //       newObjects1[i].id = nextID1;
-  //       nextID1 += 1
-  //     }
-  //     for (let i = 0; i < oldObjects2.length; i++) {
-  //       newObjects2[i].id = nextID2;
-  //       nextID2 += 1
-  //     }
-  //     for (let i = 0; i < oldObjects3.length; i++) {
-  //       newObjects3[i].id = nextID3;
-  //       nextID3 += 1
-  //     }
-  //     for (let i = 0; i < oldObjects4.length; i++) {
-  //       newObjects4[i].id = nextID4;
-  //       nextID4 += 1
-  //     }
-  // }
-});
-const realm_schedule = realm.objects('schedule');
-const realm_bible_kjv = realm.objects('bible_kjv');
-const realm_bible_japan = realm.objects('bible_japan');
-const realm_bible_cht = realm.objects('bible_cht');
-const realm_bible_chs = realm.objects('bible_chs');
-// SQLite.enablePromise(true);
-global.db = {
-  realm,
-  realm_schedule,
-  realm_bible_kjv,
-  realm_bible_japan,
-  realm_bible_cht,
-  realm_bible_chs,
-};
+
 class MyHomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -158,15 +25,12 @@ class MyHomeScreen extends Component {
   componentDidMount() {
     this.props.navigation.navigate('Diary');
     FCM.requestPermissions();
-
     FCM.getFCMToken().then(token => {
       console.log("TOKEN (getFCMToken)", token);
     });
-
     FCM.getInitialNotification().then(notif => {
       console.log("INITIAL NOTIFICATION", notif)
     });
-
     this.notificationListener = FCM.on(FCMEvent.Notification, notif => {
       if (Platform.OS == 'ios') {
         if (notif.local_notification){
@@ -233,6 +97,10 @@ class MyHomeScreen extends Component {
     //   });
     // }, 5000);
   }
+  BBB = async () => {
+    const d = await test_db();
+    alert(d.length);
+  }
   componentWillUnmount() {
     // stop listening for events
     this.notificationListener.remove();
@@ -240,6 +108,8 @@ class MyHomeScreen extends Component {
   render() {
     return (
       <View style={{opacity:0}}>
+        <Button title="AAAA" onPress={() => this.props.navigation.navigate('Diary')}></Button>
+        <Button title="BBBBB" onPress={() => this.BBB()}></Button>
       </View>
     );
   }

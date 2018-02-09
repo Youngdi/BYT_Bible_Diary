@@ -28,6 +28,7 @@ import Tooltip from '../components/Tooltip';
 import Pupup from '../components/Popup';
 import bibleFlag from '../constants/bible';
 import FontPanelModal from '../components/FontPanel';
+import { dbFindChapter, dbFindVerse, dbGetBookContent } from '../api/api';
 const {
   height: deviceHeight,
   width: deviceWidth
@@ -473,15 +474,9 @@ export default class Bible extends PureComponent {
   }
   generateContent = async (chapter_index, book_nr_index = 0) => {
     const highlightList = await global.storage.load({key:'@highlightList'});
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    let bibleVersion = realm_bible_cht;
-    if(this.state.lang == 'cht') bibleVersion = realm_bible_cht;
-    if(this.state.lang == 'chs') bibleVersion = realm_bible_chs;
-    if(this.state.lang == 'en') bibleVersion = realm_bible_kjv;
-    if(this.state.lang == 'ja') bibleVersion = realm_bible_japan;
-    const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr}`);
-    const content = results.sorted('verse_nr', false);
-    const results_findLength = bibleVersion.filtered(`book_nr = ${this.state.book_nr}`);
+    // const results_findLength = await dbFindChapter(this.state.book_nr, this.state.lang);
+    // const content = await dbFindVerse(this.state.book_nr, this.state.chapter_nr, this.state.lang);
+    const {results_findLength, content} = await dbGetBookContent(this.state.book_nr, this.state.chapter_nr, this.state.lang);
     const length = R.pipe(
       R.map(R.prop('chapter_nr')),
       R.uniq(),
@@ -525,7 +520,7 @@ export default class Bible extends PureComponent {
     this.resetHighlight();
     if(this.state.chapter_nr == 1){
       if(this.state.book_nr == 1) {
-        const results_findLength = global.db.realm_bible_kjv.filtered(`book_nr = 66`);
+        const results_findLength = await dbFindChapter(66, 'en');
         const length = R.pipe(
           R.map(R.prop('chapter_nr')),
           R.uniq(),
@@ -536,7 +531,7 @@ export default class Bible extends PureComponent {
           book_nr: 66,
         });
       } else {
-        const results_findLength = global.db.realm_bible_kjv.filtered(`book_nr = ${this.state.book_nr - 1}`);
+        const results_findLength = await dbFindChapter(this.state.book_nr - 1, 'en');
         const length = R.pipe(
           R.map(R.prop('chapter_nr')),
           R.uniq(),

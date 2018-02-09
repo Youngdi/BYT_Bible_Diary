@@ -35,6 +35,7 @@ import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
 import BibleListPanel from '../components/BibleListPanel';
+import { dbFindDiary } from '../api/api';
 
 const storage = new Storage({
 	size: 1000,
@@ -250,12 +251,6 @@ export default class DiaryRead extends Component {
     });
   }
   generateBooks = async (lang) => {
-    // const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    // let bibleVersion = realm_bible_cht;
-    // if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
-    // if(this.state.defaultLang == 'chs') bibleVersion = realm_bible_chs;
-    // if(this.state.defaultLang == 'en') bibleVersion = realm_bible_kjv;
-    // if(this.state.defaultLang == 'ja') bibleVersion = realm_bible_japan;
     const bookNameList = bookName[lang];
     this.setState({
       oldBooks: R.slice(0, 39 ,R.values(bookNameList)),
@@ -264,48 +259,11 @@ export default class DiaryRead extends Component {
   }
   generateContent = async () => {
     const highlightList = await global.storage.load({key:'@highlightList'});
-    const { month, day}  = this.state.date;
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    let bibleVersion = realm_bible_cht;
-    if(this.state.defaultLang == 'cht') bibleVersion = realm_bible_cht;
-    if(this.state.defaultLang == 'chs') bibleVersion = realm_bible_chs;
-    if(this.state.defaultLang == 'en') bibleVersion = realm_bible_kjv;
-    if(this.state.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    const schedule_results = realm_schedule.filtered(`month = ${month} AND day = ${day}`);
-    const schedule_result_reorder = schedule_results.sorted('book_id', false);
-    const _schedule_results = schedule_result_reorder.reduce((acc, val) => {
-      let _acc = acc;
-      let _val = val;
-      if(val.chapter_from == val.chapter_to) return [...acc, val];
-      for(let i = 0; i <= val.chapter_to - val.chapter_from; i++) {
-        _val = {..._val, chapter_from: val.chapter_from + i, chapter_to: val.chapter_from + i}
-        _acc = [..._acc, _val];
-      }
-      return _acc;
-    }, []);
-    const content = await _schedule_results.map(item => {
-      const results = bibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
-      return results.sorted('verse_nr', false);
+    const content = await dbFindDiary(this.state.date, this.state.defaultLang);
+    this.setState({
+      content: content,
+      highlightList: highlightList,
     });
-    if(this.state.defaultLang == 'cht_en') {
-      const jContent = _schedule_results.map(item => {
-        const results = realm_bible_kjv.filtered(`book_nr = ${item.book_id} AND chapter_nr >= ${item.chapter_from} AND chapter_nr <= ${item.chapter_to} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
-        return results.sorted('verse_nr', false);
-      });
-      const bindContent = jContent.reduce((acc, val, i) => {
-        const zipContent = R.zip(content[i], val);
-        return [...acc, R.flatten(zipContent)];
-      }, []);
-      this.setState({
-        content: bindContent,
-        highlightList: highlightList,
-      });
-    } else {
-      this.setState({
-        content: content,
-        highlightList: highlightList,
-      });
-    }
     setTimeout(() => {
       this.setState({
         loadContent: false,

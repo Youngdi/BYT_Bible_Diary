@@ -12,6 +12,7 @@ import styled from "styled-components/native";
 import Feather from 'react-native-vector-icons/Feather';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import * as R from 'ramda';
+import { dbFindChapter, dbFindVerse } from '../api/api';
 var {
   height: deviceHeight,
   width: deviceWidth,
@@ -57,14 +58,8 @@ export default class BibleListPanel extends PureComponent {
       title: 'Books',
     };
   }
-  findChapterLength = (book_nr) => {
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    let bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'cht') bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'chs') bibleVersion = realm_bible_chs;
-    if(this.props.defaultLang == 'en') bibleVersion = realm_bible_kjv;
-    if(this.props.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    const results = bibleVersion.filtered(`book_nr = ${book_nr}`);
+  findChapterLength = async (book_nr) => {
+    const results = await dbFindChapter(book_nr, this.props.defaultLang);
     const findLength = R.pipe(
       R.map(R.prop('chapter_nr')),
       R.uniq(),
@@ -77,14 +72,8 @@ export default class BibleListPanel extends PureComponent {
       title: results[0].book_name,
     });
   }
-  findVerseLength = (chapter_nr) => {
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    let bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'cht') bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'chs') bibleVersion = realm_bible_chs;
-    if(this.props.defaultLang == 'en') bibleVersion = realm_bible_kjv;
-    if(this.props.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    const results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${chapter_nr}`);
+  findVerseLength = async (chapter_nr) => {
+    const results = await dbFindVerse(this.state.book_nr, chapter_nr, this.props.defaultLang);
     this.setState({
       chapter_nr: chapter_nr,
       verseLength: results.length,
@@ -94,14 +83,7 @@ export default class BibleListPanel extends PureComponent {
   }
   goBible = async (verse_nr) => {
     const setting = await global.storage.load({key: '@setting',});
-    const { realm_schedule, realm_bible_kjv, realm_bible_japan, realm_bible_cht, realm_bible_chs } = global.db;
-    let bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'cht') bibleVersion = realm_bible_cht;
-    if(this.props.defaultLang == 'chs') bibleVersion = realm_bible_chs;
-    if(this.props.defaultLang == 'en') bibleVersion = realm_bible_kjv;
-    if(this.props.defaultLang == 'ja') bibleVersion = realm_bible_japan;
-    const raw_results = bibleVersion.filtered(`book_nr = ${this.state.book_nr} AND chapter_nr = ${this.state.chapter_nr}`);
-    const results = raw_results.slice(0, 1);
+    const results = await dbFindVerse(this.state.book_nr, this.state.chapter_nr, this.props.defaultLang);
     this.setState({
       mode: 'book',
       title: 'Books',
