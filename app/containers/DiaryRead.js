@@ -42,7 +42,6 @@ const storage = new Storage({
 	storageBackend: AsyncStorage,
 	defaultExpires: null,
 	enableCache: true,
-  // sync : {}
 });
 const {
   height: deviceHeight,
@@ -92,6 +91,7 @@ export default class DiaryRead extends Component {
       arrowFadeInOpacity: new Animated.Value(0),
       oldBooks: [],
       newBooks: [],
+      content: [],
       popupText: '',
       defaultLang: 'cht',
       lastPress: 0,
@@ -100,12 +100,11 @@ export default class DiaryRead extends Component {
       isCalendarModalVisible: false,
       isFontSettingModalVisible: false,
       isTooltipModalVisible: false,
-      content: [],
-      scrollPosition: 0,
-      hasRead: 0,
       finishedReading: false,
       loadContent: false,
       bookmarkIsMatch: false,
+      scrollPosition: 0,
+      hasRead: 0,
       setting: {
         fontFamily: 'Avenir',
         fontSize: 18,
@@ -245,11 +244,7 @@ export default class DiaryRead extends Component {
   }
   closeHeaderActionButton = () => this.header.closeActionButton();
   closeFooterActionButton = () => this.footer.closeActionButton();
-  checkBookmark = (isMatch) => {
-    this.setState({
-      bookmarkIsMatch : isMatch,
-    });
-  }
+  checkBookmark = (isMatch) => this.setState({bookmarkIsMatch : isMatch})
   generateBooks = async (lang) => {
     const bookNameList = bookName[lang];
     this.setState({
@@ -269,6 +264,35 @@ export default class DiaryRead extends Component {
         loadContent: false,
       });
     }, 500);
+  }
+  _getDiaryBiblePhrase = () => {
+    this.closeActionButton();
+    let number = Math.floor(Math.random() * 74) + 1;
+    let bible_number = `B${number}`;
+    Alert.alert(
+    `每日一經文\n${bibleFlag[bible_number].chapter}`,
+    `${bibleFlag[bible_number].verse}`,
+    [
+      {text: '確定', onPress: () => {}},
+    ],
+      { cancelable: false }
+    );
+  }
+  _toggleModalCalendar = () => {
+    this.closeActionButton();
+    this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
+  }
+  _toggleModalTooltip = () => {
+    this.closeActionButton();
+    this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
+  }
+  _closeTooltip = () => {
+    this.diaryContent.resetHighlight();
+    this.setState({ isTooltipModalVisible: false });
+  };
+  _toggleModalFontSetting = () => {
+    this.closeActionButton();
+    this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
   _handleDoublePress = () => {
     var delta = new Date().getTime() - this.state.lastPress;
@@ -308,35 +332,6 @@ export default class DiaryRead extends Component {
     this.setState({
       lastPress: new Date().getTime(),
     });
-  }
-  _getDiaryBiblePhrase = () => {
-    this.closeActionButton();
-    let number = Math.floor(Math.random() * 74) + 1;
-    let bible_number = `B${number}`;
-    Alert.alert(
-    `每日一經文\n${bibleFlag[bible_number].chapter}`,
-    `${bibleFlag[bible_number].verse}`,
-    [
-      {text: '確定', onPress: () => {}},
-    ],
-      { cancelable: false }
-    );
-  }
-  _toggleModalCalendar = () => {
-    this.closeActionButton();
-    this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
-  }
-  _toggleModalTooltip = () => {
-    this.closeActionButton();
-    this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
-  }
-  _closeTooltip = () => {
-    this.diaryContent.resetHighlight();
-    this.setState({ isTooltipModalVisible: false });
-  };
-  _toggleModalFontSetting = () => {
-    this.closeActionButton();
-    this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
   _handleNextDay = () => {
     this.closeActionButton();
@@ -715,7 +710,7 @@ export default class DiaryRead extends Component {
               </View>
             </StyledMainContent>
           </StyledMain>
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <Animated.View
             style={[
               styles.fixedHeader,
@@ -735,9 +730,8 @@ export default class DiaryRead extends Component {
               openControlPanel={this.openControlPanel}
             />
           </Animated.View>
-          : null
         }
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <Animated.View
             style={[
               styles.fixedFooter,
@@ -759,9 +753,8 @@ export default class DiaryRead extends Component {
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
           </Animated.View>
-          : null
         }
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <Animated.View
             style={[
               styles.fixedArrowUp,
@@ -774,11 +767,10 @@ export default class DiaryRead extends Component {
               handeleScrollTop={this._handeleScrollTop}
             />
           </Animated.View>
-          : null
         }
         <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <CalendarModal
             defaultLang={this.state.defaultLang}
             isCalendarModalVisible={this.state.isCalendarModalVisible}
@@ -788,9 +780,8 @@ export default class DiaryRead extends Component {
             markedDates={this.state.markedDates}
             handleMonthChange={this._handleMonthChange}
           />
-          : null
         }
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <Tooltip
             isTooltipModalVisible={this.state.isTooltipModalVisible}
             toggleModalTooltip={this._toggleModalTooltip}
@@ -801,9 +792,8 @@ export default class DiaryRead extends Component {
             handleShare={this._handleShare}
             bookmarkIsMatch={this.state.bookmarkIsMatch}
           />
-          : null
         }
-        { !this.state.finishedReading ?
+        { !this.state.finishedReading &&
           <FontPanelModal
             isFontSettingModalVisible={this.state.isFontSettingModalVisible}
             toggleModalFontSetting={this._toggleModalFontSetting}
@@ -814,7 +804,6 @@ export default class DiaryRead extends Component {
             handleSliderValueChange={this._handleSliderValueChange}
             setting={this.state.setting}
           />
-          : null
         }
         </StyledContainer>
       </Drawer>
