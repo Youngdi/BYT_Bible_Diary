@@ -2019,6 +2019,7 @@
 			baseConfigurationReference = A8226D0FAB8A202CD8E889F8 /* Pods-BYTBibleDiary.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BYTBibleDiary/BYTBibleDiary.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -2056,6 +2057,7 @@
 			baseConfigurationReference = 3E301BAB65CA5CA9DECCCBBA /* Pods-BYTBibleDiary.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BYTBibleDiary/BYTBibleDiary.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2ADEVT9YH;
