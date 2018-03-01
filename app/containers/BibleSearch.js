@@ -84,12 +84,12 @@ class FlatListItem extends React.Component {
     if(version == 'japan') lang = 'ja';
     if(version == 'kjv') lang = 'en';
     const sperateVerse = (verse, searchKey) => [
-      ...(verse.indexOf(searchKey) == -1)
+      ...(verse.toUpperCase().indexOf(searchKey.toUpperCase()) == -1)
       ? [verse] 
-      : [verse.slice(0, verse.indexOf(searchKey)),
-          searchKey,
+      : [verse.slice(0, verse.toUpperCase().indexOf(searchKey.toUpperCase())),
+          verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()), verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
           ...sperateVerse(
-            verse.slice(verse.indexOf(searchKey) + searchKey.length),
+            verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
             searchKey
            )
          ].filter(v => v != "")
@@ -146,7 +146,7 @@ class FlatListItem extends React.Component {
               <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25, marginBottom:10 }}>
               {
                 verseArray.map(item =>
-                  item.indexOf(this.props.searchKey) > -1
+                  item.toUpperCase().indexOf(this.props.searchKey.toUpperCase()) > -1
                   ? <Text style={{color:'red'}}>{item}</Text>
                   : <Text>{item}</Text>)
               }
@@ -203,17 +203,17 @@ export default class BibleSearch extends Component {
         return;
       }
       if(this.state.bookFilterKey == 1){ //舊約
-        results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 2){ // 新約
-        results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0){ // 所有
-        results = await dbCustomizeSearch(`verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0){ // 指定書卷
-        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0){ // 指定章節
-        results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0){ // 指定書卷及章節
-        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
       }
       this.setState({
         verseList: results,
