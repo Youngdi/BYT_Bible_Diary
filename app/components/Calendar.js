@@ -58,7 +58,7 @@ export default class CalendarModal extends Component {
             backgroundColor: '#1E1E1E',
             calendarBackground: '#1E1E1E',
             textSectionTitleColor: '#b6c1cd',
-            selectedDayBackgroundColor: '#EE2B47',
+            selectedDayBackgroundColor: '#CF0A2C',
             selectedDayTextColor: '#b6c1cd',
             selectedDotColor: '#FCCF4D',
             dayTextColor: '#fff',

@@ -227,7 +227,7 @@ export default class DiaryContent extends PureComponent {
   }
   renderTitle = () => {
     const renderDay = () =>
-      <View style={{borderLeftWidth:8, paddingLeft:10, borderColor:'red'}}>
+      <View style={{borderLeftWidth:8, paddingLeft:10, borderColor: this.props.marked ? '#F7B633' : '#CF0A2C'}}>
         <Title 
           fontColor={this.props.fontColor}
           fontFamily={this.props.fontFamily}
