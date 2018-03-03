@@ -61,7 +61,9 @@ export default class Tooltip extends PureComponent {
         position='bottom'
         shouldAnimateOnRequestClose={false}
         showOverlay={false}
-        visible={this.props.isTooltipModalVisible}>
+        visible={this.props.isTooltipModalVisible}
+        animationDuration={200}
+      >
         <Container>
           <TooltipRow>
               <TouchableOpacity 

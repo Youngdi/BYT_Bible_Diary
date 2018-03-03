@@ -26,7 +26,11 @@ const {
 import I18n from 'react-native-i18n';
 import { quicksort } from '../api/utilities';
 
-const StyledDiaryText = styled.View`
+const StyledMainContainer = styled.View`
+  margin-left:30px;
+  margin-right:30px;
+`;
+const StyledBibleContainer = styled.View`
   margin-left:30px;
   margin-right:30px;
 `;
@@ -62,170 +66,8 @@ const PharseNumber = styled.Text`
 export default class DiaryContent extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      selectVerse: {},
-      selectVerseNumberRef: {},
-      selectVerseRef: {},
-      lastPress: 0,
-    }
   }
-  handleTargetVerse = (verseItem) => {
-    const delta = new Date().getTime() - this.state.lastPress;
-    if(delta < 600) {
-      if(this.props.isTooltipModalVisible){
-        setTimeout(() => {
-          this.props.handleDoublePress();
-          this.props.handleDoublePress();
-        }, 0);
-      }
-    }
-    const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
-    const keyId = `${verseItem.id}-${verseItem.version}`;
-    if(this.state.selectVerse.hasOwnProperty(keyId)) {
-      delete this.state.selectVerse[keyId];
-      delete this.state.selectVerseRef[key];
-      delete this.state.selectVerseNumberRef['number' + key];
-      this.setState({
-        selectVerse: {...this.state.selectVerse},
-        selectVerseRef: {...this.state.selectVerseRef},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef},
-        lastPress: new Date().getTime(),
-      })
-    } else {
-      this.setState({
-        selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, keyId: keyId, createdTime: moment().format('YYYY-MM-DD')}},
-        selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-        lastPress: new Date().getTime(),
-      });
-    }
-    this.checkBookmark();
-    if(R.isEmpty(this.state.selectVerse)) this.props.toggleModalTooltip();
-  }
-  _handleDoublePress = () => {
-    var delta = new Date().getTime() - this.state.lastPress;
-    if(delta < 300) {
-      this.props.handleDoublePress();
-    }
-    this.setState({
-      lastPress: new Date().getTime(),
-    });
-  }
-  resetHighlight = () => {
-    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    this.setState({
-      selectVerse: {},
-      selectVerseRef: {},
-      selectVerseNumberRef: {},
-    });
-  }
-  setHighlight = async (color) => {
-    try {
-      const selectVerses = R.keys(this.state.selectVerse);
-      const setColorList = selectVerses.reduce((acc, val) => {
-        return {
-          ...acc,
-          [val]: color,
-        };
-      }, {});
-      const highlightList = await global.storage.load({key:'@highlightList'});
-      const _highlightList = {
-        ...highlightList,
-        ...setColorList,
-      }
-      await global.storage.save({key: '@highlightList', data: _highlightList, expires: null});
-      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-      R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.props.fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-      this.resetHighlight();
-    } catch(e) {
-      alert(JSON.stringify(e));
-    }
-  }
-  addBookmark = async (action) => {
-    try {
-      if (action) {
-        const _bookmark = await global.storage.load({key:'@bookmark'});
-        R.keys(this.state.selectVerse).map((keyId) => {
-          delete _bookmark[keyId];
-        });
-        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
-      } else {
-        const bookmark = await global.storage.load({key:'@bookmark'});
-        const _bookmark = {
-          ...bookmark,
-          ...this.state.selectVerse,
-        }
-        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
-      }
-      this.resetHighlight();
-    } catch(e) {
-      alert(JSON.stringify(e));
-    }
-  }
-  checkBookmark = async () => {
-    try {
-      const bookmark = await global.storage.load({key:'@bookmark'});
-      const matchFn = R.contains(R.__, R.keys(bookmark)); 
-      const isMatch = R.all(matchFn)(R.keys(this.state.selectVerse));
-      this.props.checkBookmark(isMatch);
-    } catch(e) {
-      alert(JSON.stringify(e));
-    }
-  }
-  generateCopyText = () => {
-    let c = 0;
-    const verse = R.pipe(
-      R.toPairs(),
-      R.sort((a, b) => {
-        let _a = a[0];
-        let _b = b[0];
-        _a = Number(_a.slice(0, _a.indexOf('-')));
-        _b = Number(_b.slice(0, _b.indexOf('-')));
-        return _a - _b;
-        }
-      ),
-      R.fromPairs(),
-      R.values(),
-    )(this.state.selectVerse);
-    const copy = verse.reduce((acc, val, i) => {
-      let b = [];
-      const previousVerse = verse[i - 1];
-      if(i == 0){
-        b.push(val);
-        acc[c] = b;
-        return acc;
-      }
-      if(previousVerse.book_name == val.book_name && previousVerse.chapter_nr == val.chapter_nr && previousVerse.verse_nr == val.verse_nr -1){
-        acc[c].push(val);
-        return [...acc];
-      }
-      ++c;
-      b.push(val);
-      acc[c] = b;
-      return  [...acc];
-    }, []);
-    const copyText = copy.reduce((acc, val) => {
-      let verseNumber = '';
-      verseNumber = (val.length == 1) ? '' : '-' + (val[0].verse_nr + val.length - 1);
-      for(let i = 0; i < val.length; i++){
-        if(i == 0){
-          acc = acc + val[0].book_name + val[0].chapter_nr + ':' + val[0].verse_nr + verseNumber + '  :『' + val[i].verse;
-        } else {
-          acc = acc  + val[i].verse;
-        }
-      }
-      acc = acc + '』\n\n';
-      return acc;
-    }, '');
-    return copyText;
-  }
-  copyVerse = () => {
-    const copyText = this.generateCopyText();
-    Clipboard.setString(copyText);
-    this.resetHighlight();
-  }
-  renderTitle = () => {
+  renderDiaryTitle = () => {
     const renderDay = () =>
       <View style={{borderLeftWidth:8, paddingLeft:10, borderColor: this.props.marked ? '#F7B633' : '#CF0A2C'}}>
         <Title 
@@ -284,43 +126,7 @@ export default class DiaryContent extends PureComponent {
           return(
             <Text
               key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
-              onPress={(e) => {
-                const delta = new Date().getTime() - this.state.lastPress;
-                if(delta < 400) {
-                  if(this.props.isTooltipModalVisible){
-                    setTimeout(() => {
-                      this.props.handleDoublePress();
-                      this.props.handleDoublePress();
-                    }, 0);
-                  }
-                }
-                const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
-                const keyId = `${verseItem.id}-${verseItem.version}`;
-                if(this.state.selectVerse.hasOwnProperty(keyId)) {
-                  this[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.props.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-                  delete this.state.selectVerse[keyId];
-                  delete this.state.selectVerseRef[key];
-                  delete this.state.selectVerseNumberRef['number' + key];
-                  this.setState({
-                    selectVerse: {...this.state.selectVerse},
-                    selectVerseRef: {...this.state.selectVerseRef},
-                    selectVerseNumberRef: {...this.state.selectVerseNumberRef},
-                    lastPress: new Date().getTime(),
-                  })
-                } else {
-                  this[verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                  this['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-                  this.setState({
-                    selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, keyId: keyId, createdTime: moment().format('YYYY-MM-DD')}},
-                    selectVerseRef: {...this.state.selectVerseRef, [key] : this[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-                    selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this['number' + verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-                    lastPress: new Date().getTime(),
-                  });
-                }
-                this.checkBookmark();
-                if(R.isEmpty(this.state.selectVerse)) this.props.toggleModalTooltip();
-              }}
+              onPress={(e) => this.props.handleVerseClick(verseItem)}
               ref={ r => this[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr] = r}
               style={{
                 color: this.props.fontColor,
@@ -346,7 +152,7 @@ export default class DiaryContent extends PureComponent {
       </View>
     );
   }
-  renderVerse = () => this.props.content.map((item, i) =>
+  renderDiaryVerse = () => this.props.content.map((item, i) =>
     <View ref={r => this[item[0].book_name + item[0].chapter_nr] = r}>
       <FlatList
         data={[item]}
@@ -355,6 +161,54 @@ export default class DiaryContent extends PureComponent {
       />
     </View>
   );
+  renderBibleVerse = () => {
+    const fontSize = this.props.fontSize;
+    const lineHeight = this.props.lineHeight;
+    const fontColor = this.props.fontColor;
+    const fontFamily = this.props.fontFamily;
+    if(R.isEmpty(this.props.content[0])) return;
+    return (
+      this.props.content.map( (item, i) => {
+        const Verse = () => item.map(verseItem => {
+          return (
+            <Text
+              key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`}
+              onPress={(e) => this.handleVerseClick(verseItem)}
+              ref={ r => this[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr] = r}
+              style={{
+                color: fontColor,
+                backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
+              }}
+            >
+              <PharseNumber
+                key={`${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}-number`}
+                style={{
+                  color: fontColor, // this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.readingMode ? '#ccc' : '#000': 'gray'
+                  backgroundColor: this.props.highlightList.hasOwnProperty(`${verseItem.id}-${verseItem.version}`) ? this.props.highlightList[`${verseItem.id}-${verseItem.version}`] : 'transparent'
+                }}
+                fontSize={fontSize - 6}
+                ref={ r => this['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr] = r}
+              >
+              {this.props.defaultLang == 'en' ? '  ': ''}{`${verseItem.verse_nr}`}{'  '}
+              </PharseNumber>
+              {`${verseItem.verse}`}
+            </Text>
+        )});
+        return (
+          <View onLayout={this.handlelayout}>
+            <PharseCantainer
+              fontSize={fontSize}
+              fontColor={fontColor}
+              lineHeight={lineHeight}
+              fontFamily={fontFamily}
+            >
+            {Verse()}
+            </PharseCantainer>
+          </View>
+         );
+      })
+    );
+  }
   renderFinishText = () => {
     if(this.props.content.length == 0) return;
     return(
@@ -373,13 +227,27 @@ export default class DiaryContent extends PureComponent {
       </View>
     );
   }
+  renderDiary = () => {
+    return (
+      <StyledMainContainer>
+        {this.renderDiaryTitle()}
+        {this.renderDiaryVerse()}
+        {this.renderFinishText()}
+      </StyledMainContainer>
+    )
+  }
+  renderBible = () => {
+    return (
+      <View style={{marginTop:20}}>
+        <StyledMainContainer>
+          {this.renderBibleVerse()}
+        </StyledMainContainer>
+      </View>
+    )
+  }
   render() {
     return (
-      <StyledDiaryText>
-        {this.renderTitle()}
-        {this.renderVerse()}
-        {this.renderFinishText()}
-      </StyledDiaryText>
+      this.renderDiary()
     );
   }
 }

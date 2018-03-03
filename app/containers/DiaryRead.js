@@ -36,6 +36,8 @@ import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
 import BibleListPanel from '../components/BibleListPanel';
 import { dbFindDiary } from '../api/api';
+import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
+import { handleScroll } from '../api/diaryReadLogic';
 
 const storage = new Storage({
 	size: 1000,
@@ -95,6 +97,7 @@ export default class DiaryRead extends Component {
       popupText: '',
       defaultLang: 'cht',
       lastPress: 0,
+      lastPress1: 0,
       bg: '#fff',
       fullScreenMode: false,
       isCalendarModalVisible: false,
@@ -125,6 +128,9 @@ export default class DiaryRead extends Component {
       currentDate: moment().format('YYYY-MM-DD'),
       contentView:{},
       highlightList: {},
+      selectVerse: {},
+      selectVerseNumberRef: {},
+      selectVerseRef: {},
     };
     this.initData();
   }
@@ -222,29 +228,29 @@ export default class DiaryRead extends Component {
         }
       }
   }
-  closeControlPanel = () => {
-    this._drawer.close()
-  };
-  openControlPanel = () => {
-    this._drawer.open()
-  };
+  closeControlPanel = () => this._drawer.close()
+  openControlPanel = () => this._drawer.open()
+  setFullScreenMode = () => this.setState({fullScreenMode: true})
+  closeHeaderActionButton = () => this.header.closeActionButton();
+  closeFooterActionButton = () => this.footer.closeActionButton();
   reset = () => {
-    this._closeTooltip();
+    this.closeTooltip();
     this.closeActionButton();
     this.contentView.root.scrollTo({y: 0, animated: false});
     this.setState({
       isCalendarModalVisible: false,
       fullScreenMode: false,
       isFontSettingModalVisible:false,
+      highlightList: {},
+      selectVerse: {},
+      selectVerseNumberRef: {},
+      selectVerseRef: {},
     });
   }
   closeActionButton = () => {
     if(this.header) this.header.closeActionButton();
     if(this.footer) this.footer.closeActionButton();
   }
-  closeHeaderActionButton = () => this.header.closeActionButton();
-  closeFooterActionButton = () => this.footer.closeActionButton();
-  checkBookmark = (isMatch) => this.setState({bookmarkIsMatch : isMatch})
   generateBooks = async (lang) => {
     const bookNameList = bookName[lang];
     this.setState({
@@ -265,7 +271,7 @@ export default class DiaryRead extends Component {
       });
     }, 500);
   }
-  _getDiaryBiblePhrase = () => {
+  getDiaryBiblePhrase = () => {
     this.closeActionButton();
     let number = Math.floor(Math.random() * 74) + 1;
     let bible_number = `B${number}`;
@@ -278,55 +284,58 @@ export default class DiaryRead extends Component {
       { cancelable: false }
     );
   }
-  _toggleModalCalendar = () => {
+  toggleModalCalendar = () => {
     this.closeActionButton();
     this.state.fullScreenMode ? null : this.setState({ isCalendarModalVisible: !this.state.isCalendarModalVisible });
   }
-  _toggleModalTooltip = () => {
+  toggleModalTooltip = () => {
     this.closeActionButton();
     this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
   }
-  _closeTooltip = () => {
-    this.diaryContent.resetHighlight();
+  closeTooltip = () => {
+    this.resetHighlight();
     this.setState({ isTooltipModalVisible: false });
   };
-  _toggleModalFontSetting = () => {
+  toggleModalFontSetting = () => {
     this.closeActionButton();
     this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
-  _handleDoublePress = () => {
+  fullScreenAnimation = () => {
+    this.state.fadeInOpacity.setValue(this.state.fullScreenMode ? 0 : 1);
+    this.state.footerScrollY.setValue(this.state.fullScreenMode ? 50 : 0);
+    this.state.headerScrollY.setValue(this.state.fullScreenMode ? -50 : 0);
+    this.state.arrowFadeInOpacity.setValue(this.state.fullScreenMode ? 1 : 0);
+    Animated.parallel([
+      Animated.timing(this.state.fadeInOpacity, {
+        toValue: this.state.fullScreenMode ? 1 : 0,
+        duration: 500,
+        easing: Easing.linear,
+      }),
+      Animated.timing(this.state.footerScrollY, {
+        toValue: this.state.fullScreenMode ? 0 : 50,
+        duration: 500,
+        easing: Easing.linear,
+      }),
+      Animated.timing(this.state.headerScrollY, {
+        toValue: this.state.fullScreenMode ? 0 : -50,
+        duration: 500,
+        easing: Easing.linear,
+      }),
+      Animated.timing(this.state.arrowFadeInOpacity, {
+        toValue: this.state.fullScreenMode ? 0 : 1,
+        duration: 500,
+        easing: Easing.linear,
+      })
+    ]).start();
+    this.closeActionButton();
+    this.setState({
+      fullScreenMode: !this.state.fullScreenMode,
+    });
+  }
+  handleDoublePress = () => {
     var delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
-      this.state.fadeInOpacity.setValue(this.state.fullScreenMode ? 0 : 1);
-      this.state.footerScrollY.setValue(this.state.fullScreenMode ? 50 : 0);
-      this.state.headerScrollY.setValue(this.state.fullScreenMode ? -50 : 0);
-      this.state.arrowFadeInOpacity.setValue(this.state.fullScreenMode ? 1 : 0);
-      Animated.parallel([
-        Animated.timing(this.state.fadeInOpacity, {
-          toValue: this.state.fullScreenMode ? 1 : 0,
-          duration: 500,
-          easing: Easing.linear,
-        }),
-        Animated.timing(this.state.footerScrollY, {
-          toValue: this.state.fullScreenMode ? 0 : 50,
-          duration: 500,
-          easing: Easing.linear,
-        }),
-        Animated.timing(this.state.headerScrollY, {
-          toValue: this.state.fullScreenMode ? 0 : -50,
-          duration: 500,
-          easing: Easing.linear,
-        }),
-        Animated.timing(this.state.arrowFadeInOpacity, {
-          toValue: this.state.fullScreenMode ? 0 : 1,
-          duration: 500,
-          easing: Easing.linear,
-        })
-      ]).start();
-      this.closeActionButton();
-      this.setState({
-        fullScreenMode: !this.state.fullScreenMode,
-      });
+      this.fullScreenAnimation();
     }
     this.closeActionButton();
     this.setState({
@@ -477,18 +486,18 @@ export default class DiaryRead extends Component {
       isTooltipModalVisible: false,
     });
     this.contentView.root.scrollTo({y: 0, animated: true});
-    this.diaryContent.resetHighlight();
+    this.resetHighlight();
     setTimeout( () => {
       this.generateContent();
     }, 10);
   }
   _handleMonthChange = (month) => {
     if(month.year > 2018) {
-      this._toggleModalCalendar();
+      this.toggleModalCalendar();
       setTimeout(() => Alert.alert(I18n.t('move_to_next_year')), 1000);
     }
     if(month.year < 2018) {
-      this._toggleModalCalendar();
+      this.toggleModalCalendar();
       setTimeout(() => Alert.alert(I18n.t('move_to_previous_year')), 1000);
     }
   }
@@ -496,66 +505,6 @@ export default class DiaryRead extends Component {
     this.closeActionButton();
     if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
-  }
-  _setFullScreenMode = () => {
-    this.setState({
-      fullScreenMode: true,
-    });
-  }
-  async _handleScroll(event) {
-    this.closeActionButton();
-    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
-    if(this.state.isTooltipModalVisible) return;
-    const paddingToBottom = 20;
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    const direction = currentOffset > this.offset ? 'down' : 'up';
-    const distance = this.offset ? (this.offset - currentOffset) : 0;
-    const footerNewPosition = this.state.footerScrollY._value - distance;
-    if (currentOffset > 0 && currentOffset < (this.contentHeight - this.scrollViewHeight)) {
-      if (direction === 'down') { //往下滑
-        this.setState({
-          fullScreenMode: true,
-        });
-        this.state.arrowFadeInOpacity.setValue(1);
-        if (this.state.footerScrollY._value < 50) {
-          this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
-          this.state.headerScrollY.setValue(footerNewPosition > 30 ? -100 : -footerNewPosition);
-        }
-        if (this.state.footerScrollY._value < 200) {
-          this.state.fadeInOpacity.setValue(footerNewPosition > 50 ? 0 : 1 - footerNewPosition / 100);
-        }
-      }
-      if (direction === 'up') { //往上滑
-        this.setState({
-          fullScreenMode: footerNewPosition == 50 ? true : false,
-        });
-        this.state.arrowFadeInOpacity.setValue(footerNewPosition == 50 ? 1 : 0);
-        if (this.state.footerScrollY._value >= 0) {
-          this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
-          this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition > 30 ? -150 : -footerNewPosition);
-          this.state.fadeInOpacity.setValue(footerNewPosition < 0 ? 1 : footerNewPosition == 50 ? 0 : 1 - footerNewPosition / 100);
-        }
-      }
-      this.offset = currentOffset;
-    }
-    if(layoutMeasurement.height + contentOffset.y >= contentSize.height + 120) {
-      if(this.state.hasRead) return;
-      if(this.state.markedDates[this.state.currentDate].marked) return;
-      if(this.state.content.length == 0) return;
-      const markedDates = {
-        ...this.state.markedDates,
-        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true}
-      }
-      const recordMarkedDates ={
-        ...this.state.markedDates,
-        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true, selected: false}
-      }
-      this.setState({
-        finishedReading: true,
-        markedDates: markedDates,
-      });
-      await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
-    }
   }
   _handleFinished = () => {
     this.setState({
@@ -585,37 +534,95 @@ export default class DiaryRead extends Component {
       this.generateBooks(lang);
     }, 1500);
   }
-  _handleHighlight = (color) => {
-    this.diaryContent.setHighlight(color);
-    this.setState({ isTooltipModalVisible: false });
+  handleCheckBookmark = async () => {
+    const isMatch = await checkBookmark(this.state.selectVerse);
+    this.setState({bookmarkIsMatch : isMatch});
   }
-  _handleBookmark = async () => {
-    this.diaryContent.addBookmark(this.state.bookmarkIsMatch);
+  handleHighlight = (color) => {
+    setHighlight({
+      color,
+      fontColor: this.state.setting.fontColor,
+      selectVerse: this.state.selectVerse,
+      selectVerseRef: this.state.selectVerseRef,
+      selectVerseNumberRef: this.state.selectVerseNumberRef,
+    });
+    this.setState({ isTooltipModalVisible: false });
+    this.resetHighlight();
+  }
+  handleBookmark = async () => {
+    addBookmark(this.state.bookmarkIsMatch, this.state.selectVerse);
     this.setState({ isTooltipModalVisible: false, popupText: this.state.bookmarkIsMatch ? I18n.t('popup_bookmark_removed') : I18n.t('popup_bookmark_successed') });
     setTimeout(() => {
       this.pupupDialog.popup();
       }, 0);
+    this.resetHighlight();    
   }
-  _handleShare = async () => {
-    const copyText = this.diaryContent.generateCopyText();
+  handleShare = async (selectVerse) => {
+    const copyText = await copyVerse(this.state.selectVerse);
     const share = await Share.share({
       message: copyText,
       title: this.state.currentDate,
     });
     if(share.action == "sharedAction") {
       this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_share_successed') });
-      this.diaryContent.resetHighlight();
       setTimeout(() => {
         this.pupupDialog.popup();
-        }, 0);
+      }, 0);
+      this.resetHighlight();
     }
   }
-  _handleCopyVerse = async () => {
-    this.diaryContent.copyVerse();
+  handleCopyVerse = async () => {
+    copyVerse(this.state.selectVerse);
     this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_copy_successed') });
     setTimeout(() => {
-    this.pupupDialog.popup();
+      this.pupupDialog.popup();
     }, 0);
+    this.resetHighlight();
+  }
+  handleVerseClick = (verseItem) => {
+    const delta = new Date().getTime() - this.state.lastPress;
+    if(delta < 300) {
+      setTimeout(() => {
+        this.fullScreenAnimation();
+      }, 0);
+    }
+    const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
+    const keyId = `${verseItem.id}-${verseItem.version}`;
+    if(this.state.selectVerse.hasOwnProperty(keyId)) {
+      this.diaryContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+      this.diaryContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
+      delete this.state.selectVerse[keyId];
+      delete this.state.selectVerseRef[key];
+      delete this.state.selectVerseNumberRef['number' + key];
+      this.setState({
+        selectVerse: {...this.state.selectVerse},
+        selectVerseRef: {...this.state.selectVerseRef},
+        selectVerseNumberRef: {...this.state.selectVerseNumberRef},
+        lastPress: new Date().getTime(),
+      });
+    } else {
+      this.diaryContent[verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+      this.diaryContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
+      this.setState({
+        selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, keyId: keyId, createdTime: moment().format('YYYY-MM-DD')}},
+        selectVerseRef: {...this.state.selectVerseRef, [key] : this.diaryContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
+        selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this.diaryContent['number' + verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
+        lastPress: new Date().getTime(),
+      });
+    }
+    if(R.isEmpty(this.state.selectVerse)) this.toggleModalTooltip();
+    setTimeout(() => {
+      this.handleCheckBookmark();
+    }, 0);
+  }
+  resetHighlight = () => {
+    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    this.setState({
+      selectVerse: {},
+      selectVerseRef: {},
+      selectVerseNumberRef: {},
+    });
   }
   navigateTo = (toWhere) => {
     this.reset();
@@ -680,12 +687,12 @@ export default class DiaryRead extends Component {
           <StyledMain
             ref={r => this.contentView = r}
             bg={bg} 
-            onScroll={this._handleScroll.bind(this)}
+            onScroll={handleScroll.bind(this)}
             onContentSizeChange={(w, h) => { this.contentHeight = h }}
             onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
             scrollEventThrottle={16}
           >
-            <StyledMainContent bg={bg} onPress={this._handleDoublePress}>
+            <StyledMainContent bg={bg} onPress={this.handleDoublePress}>
               <View style={{marginTop:60, marginBottom:isIphoneX() ? 20 : 10}}>
                 <DiaryContent
                   ref={ r => this.diaryContent = r}
@@ -700,12 +707,9 @@ export default class DiaryRead extends Component {
                   contentView={this.state.contentView}
                   marked={this.state.markedDates[this.state.currentDate].marked}
                   highlightList={this.state.highlightList}
-                  toggleModalTooltip={this._toggleModalTooltip}
-                  isTooltipModalVisible={this.state.isTooltipModalVisible}
-                  checkBookmark={this.checkBookmark}
-                  handleDoublePress={this._handleDoublePress}
+                  handleVerseClick={this.handleVerseClick} //自動curry帶入verseItem
                   closeActionButton={this.closeActionButton}
-                  setFullScreenMode={this._setFullScreenMode}
+                  setFullScreenMode={this.setFullScreenMode}
                 />
               </View>
             </StyledMainContent>
@@ -724,7 +728,7 @@ export default class DiaryRead extends Component {
               ref={r => this.header = r}
               fullScreenMode={false}
               navigation={this.props.navigation}
-              toggleModal={this._toggleModalCalendar}
+              toggleModal={this.toggleModalCalendar}
               navigateTo={this.navigateTo}
               closeFooterActionButton={this.closeFooterActionButton}
               openControlPanel={this.openControlPanel}
@@ -746,9 +750,9 @@ export default class DiaryRead extends Component {
               handlePreviousDay={this._handlePreviousDay}
               handeleChangeLang={this._handeleChangeLang}
               defaultLang={this.state.defaultLang}
-              getDiaryBiblePhrase={this._getDiaryBiblePhrase}
+              getDiaryBiblePhrase={this.getDiaryBiblePhrase}
               navigation={this.props.navigation}
-              toggleModal={this._toggleModalFontSetting}
+              toggleModal={this.toggleModalFontSetting}
               fullScreenMode={fullScreenMode}
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
@@ -776,7 +780,7 @@ export default class DiaryRead extends Component {
             isCalendarModalVisible={this.state.isCalendarModalVisible}
             currentDate={this.state.currentDate}
             handleChangeDay={this._handleChangeDay}
-            toggleModalCalendar={this._toggleModalCalendar}
+            toggleModalCalendar={this.toggleModalCalendar}
             markedDates={this.state.markedDates}
             handleMonthChange={this._handleMonthChange}
           />
@@ -784,19 +788,19 @@ export default class DiaryRead extends Component {
         { !this.state.finishedReading &&
           <Tooltip
             isTooltipModalVisible={this.state.isTooltipModalVisible}
-            toggleModalTooltip={this._toggleModalTooltip}
-            closeTooltip={this._closeTooltip}
-            handleHighlight={this._handleHighlight}
-            handleBookmark={this._handleBookmark}
-            handleCopyVerse={this._handleCopyVerse}
-            handleShare={this._handleShare}
+            toggleModalTooltip={this.toggleModalTooltip}
+            closeTooltip={this.closeTooltip}
+            handleHighlight={this.handleHighlight}
+            handleBookmark={this.handleBookmark}
+            handleCopyVerse={this.handleCopyVerse}
+            handleShare={this.handleShare}
             bookmarkIsMatch={this.state.bookmarkIsMatch}
           />
         }
         { !this.state.finishedReading &&
           <FontPanelModal
             isFontSettingModalVisible={this.state.isFontSettingModalVisible}
-            toggleModalFontSetting={this._toggleModalFontSetting}
+            toggleModalFontSetting={this.toggleModalFontSetting}
             handleSettingFontFamily={this._handleSettingFontFamily}
             handleSettingFontSize={this._handleSettingFontSize}
             handleSettingLineHeight={this._handleSettingLineHeight}
