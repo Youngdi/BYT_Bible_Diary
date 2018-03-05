@@ -1,0 +1,22 @@
+輸入金鑰儲存庫密碼: bytbible
+重新輸入新密碼: bytbible
+您的名字與姓氏為何？
+  [Unknown]:  YANG YU CHENG
+您的組織單位名稱為何？
+  [Unknown]:  BANNER
+您的組織名稱為何？
+  [Unknown]:  BYT
+您所在的城市或地區名稱為何？
+  [Unknown]:  Taipei
+您所在的州及省份名稱為何？
+  [Unknown]:  Taiwan
+此單位的兩個字母國別代碼為何？
+  [Unknown]:  TW
+CN=YANG YU CHENG, OU=BANNER, O=BYT, L=Taipei, ST=Taiwan, C=TW 正確嗎？
+  [否]:  Y
+
+針對 CN=YANG YU CHENG, OU=BANNER, O=BYT, L=Taipei, ST=Taiwan, C=TW 產生有效期 10,000 天的 2,048 位元 RSA 金鑰組以及自我簽署憑證 (SHA256withRSA)
+
+輸入 <bytbible> 的金鑰密碼
+        (RETURN 如果和金鑰儲存庫密碼相同):
+重新輸入新密碼:
