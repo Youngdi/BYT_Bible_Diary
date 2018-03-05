@@ -15,6 +15,7 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import * as R from 'ramda';
 import moment from 'moment/min/moment-with-locales';
 import styled from "styled-components/native";
@@ -107,7 +108,16 @@ export default class Bible extends PureComponent {
                   </TouchableOpacity>
       ,headerRight: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
-                    onPress={() => navigation.navigate('BibleSearch', {lang: state.params.lang, setting:state.params.setting, bg:state.params.bg})}
+                    onPress={() => {
+                      const resetAction = NavigationActions.reset({
+                        index: 1,
+                        actions: [
+                          NavigationActions.navigate({routeName: 'Diary'}),
+                          NavigationActions.navigate({routeName: 'BibleSearch', params:{lang: state.params.lang, setting:state.params.setting, bg:state.params.bg}})
+                        ],
+                      });
+                      navigation.dispatch(resetAction);
+                    }}
                   >
                     <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color={state.params.setting.fontColor} />
                   </TouchableOpacity>
