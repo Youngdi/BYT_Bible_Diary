@@ -1,7 +1,6 @@
-package com.bytbiblediary;
+package com.bytbible.diary;
 
 import android.app.Application;
-
 import com.facebook.react.ReactApplication;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
@@ -10,13 +9,13 @@ import com.airbnb.android.react.lottie.LottiePackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
-import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.rnfs.RNFSPackage;
 import com.cmcewen.blurview.BlurViewPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
+import com.ninty.system.setting.SystemSettingPackage;
 import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
@@ -33,7 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
+            new MainReactPackage(),
+            new SystemSettingPackage(),
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
@@ -41,7 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RealmReactPackage(),
             new VectorIconsPackage(),
             new RNSpinkitPackage(),
-            new ScreenBrightnessPackage(),
             new RNI18nPackage(),
             new RNFSPackage(),
             new BlurViewPackage()

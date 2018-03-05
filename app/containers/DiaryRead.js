@@ -18,7 +18,7 @@ import Spinner from 'react-native-spinkit';
 import Drawer from 'react-native-drawer'
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
-import ScreenBrightness from 'react-native-screen-brightness';
+import SystemSetting from 'react-native-system-setting'
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import styled from "styled-components/native";
 import I18n, { getLanguages } from 'react-native-i18n';
@@ -138,7 +138,7 @@ export default class DiaryRead extends Component {
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
         const setting = await global.storage.load({key:'@setting'});
         const lang = await global.storage.load({key:'@lang'});
-        const brightness = await ScreenBrightness.getBrightness();
+        const brightness = await SystemSetting.getAppBrightness();
         const FontColor = setting.readingMode ? '#ccc' : '#000';
         const BgColor = setting.readingMode ? '#333' : '#fff';
         if(lang == 'cht') I18n.locale = 'zh-hant';
@@ -462,7 +462,7 @@ export default class DiaryRead extends Component {
     });
   }
   _handleSliderValueChange = (value) => {
-    ScreenBrightness.setBrightness(value);
+    SystemSetting.setAppBrightness(value);
     this.setState({
       setting:{
         ...this.state.setting,

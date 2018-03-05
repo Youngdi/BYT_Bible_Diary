@@ -47,7 +47,7 @@ class MyHomeScreen extends Component {
       if(notif.opened_from_tray){
         return;
       }
-      if(Platform.OS ==='ios'){
+      if(Platform.OS ==='ios') {
         switch(notif._notificationType){
           case NotificationType.Remote:
             notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed

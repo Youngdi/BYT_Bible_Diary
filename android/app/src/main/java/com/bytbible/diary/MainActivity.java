@@ -1,4 +1,4 @@
-package com.bytbiblediary;
+package com.bytbible.diary;
 
 import com.facebook.react.ReactActivity;
 

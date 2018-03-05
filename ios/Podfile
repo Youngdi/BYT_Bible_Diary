@@ -9,6 +9,8 @@ target 'BYTBibleDiary' do
 
   # Pods for TakeOver
 
+  pod 'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
+
   target 'BYTBibleDiaryTests' do
     inherit! :search_paths
     # Pods for testing

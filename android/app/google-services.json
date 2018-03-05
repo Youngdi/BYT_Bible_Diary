@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "933885265624",
+    "firebase_url": "https://bytdiarybible.firebaseio.com",
+    "project_id": "bytdiarybible",
+    "storage_bucket": "bytdiarybible.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933885265624:android:8c18410ebf065aca",
+        "android_client_info": {
+          "package_name": "com.bytbible.diary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933885265624-733ar9igabpju0cesqjej3flt28q51p0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwHO4y8Pm0Zf1WzLyiYWCZvpT4Fzbjicg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
