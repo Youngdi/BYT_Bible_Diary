@@ -37,7 +37,6 @@ import Tooltip from '../components/Tooltip';
 import BibleListPanel from '../components/BibleListPanel';
 import { dbFindDiary } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
-import { handleScroll } from '../api/diaryReadLogic';
 
 const storage = new Storage({
 	size: 1000,
@@ -538,15 +537,13 @@ export default class DiaryRead extends Component {
     const isMatch = await checkBookmark(this.state.selectVerse);
     this.setState({bookmarkIsMatch : isMatch});
   }
-  handleHighlight = (color) => {
-    setHighlight({
+  handleHighlight = async (color) => {
+    const highlightList = await setHighlight({
       color,
       fontColor: this.state.setting.fontColor,
       selectVerse: this.state.selectVerse,
-      selectVerseRef: this.state.selectVerseRef,
-      selectVerseNumberRef: this.state.selectVerseNumberRef,
     });
-    this.setState({ isTooltipModalVisible: false });
+    this.setState({ isTooltipModalVisible: false,  highlightList});
     this.resetHighlight();
   }
   handleBookmark = async () => {
@@ -579,7 +576,7 @@ export default class DiaryRead extends Component {
     }, 0);
     this.resetHighlight();
   }
-  handleVerseClick = (verseItem) => {
+  handleVerseClick = async (verseItem) => {
     const delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
       setTimeout(() => {
@@ -589,24 +586,14 @@ export default class DiaryRead extends Component {
     const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
     const keyId = `${verseItem.id}-${verseItem.version}`;
     if(this.state.selectVerse.hasOwnProperty(keyId)) {
-      this.diaryContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-      this.diaryContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
       delete this.state.selectVerse[keyId];
-      delete this.state.selectVerseRef[key];
-      delete this.state.selectVerseNumberRef['number' + key];
       this.setState({
         selectVerse: {...this.state.selectVerse},
-        selectVerseRef: {...this.state.selectVerseRef},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef},
         lastPress: new Date().getTime(),
       });
     } else {
-      this.diaryContent[verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-      this.diaryContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
       this.setState({
         selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, keyId: keyId, createdTime: moment().format('YYYY-MM-DD')}},
-        selectVerseRef: {...this.state.selectVerseRef, [key] : this.diaryContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this.diaryContent['number' + verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
         lastPress: new Date().getTime(),
       });
     }
@@ -616,13 +603,64 @@ export default class DiaryRead extends Component {
     }, 0);
   }
   resetHighlight = () => {
-    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
     this.setState({
       selectVerse: {},
-      selectVerseRef: {},
-      selectVerseNumberRef: {},
     });
+  }
+  handleScroll = async (event) => {
+    this.closeActionButton();
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
+    if(this.state.isTooltipModalVisible) return;
+    const paddingToBottom = 20;
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const direction = currentOffset > this.offset ? 'down' : 'up';
+    const distance = this.offset ? (this.offset - currentOffset) : 0;
+    const footerNewPosition = this.state.footerScrollY._value - distance;
+    if (currentOffset > 0 && currentOffset < (this.contentHeight - this.scrollViewHeight)) {
+      if (direction === 'down') { //往下滑
+        this.setState({
+          fullScreenMode: true,
+        });
+        this.state.arrowFadeInOpacity.setValue(1);
+        if (this.state.footerScrollY._value < 50) {
+          this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition > 30 ? -100 : -footerNewPosition);
+        }
+        if (this.state.footerScrollY._value < 200) {
+          this.state.fadeInOpacity.setValue(footerNewPosition > 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      if (direction === 'up') { //往上滑
+        this.setState({
+          fullScreenMode: footerNewPosition == 50 ? true : false,
+        });
+        this.state.arrowFadeInOpacity.setValue(footerNewPosition == 50 ? 1 : 0);
+        if (this.state.footerScrollY._value >= 0) {
+          this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
+          this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition > 30 ? -150 : -footerNewPosition);
+          this.state.fadeInOpacity.setValue(footerNewPosition < 0 ? 1 : footerNewPosition == 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      this.offset = currentOffset;
+    }
+    if(layoutMeasurement.height + contentOffset.y >= contentSize.height + 120) {
+      if(this.state.hasRead) return;
+      if(this.state.markedDates[this.state.currentDate].marked) return;
+      if(this.state.content.length == 0) return;
+      const markedDates = {
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true}
+      }
+      const recordMarkedDates ={
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true, selected: false}
+      }
+      this.setState({
+        finishedReading: true,
+        markedDates: markedDates,
+      });
+      await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
+    }
   }
   navigateTo = (toWhere) => {
     this.reset();
@@ -687,7 +725,7 @@ export default class DiaryRead extends Component {
           <StyledMain
             ref={r => this.contentView = r}
             bg={bg} 
-            onScroll={handleScroll.bind(this)}
+            onScroll={this.handleScroll}
             onContentSizeChange={(w, h) => { this.contentHeight = h }}
             onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
             scrollEventThrottle={16}
@@ -695,7 +733,7 @@ export default class DiaryRead extends Component {
             <StyledMainContent bg={bg} onPress={this.handleDoublePress}>
               <View style={{marginTop:60, marginBottom:isIphoneX() ? 20 : 10}}>
                 <DiaryContent
-                  ref={ r => this.diaryContent = r}
+                  selectVerse={this.state.selectVerse}
                   fontColor={this.state.setting.fontColor}
                   fontSize={this.state.setting.fontSize}
                   lineHeight={this.state.setting.lineHeight}

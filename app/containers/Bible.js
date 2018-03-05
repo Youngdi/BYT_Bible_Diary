@@ -13,6 +13,7 @@ import {
   Clipboard,
   Share,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import * as R from 'ramda';
 import moment from 'moment/min/moment-with-locales';
@@ -115,6 +116,8 @@ export default class Bible extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      footerScrollY: new Animated.Value(0),
+      fadeInOpacity: new Animated.Value(1),
       loadContent: false,
       fullScreenMode: false,
       popupText: '',
@@ -144,6 +147,7 @@ export default class Bible extends PureComponent {
       },
       pharseContainerHeight: 0,
     }
+    this.offset = 0;
     this.initData();
   }
   initData = async () => {
@@ -205,11 +209,62 @@ export default class Bible extends PureComponent {
       pharseContainerWidth: e.nativeEvent.layout.width,
       pharseContainerHeight: e.nativeEvent.layout.height
     });
-  } 
-  closeHeaderActionButton = () => {
-
   }
-  handleVerseClick = (verseItem) => {
+  handleScroll = (event) => {
+    this.closeActionButton();
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
+    if(this.state.isTooltipModalVisible) return;
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const direction = currentOffset > this.offset ? 'down' : 'up';
+    const distance = this.offset ? (this.offset - currentOffset) : 0;
+    const footerNewPosition = this.state.footerScrollY._value - distance;
+    if (currentOffset > 0 && currentOffset < (this.contentHeight - this.scrollViewHeight)) {
+      if (direction === 'down') { //往下滑
+        this.setState({
+          fullScreenMode: true,
+        });
+        if (this.state.footerScrollY._value < 50) {
+          this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
+        }
+        if (this.state.footerScrollY._value < 200) {
+          this.state.fadeInOpacity.setValue(footerNewPosition > 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      if (direction === 'up') { //往上滑
+        this.setState({
+          fullScreenMode: footerNewPosition == 50 ? true : false,
+        });
+        if (this.state.footerScrollY._value >= 0) {
+          this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
+          this.state.fadeInOpacity.setValue(footerNewPosition < 0 ? 1 : footerNewPosition == 50 ? 0 : 1 - footerNewPosition / 100);
+        }
+      }
+      this.offset = currentOffset;
+    }
+  }
+  closeActionButton = () => {
+    if(this.footer) this.footer.closeActionButton();
+  }
+  fullScreenAnimation = () => {
+    this.state.fadeInOpacity.setValue(this.state.fullScreenMode ? 0 : 1);
+    this.state.footerScrollY.setValue(this.state.fullScreenMode ? 50 : 0);
+    Animated.parallel([
+      Animated.timing(this.state.fadeInOpacity, {
+        toValue: this.state.fullScreenMode ? 1 : 0,
+        duration: 500,
+        easing: Easing.linear,
+      }),
+      Animated.timing(this.state.footerScrollY, {
+        toValue: this.state.fullScreenMode ? 0 : 50,
+        duration: 500,
+        easing: Easing.linear,
+      }),
+    ]).start();
+    this.setState({
+      fullScreenMode: !this.state.fullScreenMode,
+    });
+  }
+  handleVerseClick = async (verseItem) => {
     const delta = new Date().getTime() - this.state.lastPress;
     if(delta < 300) {
       setTimeout(() => {
@@ -219,24 +274,14 @@ export default class Bible extends PureComponent {
     const key = `${verseItem.version}-${verseItem.book_ref}-${verseItem.chapter_nr}-${verseItem.verse_nr}`;
     const keyId = `${verseItem.id}-${verseItem.version}`;
     if(this.state.selectVerse.hasOwnProperty(keyId)) {
-      this.bibleContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
-      this.bibleContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:this.state.setting.fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}});
       delete this.state.selectVerse[keyId];
-      delete this.state.selectVerseRef[key];
-      delete this.state.selectVerseNumberRef['number' + key];
       this.setState({
         selectVerse: {...this.state.selectVerse},
-        selectVerseRef: {...this.state.selectVerseRef},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef},
         lastPress: new Date().getTime(),
       });
     } else {
-      this.bibleContent[verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
-      this.bibleContent['number' + verseItem.version + verseItem.book_name +verseItem.chapter_nr + verseItem.verse_nr].setNativeProps({style:{color:'#CF1B1B', textDecorationLine:'underline', textDecorationStyle:'dotted'}});
       this.setState({
         selectVerse: {...this.state.selectVerse, [keyId]:{...verseItem, keyId: keyId, createdTime: moment().format('YYYY-MM-DD')}},
-        selectVerseRef: {...this.state.selectVerseRef, [key] : this.bibleContent[verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
-        selectVerseNumberRef: {...this.state.selectVerseNumberRef, ['number' + key]: this.bibleContent['number' + verseItem.version + verseItem.book_name + verseItem.chapter_nr + verseItem.verse_nr]},
         lastPress: new Date().getTime(),
       });
     }
@@ -249,50 +294,44 @@ export default class Bible extends PureComponent {
     const isMatch = await checkBookmark(this.state.selectVerse);
     this.setState({bookmarkIsMatch : isMatch});
   }
-  _handleDoublePress = () => {
-    var delta = new Date().getTime() - this.state.lastPress;
-    if(delta < 300) {
-      this.setState({
-        fullScreenMode: !this.state.fullScreenMode,
-      });
-      //this.closeActionButton();
-    }
-    //this.closeActionButton();
-    this.setState({
-      lastPress: new Date().getTime(),
+  handleHighlight = async (color) => {
+    const highlightList = await setHighlight({
+      color,
+      fontColor: this.state.setting.fontColor,
+      selectVerse: this.state.selectVerse,
     });
+    this.setState({ isTooltipModalVisible: false,  highlightList});
+    this.resetHighlight();
   }
-  handleHighlight = (color) => {
-    this.setHighlight(color);
-    this.setState({ isTooltipModalVisible: false });
-  }
-  handleBookmark = () => {
-    this.addBookmark(this.state.bookmarkIsMatch);
+  handleBookmark = async () => {
+    addBookmark(this.state.bookmarkIsMatch, this.state.selectVerse);
     this.setState({ isTooltipModalVisible: false, popupText: this.state.bookmarkIsMatch ? I18n.t('popup_bookmark_removed') : I18n.t('popup_bookmark_successed') });
     setTimeout(() => {
       this.pupupDialog.popup();
       }, 0);
+    this.resetHighlight();    
   }
-  handleShare = async () => {
-    const copyText = this.generateCopyText();
+  handleShare = async (selectVerse) => {
+    const copyText = await copyVerse(this.state.selectVerse);
     const share = await Share.share({
       message: copyText,
       title: this.state.currentDate,
     });
     if(share.action == "sharedAction") {
       this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_share_successed') });
-      this.resetHighlight();
       setTimeout(() => {
         this.pupupDialog.popup();
-        }, 0);
+      }, 0);
+      this.resetHighlight();
     }
   }
   handleCopyVerse = async () => {
-    this.copyVerse();
+    copyVerse(this.state.selectVerse);
     this.setState({ isTooltipModalVisible: false, popupText: I18n.t('popup_copy_successed') });
     setTimeout(() => {
-    this.pupupDialog.popup();
+      this.pupupDialog.popup();
     }, 0);
+    this.resetHighlight();
   }
   toggleModalTooltip = () => {
     this.setState({ isTooltipModalVisible: !this.state.isTooltipModalVisible });
@@ -302,7 +341,6 @@ export default class Bible extends PureComponent {
     this.setState({ isTooltipModalVisible: false });
   };
   getDiaryBiblePhrase = () => {
-    // this.closeActionButton();
     let number = Math.floor(Math.random() * 74) + 1;
     let bible_number = `B${number}`;
     Alert.alert(
@@ -315,110 +353,9 @@ export default class Bible extends PureComponent {
     );
   }
   resetHighlight = () => {
-    const { fontColor } = this.state.setting;
-    R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:fontColor, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
     this.setState({
       selectVerse: {},
-      selectVerseRef: {},
-      selectVerseNumberRef: {},
     });
-  }
-  setHighlight = async (color) => {
-    const { fontColor } = this.state.setting;
-    try {
-      const selectVerses = R.keys(this.state.selectVerse);
-      const setColorList = selectVerses.reduce((acc, val) => {
-        return {
-          ...acc,
-          [val]: color,
-        };
-      }, {});
-      const highlightList = await global.storage.load({key:'@highlightList'});
-      const _highlightList = {
-        ...highlightList,
-        ...setColorList,
-      }
-      await global.storage.save({key: '@highlightList', data: _highlightList, expires: null});
-      R.values(this.state.selectVerseNumberRef).map(item => item.setNativeProps({style:{color:fontColor, backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-      R.values(this.state.selectVerseRef).map(item => item.setNativeProps({style:{color:fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-      this.resetHighlight();
-    } catch(e) {
-      alert(JSON.stringify(e));
-    }
-  }
-  addBookmark = async (action) => {
-    try {
-      if (action) {
-        const _bookmark = await global.storage.load({key:'@bookmark'});
-        R.keys(this.state.selectVerse).map((keyId) => {
-          delete _bookmark[keyId];
-        });
-        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
-      } else {
-        const bookmark = await global.storage.load({key:'@bookmark'});
-        const _bookmark = {
-          ...bookmark,
-          ...this.state.selectVerse,
-        }
-        await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
-      }
-      this.resetHighlight();
-    } catch(e) {
-      alert(JSON.stringify(e));
-    }
-  }
-  generateCopyText = () => {
-    let c = 0;
-    const verse = R.pipe(
-      R.toPairs(),
-      R.sort((a, b) => {
-        let _a = a[0];
-        let _b = b[0];
-        _a = Number(_a.slice(0, _a.indexOf('-')));
-        _b = Number(_b.slice(0, _b.indexOf('-')));
-        return _a - _b;
-        }
-      ),
-      R.fromPairs(),
-      R.values(),
-    )(this.state.selectVerse);
-    const copy = verse.reduce((acc, val, i) => {
-      let b = [];
-      const previousVerse = verse[i - 1];
-      if(i == 0){
-        b.push(val);
-        acc[c] = b;
-        return acc;
-      }
-      if(previousVerse.book_name == val.book_name && previousVerse.chapter_nr == val.chapter_nr && previousVerse.verse_nr == val.verse_nr -1){
-        acc[c].push(val);
-        return [...acc];
-      }
-      ++c;
-      b.push(val);
-      acc[c] = b;
-      return  [...acc];
-    }, []);
-    const copyText = copy.reduce((acc, val) => {
-      let verseNumber = '';
-      verseNumber = (val.length == 1) ? '' : '-' + (val[0].verse_nr + val.length - 1);
-      for(let i = 0; i < val.length; i++){
-        if(i == 0){
-          acc = acc + val[0].book_name + val[0].chapter_nr + ':' + val[0].verse_nr + verseNumber + '  :『' + val[i].verse;
-        } else {
-          acc = acc  + val[i].verse;
-        }
-      }
-      acc = acc + '』\n\n';
-      return acc;
-    }, '');
-    return copyText;
-  }
-  copyVerse = () => {
-    const copyText = this.generateCopyText();
-    Clipboard.setString(copyText);
-    this.resetHighlight();
   }
   generateContent = async (chapter_index, book_nr_index = 0) => {
     const highlightList = await global.storage.load({key:'@highlightList'});
@@ -495,8 +432,7 @@ export default class Bible extends PureComponent {
     }
     await this.generateContent();
   }
-  _handeleChangeLang = async (lang) => {
-    // this.closeActionButton();
+  handeleChangeLang = async (lang) => {
     if(this.state.loadContent) return null;
     if(lang == 'cht') I18n.locale = 'zh-hant';
     if(lang == 'chs') I18n.locale = 'zh-hans';
@@ -514,25 +450,11 @@ export default class Bible extends PureComponent {
     } else {
       this.resetHighlight();
     }
-    // await global.storage.save({
-    //   key: '@lang',
-    //   data: lang,
-    //   expires: null,
-    // });
     setTimeout(() => {
       this.generateContent();
     }, 0);
   }
-  handleScroll = async (e) => {
-    // this.closeActionButton();
-    const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
-    const paddingToBottom = 20;
-    const direction = contentOffset.y > this.state.scrollPosition ? 'down' : 'up';
-    if(this.state.isTooltipModalVisible) return;
-    if(contentOffset.y < 200) this.setState({fullScreenMode: false});
-  }
   toggleModalFontSetting = () => {
-    // this.closeActionButton();
     this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
   handleSettingFontFamily = async (font) => {
@@ -616,39 +538,52 @@ export default class Bible extends PureComponent {
         <StyledMain
           ref={r => this.contentView = r}
           bg={this.state.bg} 
-          onScroll={this.handleScroll.bind(this)}
+          onScroll={this.handleScroll}
+          onContentSizeChange={(w, h) => { this.contentHeight = h }}
+          onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
           scrollEventThrottle={16}
-          >
+        >
           <StyledMainContent
             bg={this.state.bg}
-            onPress={this._handleDoublePress}
           >
           <BibleContent
-            ref={ r => this.bibleContent = r}
+            selectVerse={this.state.selectVerse}
             fontColor={this.state.setting.fontColor}
             fontSize={this.state.setting.fontSize}
             lineHeight={this.state.setting.lineHeight}
             fontFamily={this.state.setting.fontFamily}
             readingMode={this.state.setting.readingMode}
             content={this.state.content}
-            defaultLang={this.state.defaultLang}
-            contentView={this.state.contentView}
+            defaultLang={this.state.lang}
             highlightList={this.state.highlightList}
             handleVerseClick={this.handleVerseClick}
+            handlelayout={this.handlelayout}
           />
           </StyledMainContent>
         </StyledMain>
-        <Footer
-          handleNextDay={this._handleNext}
-          handlePreviousDay={this._handlePrevious}
-          handeleChangeLang={this._handeleChangeLang}
-          defaultLang={this.state.lang}
-          getDiaryBiblePhrase={this.getDiaryBiblePhrase}
-          toggleModal={this.toggleModalFontSetting}
-          fullScreenMode={this.state.fullScreenMode}
-          content={[1,2]}
-          closeHeaderActionButton={this.closeHeaderActionButton}
-        />
+        { !this.state.finishedReading &&
+          <Animated.View
+            style={[
+              styles.fixedFooter,
+              { opacity: this.state.fadeInOpacity,
+                transform: [{ translateY: this.state.footerScrollY }] 
+              },
+            ]}
+          >
+            <Footer
+              ref={(el) => this.footer = el}
+              handleNextDay={this._handleNext}
+              handlePreviousDay={this._handlePrevious}
+              handeleChangeLang={this.handeleChangeLang}
+              defaultLang={this.state.lang}
+              getDiaryBiblePhrase={this.getDiaryBiblePhrase}
+              navigation={this.props.navigation}
+              toggleModal={this.toggleModalFontSetting}
+              fullScreenMode={this.state.fullScreenMode}
+              content={[1,2]}
+            />
+          </Animated.View>
+        }
         <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         <Tooltip
           isTooltipModalVisible={this.state.isTooltipModalVisible}
@@ -674,3 +609,14 @@ export default class Bible extends PureComponent {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  fixedFooter: {
+    position: 'absolute',
+    zIndex: 3,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+  },
+});

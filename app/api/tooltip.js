@@ -36,7 +36,7 @@ export async function addBookmark(action, selectVerse) {
   }
 }
 export async function setHighlight(data) {
-  const {color, selectVerse, selectVerseRef, selectVerseNumberRef, fontColor} = data;
+  const {color, selectVerse, fontColor} = data;
   try {
     const selectVerses = R.keys(selectVerse);
     const setColorList = selectVerses.reduce((acc, val) => {
@@ -51,8 +51,7 @@ export async function setHighlight(data) {
       ...setColorList,
     }
     await global.storage.save({key: '@highlightList', data: _highlightList, expires: null});
-    R.values(selectVerseNumberRef).map(item => item.setNativeProps({style:{color:fontColor, backgroundColor:color,textDecorationLine:'none', textDecorationStyle:'dotted'}}));
-    R.values(selectVerseRef).map(item => item.setNativeProps({style:{color:fontColor, backgroundColor:color, textDecorationLine:'none', textDecorationStyle:'dotted'}}));
+    return _highlightList;
   } catch(e) {
     alert(JSON.stringify(e));
   }
@@ -104,3 +103,6 @@ function generateCopyText(selectVerse) {
     }, '');
     return copyText;
   }
+
+export const checkVerseSelected = (selectedList, verse) =>  R.indexOf(verse, R.keys(selectedList)) != -1 ? true : false;
+export const checkVerseHighlighted = (highlightList, verse) => highlightList[`${verse.id}-${verse.version}`] ? highlightList[`${verse.id}-${verse.version}`] : 'transparent';
