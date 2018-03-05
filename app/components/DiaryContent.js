@@ -36,7 +36,6 @@ const StyledBibleContainer = styled.View`
   margin-right:30px;
 `;
 const Title = styled.Text`
-  height: 23px;
   font-weight: bold;
   font-size: 20px;
   color: ${props => props.fontColor};

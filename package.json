@@ -17,6 +17,7 @@
     "d-ios": "react-native run-ios --device 'Youngdi' ",
     "r-ios": "react-native run-ios --configuration Release --device 'Youngdi'",
     "e-an": "react-native run-android",
+    "d-an": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
     "r-an": "sh ./doc/buildSignedApk.sh",
     "code-push-ios-d": "code-push release-react byt.bible.diary.ios ios",
     "code-push-ios-p": "code-push release-react byt.bible.diary.ios ios -d Production",

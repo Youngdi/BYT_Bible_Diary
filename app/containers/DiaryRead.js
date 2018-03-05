@@ -111,7 +111,7 @@ export default class DiaryRead extends Component {
         fontFamily: 'Avenir',
         fontSize: 18,
         fontColor: '#000',
-        lineHeight: 28,
+        lineHeight: 33,
         brightnessValue: 1,
         readingMode: false, // 0 -> day, 1 -> night
       },
@@ -192,7 +192,7 @@ export default class DiaryRead extends Component {
                 fontFamily: 'Avenir',
                 fontSize: 18,
                 fontColor: '#000',
-                lineHeight: 28,
+                lineHeight: 33,
                 brightnessValue: 1,
                 readingMode: false, // 0 -> day, 1 -> night
               },
