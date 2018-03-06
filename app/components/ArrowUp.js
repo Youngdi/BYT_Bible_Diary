@@ -21,14 +21,16 @@ const StyledArrowUp = styled.View`
   justify-content: flex-end;
 `;
 const shadowStyle = {
-  shadowOpacity: 0.35,
-  shadowOffset: {
-    width: 0,
-    height: 5
-  },
-  shadowColor: "#000",
-  shadowRadius: 3,
-  elevation: 5,
+  ...Platform.OS == 'ios' ? {
+    shadowOpacity: 0.35,
+    shadowOffset: {
+      width: 0,
+      height: 5
+    },
+    shadowColor: "#000",
+    shadowRadius: 3,
+    elevation: 5,    
+  } : {},
   backgroundColor:'#1E1E1E',
   width: 36,
   height: 36,

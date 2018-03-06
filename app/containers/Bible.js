@@ -31,9 +31,11 @@ import Pupup from '../components/Popup';
 import bibleFlag from '../constants/bible';
 import FontPanelModal from '../components/FontPanel';
 import BibleContent from '../components/BibleContent';
+import AndroidActionButton from '../components/AndroidActionButton';;
 import { dbFindChapter, dbFindVerse, dbGetBookContent } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
 
+const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
 const {
   height: deviceHeight,
   width: deviceWidth
@@ -593,6 +595,14 @@ export default class Bible extends PureComponent {
               content={[1,2]}
             />
           </Animated.View>
+        }
+        {Platform.OS == 'ios' ? null : 
+          <AndroidActionAnimatedButton
+            offsetY={this.state.footerScrollY}
+            opacity={this.state.fadeInOpacity}
+            defaultLang={this.state.lang}
+            handeleChangeLang={this.handeleChangeLang}
+          />
         }
         <Pupup marginAdjust={-150} text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         <Tooltip

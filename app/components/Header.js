@@ -35,7 +35,7 @@ const StyledHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-top: 25px;
-  height: ${Platform.OS == 'ios' ? '6%' : '100px'};                                                                                                                                                         '};
+  height: ${Platform.OS == 'ios' ? '6%' : deviceHeight};
 `;
 
 const shadowStyle = {
@@ -65,14 +65,14 @@ export default class Header extends PureComponent {
     };
   }
   closeActionButton = () => {
-    this.actionButton.reset();
+    this.actionButton && this.actionButton.reset();
   }
   navigateTo =(toWhere) => {
     this.props.navigateTo(toWhere);
   }
   render() {
     return (
-      <StyledHeader>
+      <StyledHeader pointerEvents={'box-none'}>
         <View></View>
         <ActionButton
           buttonColor="rgba(30,30,30,1)"
@@ -84,19 +84,10 @@ export default class Header extends PureComponent {
           size={36}
           position={'left'}
           hideShadow={false}
-          
           offsetY={15}
           offsetX={20}
           degrees={0}
         >
-          {/* <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('More')}>
-            <Ionicons
-              name='ios-more-outline'
-              size={30}
-              color='#bbb'
-              style={{width: 26, height: 26, marginTop:-4, marginLeft:7, backgroundColor:'transparent'}}
-            />
-          </ActionButton.Item> */}
           <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('BibleSearch')}>
             <Ionicons
               name='ios-search-outline'

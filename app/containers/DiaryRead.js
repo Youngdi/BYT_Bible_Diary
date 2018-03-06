@@ -30,13 +30,15 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CalendarModal from '../components/Calendar';
 import FontPanelModal from '../components/FontPanel';
-import DiaryContent from '../components/DiaryContent';
+import DiaryContent from '../components/DiaryContent'
+import AndroidActionButton from '../components/AndroidActionButton';;
 import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
 import BibleListPanel from '../components/BibleListPanel';
 import { dbFindDiary } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
+const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
 
 const storage = new Storage({
 	size: 1000,
@@ -341,7 +343,7 @@ export default class DiaryRead extends Component {
       lastPress: new Date().getTime(),
     });
   }
-  _handleNextDay = () => {
+  handleNextDay = () => {
     this.closeActionButton();
     if(this.state.fullScreenMode) return null;
     if(this.state.loadContent) return null;
@@ -372,7 +374,7 @@ export default class DiaryRead extends Component {
       this.generateContent();
     }, 0);
   }
-  _handlePreviousDay = () => {
+  handlePreviousDay = () => {
     this.closeActionButton();
     if(this.state.fullScreenMode) return null;
     if(this.state.loadContent) return null;
@@ -403,7 +405,7 @@ export default class DiaryRead extends Component {
       this.generateContent();
     }, 0);
   }
-  _handleSettingLineHeight = async (value) => {
+  handleSettingLineHeight = async (value) => {
     await this.setState({
       setting:{
         ...this.state.setting,
@@ -416,7 +418,7 @@ export default class DiaryRead extends Component {
       expires: null,
     });
   }
-  _handleSettingFontFamily = async (font) => {
+  handleSettingFontFamily = async (font) => {
     await this.setState({
       setting:{
         ...this.state.setting,
@@ -429,7 +431,7 @@ export default class DiaryRead extends Component {
       expires: null,
     });
   }
-  _handleSettingFontSize = async (value) => {
+  handleSettingFontSize = async (value) => {
     if(this.state.setting.fontSize >= 28 && value == 2) return null;
     if(this.state.setting.fontSize <= 12 && value == -2) return null;
     await this.setState({
@@ -444,7 +446,7 @@ export default class DiaryRead extends Component {
       expires: null,
     });
   }
-  _handleSettingReadingMode = async () => {
+  handleSettingReadingMode = async () => {
     const FontColor = !this.state.setting.readingMode ? '#ccc' : '#000';
     const BgColor = !this.state.setting.readingMode ? '#333' : '#fff';
     await this.setState({
@@ -461,7 +463,7 @@ export default class DiaryRead extends Component {
       expires: null,
     });
   }
-  _handleSliderValueChange = (value) => {
+  handleSliderValueChange = (value) => {
     DeviceBrightness.setBrightnessLevel(value);
     this.setState({
       setting:{
@@ -470,7 +472,7 @@ export default class DiaryRead extends Component {
       }
     });
   }
-  _handleChangeDay = async (day) => {
+  handleChangeDay = async (day) => {
     this.closeActionButton();
     await this.setState({
       isCalendarModalVisible: !this.state.isCalendarModalVisible,
@@ -490,7 +492,7 @@ export default class DiaryRead extends Component {
       this.generateContent();
     }, 10);
   }
-  _handleMonthChange = (month) => {
+  handleMonthChange = (month) => {
     if(month.year > 2018) {
       this.toggleModalCalendar();
       setTimeout(() => Alert.alert(I18n.t('move_to_next_year')), 1000);
@@ -500,18 +502,18 @@ export default class DiaryRead extends Component {
       setTimeout(() => Alert.alert(I18n.t('move_to_previous_year')), 1000);
     }
   }
-  _handeleScrollTop = (e) => {
+  handeleScrollTop = (e) => {
     this.closeActionButton();
     if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
-  _handleFinished = () => {
+  handleFinished = () => {
     this.setState({
       finishedReading: false,
       fullScreenMode: true,
     });
   }
-  _handeleChangeLang = async (lang) => {
+  handeleChangeLang = async (lang) => {
     if(this.state.loadContent) return null;
     if(lang == 'cht') I18n.locale = 'zh-hant';
     if(lang == 'chs') I18n.locale = 'zh-hans';
@@ -661,6 +663,24 @@ export default class DiaryRead extends Component {
       });
       await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
     }
+    if(Platform.OS != 'ios' && layoutMeasurement.height + contentOffset.y == contentSize.height) {
+      if(this.state.hasRead) return;
+      if(this.state.markedDates[this.state.currentDate].marked) return;
+      if(this.state.content.length == 0) return;
+      const markedDates = {
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true}
+      }
+      const recordMarkedDates ={
+        ...this.state.markedDates,
+        [this.state.currentDate] : {...this.state.markedDates[this.state.currentDate], marked: true, selected: false}
+      }
+      this.setState({
+        finishedReading: true,
+        markedDates: markedDates,
+      });
+      await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
+    }
   }
   navigateTo = (toWhere) => {
     this.reset();
@@ -754,6 +774,7 @@ export default class DiaryRead extends Component {
           </StyledMain>
         { !this.state.finishedReading &&
           <Animated.View
+            pointerEvents={'box-none'}
             style={[
               styles.fixedHeader,
               { 
@@ -783,9 +804,9 @@ export default class DiaryRead extends Component {
           >
             <Footer
               ref={r => this.footer = r}
-              handleNextDay={this._handleNextDay}
-              handlePreviousDay={this._handlePreviousDay}
-              handeleChangeLang={this._handeleChangeLang}
+              handleNextDay={this.handleNextDay}
+              handlePreviousDay={this.handlePreviousDay}
+              handeleChangeLang={this.handeleChangeLang}
               defaultLang={this.state.defaultLang}
               getDiaryBiblePhrase={this.getDiaryBiblePhrase}
               navigation={this.props.navigation}
@@ -804,21 +825,21 @@ export default class DiaryRead extends Component {
             ]}
           >
             <ArrowUp
-              handeleScrollTop={this._handeleScrollTop}
+              handeleScrollTop={this.handeleScrollTop}
             />
           </Animated.View>
         }
         <Pupup marginAdjust={-30} text={this.state.popupText} ref={r => this.pupupDialog = r}/>
-        { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
+        { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this.handleFinished} /> : null}
         { !this.state.finishedReading &&
           <CalendarModal
             defaultLang={this.state.defaultLang}
             isCalendarModalVisible={this.state.isCalendarModalVisible}
             currentDate={this.state.currentDate}
-            handleChangeDay={this._handleChangeDay}
+            handleChangeDay={this.handleChangeDay}
             toggleModalCalendar={this.toggleModalCalendar}
             markedDates={this.state.markedDates}
-            handleMonthChange={this._handleMonthChange}
+            handleMonthChange={this.handleMonthChange}
           />
         }
         { !this.state.finishedReading &&
@@ -837,12 +858,20 @@ export default class DiaryRead extends Component {
           <FontPanelModal
             isFontSettingModalVisible={this.state.isFontSettingModalVisible}
             toggleModalFontSetting={this.toggleModalFontSetting}
-            handleSettingFontFamily={this._handleSettingFontFamily}
-            handleSettingFontSize={this._handleSettingFontSize}
-            handleSettingLineHeight={this._handleSettingLineHeight}
-            handleSettingReadingMode={this._handleSettingReadingMode}
-            handleSliderValueChange={this._handleSliderValueChange}
+            handleSettingFontFamily={this.handleSettingFontFamily}
+            handleSettingFontSize={this.handleSettingFontSize}
+            handleSettingLineHeight={this.handleSettingLineHeight}
+            handleSettingReadingMode={this.handleSettingReadingMode}
+            handleSliderValueChange={this.handleSliderValueChange}
             setting={this.state.setting}
+          />
+        }
+        {Platform.OS == 'ios' ? null : 
+          <AndroidActionAnimatedButton
+            offsetY={this.state.footerScrollY}
+            opacity={this.state.fadeInOpacity}
+            defaultLang={this.state.defaultLang}
+            handeleChangeLang={this.handeleChangeLang}
           />
         }
         </StyledContainer>
@@ -850,7 +879,6 @@ export default class DiaryRead extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   fixedHeader: {
     zIndex: 1,
@@ -858,7 +886,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: Platform.OS == 'ios' ? 50 : 100,
+    height: Platform.OS == 'ios' ? 50 : deviceHeight,
   },
   fixedFooter: {
     position: 'absolute',
@@ -876,5 +904,10 @@ const styles = StyleSheet.create({
     width: 50,
     marginBottom: isIphoneX() ? 70 : 60,
     height: 50,
-  }
+  },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
 });

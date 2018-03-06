@@ -11,38 +11,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import styled from "styled-components/native";
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ActionButton from './ActionButton';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-
-var {
-  height: deviceHeight
-} = Dimensions.get('window');
-
-const StyledFooter = styled.View`
-  z-index: 2;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  padding-bottom: ${isIphoneX() ? '16' : '0'}px;
-  height: ${isIphoneX() ? 60 : deviceHeight / 17};
-  background-color: #1E1E1E;
-`;
-const StyledLangListText = styled.Text`
-  margin-top: -2px;
-  color: #bbb;
-  font-size: 16px;
-`;
-const StyledLangText = styled.Text`
-  fontSize: 16px;
-  height: 18px;
-  color: white;
-`;
+import ActionButton from 'react-native-action-button';
 
 const StyledSelectedLangText = styled.Text`
   margin-top:${props => props.marginTop}px;  
@@ -50,14 +21,13 @@ const StyledSelectedLangText = styled.Text`
   height: 18px;
   color: white;
 `;
-export default class Footer extends PureComponent {
-  constructor(props) {
-    super(props);
-
-  }
-  closeActionButton = () => {
-    this.actionButton && this.actionButton.reset();
-  }
+const StyledLangText = styled.Text`
+  margin-top:-3px;
+  fontSize: 16px;
+  height: 18px;
+  color: white;
+`;
+export default class AndroidActionButton extends PureComponent {
   render() {
     let selectLangText = 'cht';
     let langList = [
@@ -112,52 +82,21 @@ export default class Footer extends PureComponent {
       ];
     }
     return (
-      <StyledFooter>
-        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handlePreviousDay()}>
-          <MaterialIcons
-            name='arrow-back'
-            size={20}
-            color='#bbb'
-          />
-        </TouchableOpacity>
-        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.getDiaryBiblePhrase()}>
-          <SimpleLineIcons
-            name='emotsmile'
-            size={22}
-            color='#bbb'
-          />
-        </TouchableOpacity>
-        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.toggleModal()}>
-          <FontAwesome
-            name='font'
-            size={18}
-            color='#bbb'
-          />
-        </TouchableOpacity>
-        {
-        Platform.OS == 'ios' ?
-          <ActionButton
-            buttonColor="rgba(30,30,30,1)"
-            onPress={this.props.closeHeaderActionButton}
-            ref={r => this.actionButton = r}
-            degrees={0}
-            position={'center'}
-            icon={<StyledSelectedLangText marginTop={this.props.defaultLang == 'en' ? -4 : 0}>{selectLangText}</StyledSelectedLangText>}
-          >
-            {langList}
-          </ActionButton> : null
-        }
-        <View style={{opacity:0, zIndex:-999}}>
-          <StyledLangListText>{'  '}</StyledLangListText>
-        </View>
-        <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={()=> this.props.handleNextDay()} >
-          <MaterialIcons
-            name='arrow-forward'
-            size={20}
-            color='#bbb'
-          />
-        </TouchableOpacity>
-      </StyledFooter>
+      <ActionButton
+        onPress={this.closeHeaderActionButton}
+        style={{zIndex:10, opacity:this.props.opacity, bottom:-this.props.offsetY + 3}}
+        buttonColor="rgba(0,0,0,0)"
+        renderIcon={() => <StyledSelectedLangText marginTop={this.props.defaultLang == 'en' ? -3 : 0}>{selectLangText}</StyledSelectedLangText>}
+        radius={100}
+        size={36}
+        position={'right'}
+        hideShadow={false}
+        offsetY={0}
+        offsetX={86}
+        degrees={0}
+      >
+        {langList}
+      </ActionButton>
     );
   }
 }
