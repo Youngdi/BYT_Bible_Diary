@@ -34,8 +34,8 @@ const StyledHeader = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: ${Platform.OS == 'ios' ? 25 : 0};
-  height: 6%;
+  margin-top: 25px;
+  height: ${Platform.OS == 'ios' ? '6%' : '100px'};                                                                                                                                                         '};
 `;
 
 const shadowStyle = {
@@ -73,7 +73,7 @@ export default class Header extends PureComponent {
   render() {
     return (
       <StyledHeader>
-      <View></View>
+        <View></View>
         <ActionButton
           buttonColor="rgba(30,30,30,1)"
           renderIcon={() => <SimpleLineIcons name='drawer' size={20} color='#bbb' />}

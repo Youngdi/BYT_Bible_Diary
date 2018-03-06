@@ -18,7 +18,7 @@ import Spinner from 'react-native-spinkit';
 import Drawer from 'react-native-drawer'
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
-import SystemSetting from 'react-native-system-setting'
+import DeviceBrightness from 'react-native-device-brightness';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import styled from "styled-components/native";
 import I18n, { getLanguages } from 'react-native-i18n';
@@ -138,7 +138,7 @@ export default class DiaryRead extends Component {
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
         const setting = await global.storage.load({key:'@setting'});
         const lang = await global.storage.load({key:'@lang'});
-        const brightness = await SystemSetting.getAppBrightness();
+        const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
         const FontColor = setting.readingMode ? '#ccc' : '#000';
         const BgColor = setting.readingMode ? '#333' : '#fff';
         if(lang == 'cht') I18n.locale = 'zh-hant';
@@ -462,7 +462,7 @@ export default class DiaryRead extends Component {
     });
   }
   _handleSliderValueChange = (value) => {
-    SystemSetting.setAppBrightness(value);
+    DeviceBrightness.setBrightnessLevel(value);
     this.setState({
       setting:{
         ...this.state.setting,
@@ -764,7 +764,6 @@ export default class DiaryRead extends Component {
           >
             <Header
               ref={r => this.header = r}
-              fullScreenMode={false}
               navigation={this.props.navigation}
               toggleModal={this.toggleModalCalendar}
               navigateTo={this.navigateTo}
@@ -791,7 +790,6 @@ export default class DiaryRead extends Component {
               getDiaryBiblePhrase={this.getDiaryBiblePhrase}
               navigation={this.props.navigation}
               toggleModal={this.toggleModalFontSetting}
-              fullScreenMode={fullScreenMode}
               closeHeaderActionButton={this.closeHeaderActionButton}
             />
           </Animated.View>
@@ -810,7 +808,7 @@ export default class DiaryRead extends Component {
             />
           </Animated.View>
         }
-        <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
+        <Pupup marginAdjust={-30} text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this._handleFinished} /> : null}
         { !this.state.finishedReading &&
           <CalendarModal
@@ -860,7 +858,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: 50,
+    height: Platform.OS == 'ios' ? 50 : 100,
   },
   fixedFooter: {
     position: 'absolute',

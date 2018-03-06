@@ -24,7 +24,7 @@ export default class Popup extends PureComponent {
           width={0.6}
           height={200}
           overlayOpacity={0}
-          dialogStyle={{backgroundColor:'rgba(0,0,0,0.7)', display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}
+          dialogStyle={{backgroundColor:'rgba(0,0,0,0.7)', display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', marginTop:this.props.marginAdjust}}
           ref={(popupDialog) => { this.popupDialog = popupDialog; }}
           dialogAnimation={fadeAnimation}
         >

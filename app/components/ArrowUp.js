@@ -36,8 +36,8 @@ const shadowStyle = {
   borderWidth:4,
   borderStyle:'solid',
   borderRadius: 18,
-  marginRight:20,
-  marginTop:15,
+  marginRight:12,
+  marginTop:12,
 };
 export default class ArrowUp extends PureComponent {
   constructor(props) {
@@ -49,14 +49,14 @@ export default class ArrowUp extends PureComponent {
     return (
       <StyledArrowUp>
         <View style={shadowStyle}>
-        <TouchableOpacity onPress={ () => this.props.handeleScrollTop()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
-          <MaterialCommunityIcons
-            name='arrow-collapse-up'
-            size={23}
-            color="#bbb"
-            style={{marginTop:4,marginLeft:3,backgroundColor:'transparent'}}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={ () => this.props.handeleScrollTop()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
+            <MaterialCommunityIcons
+              name='arrow-collapse-up'
+              size={23}
+              color="#bbb"
+              style={{marginTop:4,marginLeft:3,backgroundColor:'transparent'}}
+            />
+          </TouchableOpacity>
         </View>
       </StyledArrowUp>
     );

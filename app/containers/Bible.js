@@ -20,7 +20,7 @@ import * as R from 'ramda';
 import moment from 'moment/min/moment-with-locales';
 import styled from "styled-components/native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import SystemSetting from 'react-native-system-setting'
+import DeviceBrightness from 'react-native-device-brightness';
 import { bookName } from '../constants/bible';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import Footer from '../components/Footer';
@@ -163,7 +163,7 @@ export default class Bible extends PureComponent {
   initData = async () => {
     const highlightList = await global.storage.load({key:'@highlightList'});
     const setting = await global.storage.load({key:'@setting'});
-    const brightness = await SystemSetting.getAppBrightness();
+    const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
     const FontColor = setting.readingMode ? '#ccc' : '#000';
     const BgColor = setting.readingMode ? '#333' : '#fff';
     await this.setState({
@@ -534,7 +534,7 @@ export default class Bible extends PureComponent {
     });
   }
   _handleSliderValueChange = (value) => {
-    SystemSetting.setAppBrightness(value);
+    DeviceBrightness.setBrightnessLevel(value);
     this.setState({
       setting:{
         ...this.state.setting,
@@ -594,7 +594,7 @@ export default class Bible extends PureComponent {
             />
           </Animated.View>
         }
-        <Pupup text={this.state.popupText} ref={r => this.pupupDialog = r}/>
+        <Pupup marginAdjust={-150} text={this.state.popupText} ref={r => this.pupupDialog = r}/>
         <Tooltip
           isTooltipModalVisible={this.state.isTooltipModalVisible}
           toggleModalTooltip={this.toggleModalTooltip}

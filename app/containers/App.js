@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet, Share, Platform } from 'react-native';
-import { SafeAreaView, StackNavigator, TabNavigator } from 'react-navigation';
+import { SafeAreaView, StackNavigator, TabNavigator, NavigationActions } from 'react-navigation';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 import CodePush from "react-native-code-push";
 import DiaryScreen from './DiaryRead';
@@ -23,7 +23,14 @@ class MyHomeScreen extends Component {
     super(props);
   }
   componentDidMount() {
-    this.props.navigation.navigate('Diary');
+    // this.props.navigation.navigate('Diary');
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({routeName: 'Diary'}),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
     FCM.requestPermissions();
     FCM.getFCMToken().then(token => {
       console.log("TOKEN (getFCMToken)", token);

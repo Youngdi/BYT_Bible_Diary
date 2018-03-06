@@ -2,6 +2,7 @@ package com.bytbible.diary;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
@@ -16,7 +17,6 @@ import com.cmcewen.blurview.BlurViewPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.ninty.system.setting.SystemSettingPackage;
 import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
@@ -37,8 +37,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
-            new SystemSettingPackage(),
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
