@@ -2,6 +2,7 @@ package com.bytbible.diary;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.airbnb.android.react.lottie.LottiePackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import com.microsoft.codepush.react.CodePush;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new LottiePackage(),
             new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new FIRMessagingPackage(),

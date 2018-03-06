@@ -1,4 +1,6 @@
 rootProject.name = 'BYTBibleDiary'
+include ':lottie-react-native'
+project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/lib/android')
 include ':react-native-device-brightness'
 project(':react-native-device-brightness').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-brightness/android')
 include ':app', ':react-native-code-push'

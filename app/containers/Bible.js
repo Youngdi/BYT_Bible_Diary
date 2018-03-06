@@ -390,8 +390,7 @@ export default class Bible extends PureComponent {
     }, 500);
     this.props.navigation.setParams({ title: `${content[0].book_name}${' '}${content[0].chapter_nr}`});
   }
-  _handleNext = async () => {
-    this.resetHighlight();
+  handleNext = async () => {
     if(this.state.chapterLength == this.state.chapter_nr){
       if(this.state.book_nr == 66) {
         await this.setState({
@@ -410,9 +409,9 @@ export default class Bible extends PureComponent {
       });
     }
     await this.generateContent();
+    setTimeout(() => this.contentView.root.scrollTo({y: 0, animated: true}), 0);
   }
-  _handlePrevious = async () => {
-    this.resetHighlight();
+  handlePrevious = async () => {
     if(this.state.chapter_nr == 1){
       if(this.state.book_nr == 1) {
         const results_findLength = await dbFindChapter(66, 'en');
@@ -443,6 +442,7 @@ export default class Bible extends PureComponent {
       });
     }
     await this.generateContent();
+    setTimeout(() => this.contentView.root.scrollTo({y: 0, animated: true}), 0);
   }
   handeleChangeLang = async (lang) => {
     if(this.state.loadContent) return null;
@@ -467,7 +467,7 @@ export default class Bible extends PureComponent {
     }, 0);
   }
   toggleModalFontSetting = () => {
-    this.state.fullScreenMode ? null : this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
+    this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
   handleSettingFontFamily = async (font) => {
     await this.setState({
@@ -584,8 +584,8 @@ export default class Bible extends PureComponent {
           >
             <Footer
               ref={(el) => this.footer = el}
-              handleNextDay={this._handleNext}
-              handlePreviousDay={this._handlePrevious}
+              handleNextDay={this.handleNext}
+              handlePreviousDay={this.handlePrevious}
               handeleChangeLang={this.handeleChangeLang}
               defaultLang={this.state.lang}
               getDiaryBiblePhrase={this.getDiaryBiblePhrase}

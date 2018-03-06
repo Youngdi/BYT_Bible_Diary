@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: Platform.OS == 'ios' ? 50 : deviceHeight,
+    height: deviceHeight,
   },
   fixedFooter: {
     position: 'absolute',

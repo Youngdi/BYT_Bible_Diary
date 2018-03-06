@@ -146,6 +146,7 @@ android {
 }
 
 dependencies {
+    compile project(':lottie-react-native')
     compile project(':react-native-device-brightness')
     compile project(':react-native-code-push')
     compile 'com.google.firebase:firebase-core:11.8.0' //this decides your firebase SDK version
