@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet, Platform } from 'react-native';
 import I18n, { getLanguages } from 'react-native-i18n';
 import LottieView from 'lottie-react-native';
 import PopupDialog, { SlideAnimation, FadeAnimation } from 'react-native-popup-dialog';
@@ -30,7 +30,7 @@ export default class Popup extends PureComponent {
         >
           <View>
             <LottieView
-              style={{width:200, height:200, marginTop:-20}}
+              style={{width:200, height:200, marginTop:Platform.OS == 'ios' ? -20 : -40}}
               ref={animation => this.animation = animation}
               source={require('../lottie/checked_done_.json')}
             />

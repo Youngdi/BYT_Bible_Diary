@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Text,
+  findNodeHandle,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styled from "styled-components/native";
@@ -22,15 +23,23 @@ const {
 } = Dimensions.get('window');
 
 const StyledCheck = styled.View`
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: ${deviceWidth}px
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  background-color: transparent;
+  width: ${deviceWidth}px;
   height: ${deviceHeight}px;
 `;
-
+const StyledContainer = styled.View`
+  margin-top:-60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: ${deviceWidth}px;
+  height: ${deviceHeight}px;
+`;
 export default class Check extends PureComponent {
   constructor(props) {
     super(props);
@@ -38,23 +47,33 @@ export default class Check extends PureComponent {
       fadeInOpacity: new Animated.Value(0),
       allowClick: true,
       progress: new Animated.Value(0),
+      viewRef: null,
     };
   }
+
   componentDidMount() {
-    Animated.timing(this.state.progress, {
-      toValue: 1,
-      duration: 3000,
-    }).start();
+    setTimeout(() => {
+      Animated.timing(this.state.progress, {
+        toValue: 1,
+        duration: 3000,
+      }).start();
+    }, 100);
+  }
+  handleBlur = () => {
+    this.setState({ viewRef: findNodeHandle(this.backgroundImage) });
   }
   render() {
     return (
-      <StyledCheck>
-        <BlurView
-          ref="ANBlurView"
-          style={{position: "absolute", top: 0, left: 0, bottom: 0, right: 0}}
-          blurType="dark"
-          blurAmount={5}
-        />
+      <StyledContainer>
+        <StyledCheck ref={(img) => this.backgroundImage = img} onLayout={this.handleBlur} />
+        {this.state.viewRef &&
+          <BlurView
+            viewRef={this.state.viewRef}
+            style={{position: "absolute", top: 0, left: 0, bottom: 0, right: 0}}
+            blurType="dark"
+            blurAmount={5}
+          />
+        }
         <TouchableOpacity
           hitSlop={{top: 1000, bottom: 1000, left: 1000, right: 1000}}
           onPress={() => {
@@ -79,7 +98,7 @@ export default class Check extends PureComponent {
         <View style={{marginBottom:250}}>
           <Text style={{fontSize:20, color:'#ccc', fontWeight:'bold', backgroundColor:'transparent'}}>{'   '}{I18n.t('pull_down_congrats')}</Text>
         </View>
-      </StyledCheck>
+      </StyledContainer>
     );
   }
 }
