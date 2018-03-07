@@ -32,7 +32,8 @@ const StyledCheck = styled.View`
   height: ${deviceHeight}px;
 `;
 const StyledContainer = styled.View`
-  margin-top:-60px;
+  z-index:999;
+  margin-top:-30px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
