@@ -98,6 +98,8 @@ android {
     buildToolsVersion "26.0.1"
 
     defaultConfig {
+        renderscriptTargetApi 26
+        renderscriptSupportModeEnabled true
         applicationId "com.bytbible.diary"
         minSdkVersion 16
         targetSdkVersion 22
@@ -154,7 +156,6 @@ dependencies {
     compile project(':react-native-fcm')
     compile project(':react-native-webview-bridge-updated')
     compile project(':react-native-fetch-blob')
-    compile project(':lottie-react-native')
     compile project(':realm')
     compile project(':react-native-vector-icons')
     compile project(':react-native-spinkit')

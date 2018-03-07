@@ -8,7 +8,6 @@ import com.evollu.react.fcm.FIRMessagingPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
@@ -44,7 +43,6 @@ public class MainApplication extends Application implements ReactApplication {
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
-            new LottiePackage(),
             new RealmReactPackage(),
             new VectorIconsPackage(),
             new RNSpinkitPackage(),
