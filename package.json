@@ -66,6 +66,7 @@
     "react-native-webview-bridge-updated": "^1.0.9",
     "react-native-zss-rich-text-editor": "^1.1.0",
     "react-navigation": "^1.4.0",
+    "react-navigation-slide-from-right-transition": "^1.0.4",
     "realm": "^2.2.4",
     "styled-components": "^3.1.6"
   },

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, ScrollView, Text, View, TouchableOpacity, Animated, StyleSheet, Share, Platform } from 'react-native';
 import { SafeAreaView, StackNavigator, TabNavigator, NavigationActions } from 'react-navigation';
+import getSlideFromRightTransition from 'react-navigation-slide-from-right-transition';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 import CodePush from "react-native-code-push";
 import DiaryScreen from './DiaryRead';
@@ -223,6 +224,7 @@ const App = StackNavigator(
   }
 },
   {
+    transitionConfig: getSlideFromRightTransition,
     headerMode: 'screen'
   }
 );
