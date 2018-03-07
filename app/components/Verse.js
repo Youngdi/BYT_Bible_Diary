@@ -10,12 +10,12 @@ import I18n from 'react-native-i18n';
 import * as R from 'ramda';
 
 const PharseNumber = styled.Text`
+  font-size: ${props => props.fontSize}px;
   margin-top: -10px;
   margin-right: 5px;
   textDecorationLine: ${props => props.textDecorationLine};
   textDecoration-style: dotted;
   font-family: ${props => props.fontFamily};
-  font-size: ${props => props.fontSize}px;
   color: ${props => props.color};
   background-color: ${props => props.backgroundColor};
   line-height: ${props => props.lineHeight};
@@ -23,7 +23,6 @@ const PharseNumber = styled.Text`
 `;
 const PharseText = styled.Text`
   font-family: ${props => props.fontFamily};
-  font-size: ${props => props.fontSize}px;
   color: ${props => props.color};
   background-color: ${props => props.backgroundColor};
   textDecoration-line: ${props => props.textDecorationLine};
@@ -62,7 +61,6 @@ export default class Verse extends Component {
         backgroundColor={this.props.highlightColor}
         textDecorationLine={this.state.selected ? 'underline' : 'none'}
         lineHeight={this.props.lineHeight}
-        fontSize={this.props.fontSize}
         fontFamily={this.props.fontFamily}
       >
         <PharseNumber
@@ -80,4 +78,3 @@ export default class Verse extends Component {
     );
   }
 }
-

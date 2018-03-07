@@ -113,23 +113,28 @@ export default class DiaryContent extends PureComponent {
         >
         {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item.length == 1 ? '' : item[item.length -1].verse_nr}`}
         </BookTitle>
-        <Text>
-          {item.map(verseItem => {
-            return(
-              <Verse 
-                fontSize={this.props.fontSize}
-                fontColor={this.props.fontColor}
-                lineHeight={this.props.lineHeight}
-                fontFamily={this.props.fontFamily}
-                verseItem={verseItem}
-                defaultLang={this.props.defaultLang}
-                handleVerseClick={this.props.handleVerseClick}
-                selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
-                highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}
-              />
-            );
-          })}
-        </Text>
+        <PharseCantainer
+          fontSize={this.props.fontSize}
+          fontColor={this.props.fontColor}
+          lineHeight={this.props.lineHeight}
+          fontFamily={this.props.fontFamily}
+        >
+        {item.map(verseItem => {
+          return(
+            <Verse 
+              fontSize={this.props.fontSize}
+              fontColor={this.props.fontColor}
+              lineHeight={this.props.lineHeight}
+              fontFamily={this.props.fontFamily}
+              verseItem={verseItem}
+              defaultLang={this.props.defaultLang}
+              handleVerseClick={this.props.handleVerseClick}
+              selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
+              highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}
+            />
+          );
+        })}
+        </PharseCantainer>
       </View>
     );
   }
