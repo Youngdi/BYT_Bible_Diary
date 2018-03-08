@@ -42,11 +42,6 @@ const shadowStyle = {
   marginTop:12,
 };
 export default class ArrowUp extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
     return (
       <StyledArrowUp>

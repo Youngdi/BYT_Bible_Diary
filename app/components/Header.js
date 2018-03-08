@@ -87,6 +87,7 @@ export default class Header extends PureComponent {
           offsetY={15}
           offsetX={20}
           degrees={0}
+          nativeFeedbackRippleColor={'rgba(255,255,255,0)'}
         >
           <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('BibleSearch')}>
             <Ionicons
@@ -96,14 +97,14 @@ export default class Header extends PureComponent {
               style={{width: 26, height: 26, marginTop:3, marginLeft:8, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Note')}>
+          {/* <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Note')}>
             <Ionicons
               name='ios-create-outline'
               size={24}
               color='#bbb'
               style={{width: 26, height: 26, marginTop:0, marginLeft:12, backgroundColor:'transparent'}}
             />
-          </ActionButton.Item>
+          </ActionButton.Item> */}
           <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Bookmark')}>
             <Ionicons
               name='ios-bookmarks-outline'

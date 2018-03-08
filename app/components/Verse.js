@@ -13,16 +13,20 @@ const PharseNumber = styled.Text`
   font-size: ${props => props.fontSize}px;
   margin-top: -10px;
   margin-right: 5px;
-  color: ${props => props.color};
-  background-color: ${props => props.backgroundColor};
   textDecorationLine: ${props => props.textDecorationLine};
   textDecoration-style: dotted;
+  color: ${props => props.color};
+  background-color: ${props => props.backgroundColor};
+  line-height: ${props => props.lineHeight};
+  font-weight: 300;
 `;
 const PharseText = styled.Text`
   color: ${props => props.color};
   background-color: ${props => props.backgroundColor};
   textDecoration-line: ${props => props.textDecorationLine};
   textDecoration-style: dotted;
+  line-height: ${props => props.lineHeight};
+  font-weight: 300;
 `;
 export default class Verse extends Component {
   state = {
@@ -54,12 +58,14 @@ export default class Verse extends Component {
         color={this.state.selected ? '#CF1B1B' : this.props.fontColor}
         backgroundColor={this.props.highlightColor}
         textDecorationLine={this.state.selected ? 'underline' : 'none'}
+        lineHeight={this.props.lineHeight}
       >
         <PharseNumber
           fontSize={this.props.fontSize - 6}
           color={this.state.selected ? '#CF1B1B' : this.props.fontColor}
           backgroundColor={this.props.highlightColor}
           textDecorationLine={this.state.selected ? 'underline' : 'none'}
+          lineHeight={this.props.lineHeight}
         >
           {this.props.defaultLang == 'en' ? '  ': ''}{`${this.props.verseItem.verse_nr}`}{'  '}
         </PharseNumber>
@@ -68,4 +74,3 @@ export default class Verse extends Component {
     );
   }
 }
-

@@ -504,7 +504,6 @@ export default class DiaryRead extends Component {
   }
   handeleScrollTop = (e) => {
     this.closeActionButton();
-    if(!this.state.fullScreenMode) return null;
     this.contentView.root.scrollTo({y: 0, animated: true});
   }
   handleFinished = () => {
@@ -618,12 +617,12 @@ export default class DiaryRead extends Component {
     const direction = currentOffset > this.offset ? 'down' : 'up';
     const distance = this.offset ? (this.offset - currentOffset) : 0;
     const footerNewPosition = this.state.footerScrollY._value - distance;
+    this.state.arrowFadeInOpacity.setValue(currentOffset > 1500 ? 1 : 0);
     if (currentOffset > 0 && currentOffset < (this.contentHeight - this.scrollViewHeight)) {
       if (direction === 'down') { //往下滑
         this.setState({
           fullScreenMode: true,
         });
-        this.state.arrowFadeInOpacity.setValue(1);
         if (this.state.footerScrollY._value < 50) {
           this.state.footerScrollY.setValue(footerNewPosition > 50 ? 50 : footerNewPosition);
           this.state.headerScrollY.setValue(footerNewPosition > 30 ? -100 : -footerNewPosition);
@@ -636,7 +635,6 @@ export default class DiaryRead extends Component {
         this.setState({
           fullScreenMode: footerNewPosition == 50 ? true : false,
         });
-        this.state.arrowFadeInOpacity.setValue(footerNewPosition == 50 ? 1 : 0);
         if (this.state.footerScrollY._value >= 0) {
           this.state.footerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition);
           this.state.headerScrollY.setValue(footerNewPosition < 0 ? 0 : footerNewPosition > 30 ? -150 : -footerNewPosition);

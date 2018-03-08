@@ -94,6 +94,7 @@ export default class AndroidActionButton extends PureComponent {
         offsetY={0}
         offsetX={86}
         degrees={0}
+        nativeFeedbackRippleColor={'rgba(255,255,255,0)'}
       >
         {langList}
       </ActionButton>

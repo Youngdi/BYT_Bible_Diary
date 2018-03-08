@@ -44,7 +44,6 @@ public class MainApplication extends Application implements ReactApplication {
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
-            new LottiePackage(),
             new RealmReactPackage(),
             new VectorIconsPackage(),
             new RNSpinkitPackage(),

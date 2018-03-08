@@ -82,7 +82,8 @@ export default class DiaryContent extends PureComponent {
             hitSlop={{top: 40, bottom: 40, left: 10, right: 10}}
             onPress={(e) => {
               this.props.closeActionButton();
-              this[item[0].book_name + item[0].chapter_nr].measure((y, pageY) => {
+
+              this[item[0].book_name + item[0].chapter_nr].measure((x, y, width, height, pageX, pageY) => {
                 this.props.contentView.root.scrollTo({y: pageY, animated: true});
                 this.props.setFullScreenMode();
               });
@@ -118,11 +119,12 @@ export default class DiaryContent extends PureComponent {
           lineHeight={this.props.lineHeight}
           fontFamily={this.props.fontFamily}
         >
-        {item.map(verseItem => {
+        {item.map((verseItem, i) => {
           return(
             <Verse 
-              fontColor={this.props.fontColor}
               fontSize={this.props.fontSize}
+              fontColor={this.props.fontColor}
+              lineHeight={this.props.lineHeight}
               verseItem={verseItem}
               defaultLang={this.props.defaultLang}
               handleVerseClick={this.props.handleVerseClick}
@@ -136,7 +138,7 @@ export default class DiaryContent extends PureComponent {
     );
   }
   renderDiaryVerse = () => this.props.content.map((item, i) =>
-    <View ref={r => this[item[0].book_name + item[0].chapter_nr] = r}>
+    <View collapsable={false} ref={r => this[item[0].book_name + item[0].chapter_nr] = r}>
       <FlatList
         data={[item]}
         renderItem={({item}) => this.renderItem(item, i)}

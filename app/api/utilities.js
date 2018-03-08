@@ -25,3 +25,14 @@ export const quicksort = (array) => {
   const [less, more] = partition(tail(array), x => x < head(array))
   return flatten([quicksort(less), head(array), quicksort(more)])
 }
+export const sperateVerse = (verse, searchKey) => [
+  ...(verse.toUpperCase().indexOf(searchKey.toUpperCase()) == -1)
+  ? [verse] 
+  : [verse.slice(0, verse.toUpperCase().indexOf(searchKey.toUpperCase())),
+      verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()), verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
+      ...sperateVerse(
+        verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
+        searchKey
+       )
+     ].filter(v => v != "")
+];
