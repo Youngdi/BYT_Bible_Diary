@@ -15,14 +15,12 @@ const PharseNumber = styled.Text`
   margin-right: 5px;
   textDecorationLine: ${props => props.textDecorationLine};
   textDecoration-style: dotted;
-  font-family: ${props => props.fontFamily};
   color: ${props => props.color};
   background-color: ${props => props.backgroundColor};
   line-height: ${props => props.lineHeight};
   font-weight: 300;
 `;
 const PharseText = styled.Text`
-  font-family: ${props => props.fontFamily};
   color: ${props => props.color};
   background-color: ${props => props.backgroundColor};
   textDecoration-line: ${props => props.textDecorationLine};
@@ -61,7 +59,6 @@ export default class Verse extends Component {
         backgroundColor={this.props.highlightColor}
         textDecorationLine={this.state.selected ? 'underline' : 'none'}
         lineHeight={this.props.lineHeight}
-        fontFamily={this.props.fontFamily}
       >
         <PharseNumber
           fontSize={this.props.fontSize - 6}
@@ -69,7 +66,6 @@ export default class Verse extends Component {
           backgroundColor={this.props.highlightColor}
           textDecorationLine={this.state.selected ? 'underline' : 'none'}
           lineHeight={this.props.lineHeight}
-          fontFamily={this.props.fontFamily}
         >
           {this.props.defaultLang == 'en' ? '  ': ''}{`${this.props.verseItem.verse_nr}`}{'  '}
         </PharseNumber>

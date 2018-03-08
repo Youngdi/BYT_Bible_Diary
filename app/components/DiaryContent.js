@@ -125,7 +125,6 @@ export default class DiaryContent extends PureComponent {
               fontSize={this.props.fontSize}
               fontColor={this.props.fontColor}
               lineHeight={this.props.lineHeight}
-              fontFamily={this.props.fontFamily}
               verseItem={verseItem}
               defaultLang={this.props.defaultLang}
               handleVerseClick={this.props.handleVerseClick}
