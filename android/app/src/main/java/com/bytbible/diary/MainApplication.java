@@ -2,17 +2,18 @@ package com.bytbible.diary;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
-import com.airbnb.android.react.lottie.LottiePackage;
-import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
-import com.evollu.react.fcm.FIRMessagingPackage;
 import com.microsoft.codepush.react.CodePush;
-import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
 import io.realm.react.RealmReactPackage;
+import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
+import com.rnfs.RNFSPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.evollu.react.fcm.FIRMessagingPackage;
+import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
+import com.cmcewen.blurview.BlurViewPackage;
+import com.airbnb.android.react.lottie.LottiePackage;
 import com.rnfs.RNFSPackage;
 import com.cmcewen.blurview.BlurViewPackage;
 import com.facebook.react.ReactNativeHost;
@@ -38,9 +39,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            new LottiePackage(),
+            new CodePush(null, getApplicationContext(), BuildConfig.DEBUG),
             new RNDeviceBrightness(),
-            new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
             new RNFetchBlobPackage(),
