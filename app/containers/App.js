@@ -24,7 +24,6 @@ class MyHomeScreen extends Component {
     super(props);
   }
   componentDidMount() {
-    // this.props.navigation.navigate('Diary');
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [

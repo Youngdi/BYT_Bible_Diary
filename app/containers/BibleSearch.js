@@ -22,6 +22,7 @@ import ArrowUp from '../components/ArrowUp';
 import { bookName } from '../constants/bibleBookList';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { dbCustomizeSearch } from '../api/api';
+import { sperateVerse } from '../api/utilities';
 
 const {
   height: deviceHeight,
@@ -83,17 +84,6 @@ class FlatListItem extends React.Component {
     let lang = version;
     if(version == 'japan') lang = 'ja';
     if(version == 'kjv') lang = 'en';
-    const sperateVerse = (verse, searchKey) => [
-      ...(verse.toUpperCase().indexOf(searchKey.toUpperCase()) == -1)
-      ? [verse] 
-      : [verse.slice(0, verse.toUpperCase().indexOf(searchKey.toUpperCase())),
-          verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()), verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
-          ...sperateVerse(
-            verse.slice(verse.toUpperCase().indexOf(searchKey.toUpperCase()) + searchKey.length),
-            searchKey
-           )
-         ].filter(v => v != "")
-    ];
     const verseArray = sperateVerse(verse, this.props.searchKey);
 
     return (
@@ -186,6 +176,7 @@ export default class BibleSearch extends Component {
       chapterFilterKey: 0,
       bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
       chapterOptionPlaceHolder: I18n.t('bible_search_placeholder'),
+      chapterDisable: false,
       bookOptions: [],
       chapterOption: [],
       fullScreenMode: false,
@@ -202,18 +193,30 @@ export default class BibleSearch extends Component {
         Alert.alert(I18n.t('bible_searchKey_limit'));
         return;
       }
-      if(this.state.bookFilterKey == 1){ //舊約
+      if(this.state.bookFilterKey == 1) { //舊約
         results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS[c] '${text}'`, this.state.lang);
-      } else if(this.state.bookFilterKey == 2){ // 新約
+      } else if(this.state.bookFilterKey == 2) { // 新約
         results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS[c] '${text}'`, this.state.lang);
-      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0){ // 所有
-        results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, this.state.lang);
-      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0){ // 指定書卷
+      } else if(this.state.bookFilterKey == 3) { // 律法書
+        results = await dbCustomizeSearch(`book_nr >= 1 AND book_nr <= 5 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 4) { // 歷史書
+        results = await dbCustomizeSearch(`book_nr >= 6 AND book_nr <= 17 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 5) { // 智慧書
+        results = await dbCustomizeSearch(`book_nr >= 18 AND book_nr <= 22 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 6) { // 先知書
+        results = await dbCustomizeSearch(`book_nr >= 23 AND book_nr <= 39 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 7) { // 四福音
+        results = await dbCustomizeSearch(`book_nr >= 40 AND book_nr <= 43 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 8) { // 保羅書信
+        results = await dbCustomizeSearch(`book_nr >= 45 AND book_nr <= 58 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0) { // 指定書卷
         results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS[c] '${text}'`, this.state.lang);
-      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0){ // 指定章節
+      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0) { // 指定章節
         results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
-      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0){ // 指定書卷及章節
+      } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0) { // 指定書卷及章節
         results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
+      } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0) { // 所有
+        results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, this.state.lang);
       }
       this.setState({
         verseList: results,
@@ -225,28 +228,47 @@ export default class BibleSearch extends Component {
     }
   }
   onSelectBook_nr = async (index, value) => {
-    await this.setState({
-      bookFilterKey: index, // 0 所有, 1舊約, 2新約
-      bookOptionsPlaceHolder: value,
-    });
-    if(this.state.searchKey.length != 0) {
-      await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
+    if(index < 9 && index != 0) {
+      this.setState({
+        chapterDisable: true,
+      });
+    } else {
+      this.setState({
+        chapterDisable: false,
+      });
     }
+    await this.setState({
+      bookFilterKey: index, // 0 所有, 1舊約, 2新約, 3律法書, 4歷史書, 5智慧書, 6先知書, 7四福音, 8保羅書信
+      bookOptionsPlaceHolder: value,
+      chapterFilterKey: index > 8 ? this.state.chapterFilterKey : 0,
+      chapterOptionPlaceHolder: index > 8 ? this.state.chapterOptionPlaceHolder : I18n.t('bible_search_placeholder'),
+    });
+    if(this.state.searchKey.length != 0) await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
   }
   onSelectChapter_nr = async (index, value) => {
     await this.setState({
       chapterFilterKey: index, // 0 所有
       chapterOptionPlaceHolder: value,
     });
-    if(this.state.searchKey.length != 0) {
-      await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
-    }
+    if(this.state.searchKey.length != 0) await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
+    
   }
   generateOptions = () => {
     const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
     this.setState({
       lang: this.props.navigation.state.params.lang,
-      bookOptions: [I18n.t('bible_search_placeholder'), I18n.t('bible_search_old_testament'), I18n.t('bible_search_new_testament'), ...bookNameList],
+      bookOptions: [
+        I18n.t('bible_search_placeholder'),
+        I18n.t('bible_search_old_testament'),
+        I18n.t('bible_search_new_testament'),
+        I18n.t('bible_search_laws'),
+        I18n.t('bible_search_history'),
+        I18n.t('bible_search_wisdom'),
+        I18n.t('bible_search_prophet'),
+        I18n.t('bible_search_gospel'),
+        I18n.t('bible_search_paul'),
+        ...bookNameList
+      ],
       chapterOption: [I18n.t('bible_search_placeholder'), ...R.range(1,150)],
     });
   }
@@ -255,6 +277,10 @@ export default class BibleSearch extends Component {
       verseList: [],
       searchKey: '',
       fullScreenMode: false,
+      bookFilterKey: 0,
+      chapterFilterKey: 0,
+      bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
+      chapterOptionPlaceHolder: I18n.t('bible_search_placeholder'),
     });
   }
   renderHeader = () => {
@@ -269,6 +295,7 @@ export default class BibleSearch extends Component {
         lightTheme
         placeholder={`${I18n.t('bookmark_search')}...`}
         round
+        value={this.state.searchKey}
       />
       <StyledOptionBox>
           <ModalDropdown
@@ -302,6 +329,7 @@ export default class BibleSearch extends Component {
             </StyledOptionBoxRow>
           </ModalDropdown>
           <ModalDropdown
+            disabled={this.state.chapterDisable}
             dropdownStyle={{
               width: 100,
               height: 300,
@@ -326,9 +354,7 @@ export default class BibleSearch extends Component {
                 <Text style={{fontSize:13, fontWeight:'300', color:'#333', marginBottom:2}}>{I18n.t('bible_search_chapter')}</Text>
                 <Text style={{fontSize:14, fontWeight:'500', color:'#000'}}>{this.state.chapterOptionPlaceHolder}</Text>
               </StyledOptionRow>
-              <View>
-                <MaterialCommunityIcons name='menu-down' size={25} color={'#333'} /> 
-              </View>
+              {!this.state.chapterDisable ? <MaterialCommunityIcons name='menu-down' size={25} color={'#333'} /> : <View></View>}
             </StyledOptionBoxRow>
           </ModalDropdown>
       </StyledOptionBox>
@@ -366,7 +392,6 @@ export default class BibleSearch extends Component {
           ListHeaderComponent={this.renderHeader}
           data={this.state.verseList}
           renderItem={this.renderItem}
-          
         />
         { this.state.fullScreenMode ?
           <ArrowUpFixedContainer>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -9,6 +9,7 @@ import {
   Platform,
   RefreshControl,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import Swipeout from "react-native-swipeout";
 import * as R from 'ramda';
@@ -19,6 +20,7 @@ import styled from "styled-components/native";
 import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
 import { isIphoneX } from 'react-native-iphone-x-helper';
+import { sperateVerse } from '../api/utilities';
 
 const {
   height: deviceHeight,
@@ -40,7 +42,7 @@ const ArrowUpFixedContainer = styled.View`
   margin-bottom: ${isIphoneX() ? '70px' : '60px'};
   height: 50px;
 `;
-class FlatListItem extends React.Component {
+class FlatListItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,6 +55,7 @@ class FlatListItem extends React.Component {
     let lang = version;
     if(version == 'japan') lang = 'ja';
     if(version == 'kjv') lang = 'en';
+    const verseArray = this.props.searchKey.length == 0 ? [verse] : sperateVerse(verse, this.props.searchKey);
     return (
         <TouchableOpacity
           style={{
@@ -127,7 +130,12 @@ class FlatListItem extends React.Component {
             </View>
             <View>
               <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
-                {`${verse}`}
+              {
+                verseArray.map(item =>
+                  item.toUpperCase().indexOf(this.props.searchKey.toUpperCase()) > -1 && this.props.searchKey.length != 0
+                  ? <Text style={{color:'red'}}>{item}</Text>
+                  : <Text>{item}</Text>)
+              }
               </Text>
             </View>
             <View style={{display:'flex', justifyContent:'flex-end', flexDirection:'row'}}>
@@ -171,6 +179,7 @@ export default class Bookmark extends Component {
       bookmarkListfilter: [],
       refreshing: false,
       fullScreenMode: false,
+      searchKey: '',
     }
   }
   componentDidMount = async () => {
@@ -240,17 +249,28 @@ export default class Bookmark extends Component {
     }
     await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
   }
+  onClearText = () => {
+    this.setState({
+      bookmarkListfilter: R.map(R.prop('keyId'), this.state.bookmarkList),
+      searchKey: '',
+    });
+  }
   renderHeader = () => {
+    const matchSearchText = R.replace('searchKey', this.state.searchKey, R.replace('bookmark_number', this.state.bookmarkListfilter.length, I18n.t('bookmark_matchSearchKey')))
+    const noMatchSearchText = R.replace('bookmark_number', this.state.bookmarkListfilter.length, I18n.t('bookmark_number'));
+    const searchTips = R.isEmpty(this.state.searchKey) ?[noMatchSearchText] : sperateVerse(matchSearchText, this.state.searchKey);
     return (
-    <View style={{flex:1, width:'100%',height:80, justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
+    <View style={{flex:1, width:'100%', justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
       <SearchBar
         platform={`${Platform.OS}`}
         cancelButtonTitle={'Cancel'}
         onChangeText={this.search.bind(this)}
+        onClearText={this.onClearText}
         clearIcon
         lightTheme
         placeholder={`${I18n.t('bookmark_search')}...`}
         round
+        value={this.state.searchKey}
       />
       {
         R.isEmpty(this.state.bookmarkListfilter) ? 
@@ -260,9 +280,14 @@ export default class Bookmark extends Component {
           </Text>
         </View>
         :
-        <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:10, marginBottom:20}}>
+        <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:10}}>
           <Text style={{fontSize:14, fontWeight:'400'}}>
-            {R.replace('bookmark_number', this.state.bookmarkListfilter.length, I18n.t('bookmark_number'))}
+          { 
+            searchTips.map(item =>
+              item.toUpperCase().indexOf(this.state.searchKey.toUpperCase()) > -1 && !R.isEmpty(this.state.searchKey)
+              ? <Text style={{color:'red'}}>{item}</Text>
+              : <Text>{item}</Text>)
+          }
           </Text>
         </View>
       }
@@ -272,6 +297,7 @@ export default class Bookmark extends Component {
   renderItem = ({item, index}) => {
     return (
       <FlatListItem
+        searchKey={this.state.searchKey}
         key={item.keyId}
         addBookmark={this.addBookmark}
         deleteBookmark={this.deleteBookmark}
@@ -282,13 +308,8 @@ export default class Bookmark extends Component {
       />
     );
   }
-  _handeleScrollTop = (e) => {
+  handeleScrollTop = (e) => {
     this.contentView.scrollToOffset({x: 0, y: 0, animated: true});
-  }
-  _handleScroll = (e) => {
-    const {layoutMeasurement, contentOffset, contentSize} = e.nativeEvent;
-    if(contentOffset.y > 600) this.setState({fullScreenMode: true});
-    if(contentOffset.y < 600) this.setState({fullScreenMode: false});
   }
   render() {
     const isMatch = key => item => R.contains(item.keyId, key);
@@ -316,10 +337,10 @@ export default class Bookmark extends Component {
           ListHeaderComponent={this.renderHeader}
           data={bookmarkList}
           renderItem={this.renderItem}
-          keyExtractor={(item, index) => index}
+          keyExtractor={(item, index) => item.keyId}
         />
         <ArrowUpFixedContainer>
-          <ArrowUp handeleScrollTop={this._handeleScrollTop} fullScreenMode={true} />
+          <ArrowUp handeleScrollTop={this.handeleScrollTop} fullScreenMode={true} />
         </ArrowUpFixedContainer>
       </View>
     );
