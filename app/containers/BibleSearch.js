@@ -180,6 +180,7 @@ export default class BibleSearch extends Component {
       bookOptions: [],
       chapterOption: [],
       fullScreenMode: false,
+      showLoading: false,
     }
   }
   componentWillMount = () => {
@@ -193,6 +194,7 @@ export default class BibleSearch extends Component {
         Alert.alert(I18n.t('bible_searchKey_limit'));
         return;
       }
+      await this.setState({showLoading: true});
       if(this.state.bookFilterKey == 1) { //舊約
         results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS[c] '${text}'`, this.state.lang);
       } else if(this.state.bookFilterKey == 2) { // 新約
@@ -218,10 +220,11 @@ export default class BibleSearch extends Component {
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0) { // 所有
         results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, this.state.lang);
       }
-      this.setState({
+      await this.setState({
         verseList: results,
         searchKey: text,
         fullScreenMode: results.length > 10 ? true : false,
+        showLoading: false,
       });
     } catch (error) {
       console.log(error);
@@ -251,7 +254,6 @@ export default class BibleSearch extends Component {
       chapterOptionPlaceHolder: value,
     });
     if(this.state.searchKey.length != 0) await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
-    
   }
   generateOptions = () => {
     const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
@@ -296,6 +298,8 @@ export default class BibleSearch extends Component {
         placeholder={`${I18n.t('bookmark_search')}...`}
         round
         value={this.state.searchKey}
+        onChangeText={(event) => this.setState({searchKey:event})}
+        showLoading={this.state.showLoading}
       />
       <StyledOptionBox>
           <ModalDropdown
