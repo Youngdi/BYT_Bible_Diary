@@ -298,7 +298,10 @@ export default class BibleSearch extends Component {
         placeholder={`${I18n.t('bookmark_search')}...`}
         round
         value={this.state.searchKey}
-        onChangeText={(event) => this.setState({searchKey:event})}
+        onChangeText={(event) => {
+          if(Platform.OS != 'ios') this.setState({searchKey:event});
+          }
+        }
         showLoading={this.state.showLoading}
       />
       <StyledOptionBox>
