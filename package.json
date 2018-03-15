@@ -8,6 +8,7 @@
     "vector": "rm ./node_modules/react-native/local-cli/core/__fixtures__/files/package.json",
     "test": "jest",
     "build-apk": "cd android && ./gradlew assembleRelease",
+    "android-clean": "cd android && ./gradlew clean",
     "install-apk": "sh ./doc/install.sh",
     "ios-production": "react-native run-ios --configuration Release",
     "an-production": "react-native run-android --variant=release",
