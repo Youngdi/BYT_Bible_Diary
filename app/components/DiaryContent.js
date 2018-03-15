@@ -111,7 +111,7 @@ export default class DiaryContent extends PureComponent {
           lineHeight={this.props.lineHeight}
           fontFamily={this.props.fontFamily}
         >
-        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}-${item.length == 1 ? '' : item[item.length -1].verse_nr}`}
+        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}${item.length == 1 ? '' : '-' + item[item.length -1].verse_nr}`}
         </BookTitle>
         <PharseCantainer
           fontSize={this.props.fontSize}

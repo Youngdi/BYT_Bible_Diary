@@ -238,7 +238,14 @@ export function dbFindDiary(date, lang = 'cht') {
         return _acc;
       }, []);
       const content = _schedule_results.map(item => {
-        const results = realmBibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to == 0 ? 200 : item.verse_to}`);
+        let results;
+        if(item.verse_from == 0 && item.verse_to == 0) {
+          results = realmBibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= 200`);
+        } else if (item.verse_from != 0 && item.verse_to == 0) {
+          results = realmBibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr = ${item.verse_from}`);
+        } else {
+          results = realmBibleVersion.filtered(`book_nr = ${item.book_id} AND chapter_nr = ${item.chapter_from} AND verse_nr >= ${item.verse_from} AND verse_nr <= ${item.verse_to}`);
+        }
         const resultsSorted = results.sorted('verse_nr', false);
         return finalResults = resultsSorted.map(item => Object.assign({}, item));
       });

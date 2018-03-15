@@ -68,13 +68,13 @@ const StyledContainer = styled.View`
 I18n.fallbacks = true
 // Available languages
 I18n.translations = {
-  'zh-Hant-TW': require('../translations/cht'),
-  'zh-hant': require('../translations/cht'),
-  'zh-TW': require('../translations/cht'),
-  'zh-hans': require('../translations/chs'),
-  'en': require('../translations/en'),
-  'en-US': require('../translations/en'),
-  'ja': require('../translations/ja'),
+  'zh-Hant-TW': require('../_locales/zh_TW/messages.js'),
+  'zh-hant': require('../_locales/zh_TW/messages.js'),
+  'zh-TW': require('../_locales/zh_TW/messages.js'),
+  'zh-hans': require('../_locales/zh_CN/messages.js'),
+  'en': require('../_locales/en/messages.js'),
+  'en-US': require('../_locales/en/messages.js'),
+  'ja': require('../_locales/ja/messages.js'),
 };
 export default class DiaryRead extends Component {
   static navigationOptions = ({ navigation }) => {
