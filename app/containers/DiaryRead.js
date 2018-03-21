@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import Spinner from 'react-native-spinkit';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
-import Drawer from 'react-native-drawer'
+import Drawer from 'react-native-drawer';
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
 import DeviceBrightness from 'react-native-device-brightness';
@@ -729,7 +729,7 @@ export default class DiaryRead extends Component {
         tapToClose={true}
         openDrawerOffset={0.2} // 20% gap on the right side of drawer
         panCloseMask={0.2}
-        panOpenMask={25}
+        panOpenMask={20}
         closedDrawerOffset={-3}
         styles={drawerStyles}
         tweenHandler={(ratio) => ({
