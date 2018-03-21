@@ -1,4 +1,4 @@
 <resources>
-    <string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">wjDehiEoZkysspJnEoQVXo-xtA3kc5a64ba8-c46e-44a1-a546-41de22ffbd48</string>
+    <string moduleConfig="true" name="CodePushPublicKey">wjDehiEoZkysspJnEoQVXo-xtA3kc5a64ba8-c46e-44a1-a546-41de22ffbd48</string>
     <string name="app_name">靈修心</string>
 </resources>

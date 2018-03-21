@@ -39,7 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            new CodePush(null, getApplicationContext(), BuildConfig.DEBUG),
+            new CodePush("wjDehiEoZkysspJnEoQVXo-xtA3kc5a64ba8-c46e-44a1-a546-41de22ffbd48", getApplicationContext(), BuildConfig.DEBUG, R.string.CodePushPublicKey),
             new RNDeviceBrightness(),
             new FIRMessagingPackage(),
             new WebViewBridgePackage(),
