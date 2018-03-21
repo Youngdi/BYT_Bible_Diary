@@ -610,6 +610,17 @@ export default class DiaryRead extends Component {
       selectVerse: {},
     });
   }
+  handleUnmarkDate = async () => {
+    const recordMarkedDates = await global.storage.load({key: '@readingSchdule'});
+    const markedDates = {
+      ...recordMarkedDates,
+      [this.state.currentDate] : {...recordMarkedDates[this.state.currentDate], marked: false, selected: true}
+    };
+    this.setState({
+      markedDates: markedDates,
+    });
+    await global.storage.save({key: '@readingSchdule', data: markedDates, expires: null});
+  }
   handleScroll = async (event) => {
     this.closeActionButton();
     const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
@@ -766,6 +777,7 @@ export default class DiaryRead extends Component {
                   marked={this.state.markedDates[this.state.currentDate].marked}
                   highlightList={this.state.highlightList}
                   handleVerseClick={this.handleVerseClick} //自動curry帶入verseItem
+                  handleUnmarkDate={this.handleUnmarkDate}
                   closeActionButton={this.closeActionButton}
                   setFullScreenMode={this.setFullScreenMode}
                 />

@@ -65,14 +65,17 @@ const PharseNumber = styled.Text`
 export default class DiaryContent extends PureComponent {
   renderDiaryTitle = () => {
     const renderDay = () =>
-      <View style={{borderLeftWidth:8, paddingLeft:10, borderColor: this.props.marked ? '#F7B633' : '#CF0A2C'}}>
-        <Title 
+      <TouchableOpacity
+        onPress={() => this.props.marked && this.props.handleUnmarkDate()}
+        style={{borderLeftWidth:8, paddingLeft:10, borderColor: this.props.marked ? '#F7B633' : '#CF0A2C'}}
+      >
+        <Title
           fontColor={this.props.fontColor}
           fontFamily={this.props.fontFamily}
         >
         {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
         </Title>
-      </View>
+      </TouchableOpacity>
     const renderAnchor = () =>
       this.props.content.map( (item, i) => {
         return(
