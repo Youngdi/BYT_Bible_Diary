@@ -6,6 +6,7 @@ import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, 
 import CodePush from "react-native-code-push";
 import DiaryScreen from './DiaryRead';
 import I18n, { getLanguages } from 'react-native-i18n';
+import moment from 'moment/min/moment-with-locales';
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
 import LottieView from 'lottie-react-native';
@@ -17,13 +18,21 @@ import MoreScreen from './More';
 import NoteScreen from './Note';
 import BibleSearchScreen from './BibleSearch';
 import { test_db } from '../api/api';
+import bibleFlag from '../constants/bible';
+
 Realm.copyBundledRealmFiles();
 
 class MyHomeScreen extends Component {
   constructor(props) {
     super(props);
   }
+  getDiaryBiblePhrase = (time) => {
+    let number = Math.floor(Math.random() * 74) + 1;
+    let bible_number = `B${number}`;
+    return `${time}經文-${bibleFlag[bible_number].chapter}\n${bibleFlag[bible_number].verse}`;
+  }
   componentDidMount() {
+    this.setupScheduleLocalNotification();
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
@@ -36,41 +45,44 @@ class MyHomeScreen extends Component {
       console.log("TOKEN (getFCMToken)", token);
     });
     FCM.getInitialNotification().then(notif => {
+      FCM.setBadgeNumber(0);
       console.log("INITIAL NOTIFICATION", notif)
     });
     this.notificationListener = FCM.on(FCMEvent.Notification, notif => {
       if (Platform.OS == 'ios') {
-        if (notif.local_notification){
+        if (notif.local_notification) {
+          FCM.setBadgeNumber(0);
+          this.setupScheduleLocalNotification();
           return;
         } else {
           alert(notif.aps.alert);
         }
-      } else {
+    } else {
         alert(notif.fcm.body);
+    }
+    if(notif.local_notification){
+      return;
+    }
+    if(notif.opened_from_tray){
+      return;
+    }
+    if(Platform.OS ==='ios') {
+      switch(notif._notificationType){
+        case NotificationType.Remote:
+          notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+          break;
+        case NotificationType.NotificationResponse:
+          notif.finish();
+          break;
+        case NotificationType.WillPresent:
+          notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
+          break;
       }
-      if(notif.local_notification){
-        return;
-      }
-      if(notif.opened_from_tray){
-        return;
-      }
-      if(Platform.OS ==='ios') {
-        switch(notif._notificationType){
-          case NotificationType.Remote:
-            notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-            break;
-          case NotificationType.NotificationResponse:
-            notif.finish();
-            break;
-          case NotificationType.WillPresent:
-            notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
-            break;
-        }
-      }
-      this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, token => {
-        console.log("TOKEN (refreshUnsubscribe)", token);
-      });
+    }
+    this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, token => {
+      console.log("TOKEN (refreshUnsubscribe)", token);
     });
+  });
     CodePush.sync({ updateDialog: false, installMode: CodePush.InstallMode.IMMEDIATE },
       (status) => {
         switch (status) {
@@ -89,34 +101,51 @@ class MyHomeScreen extends Component {
           this.setState({downloadProgress: receivedBytes / totalBytes * 100});
       }
     );
-    // setTimeout(() => {
-    //   FCM.presentLocalNotification({
-    //     id: "UNIQ_ID_STRING",                               // (optional for instant notification)
-    //     title: "大會通知",                     // as FCM payload
-    //     body: '555555555',                    // as FCM payload (required)
-    //     sound: "default",                                   // as FCM payload
-    //     priority: "high",                                   // as FCM payload
-    //     click_action: "ACTION",                             // as FCM payload
-    //     badge: 0,                                           // as FCM payload IOS only, set 0 to clear badges
-    //     icon: "ic_launcher",                                // as FCM payload, you can relace this with custom icon you put in mipmap
-    //     my_custom_data:'my_custom_field_value',             // extra data you want to throw
-    //     show_in_foreground:true                             // notification when app is in foreground (local & remote)
-    //   });
-    // }, 5000);
   }
   BBB = async () => {
     const d = await test_db();
     alert(d.length);
   }
+  setupScheduleLocalNotification = () => {
+    // const badgeNumber = await FCM.getBadgeNumber();
+    FCM.cancelLocalNotification('nightReminders');
+    FCM.cancelLocalNotification('dayReminders');
+    FCM.scheduleLocalNotification({
+      fire_date: moment(`${moment().format('YYYY-MM-DD')} 08:00:00`).toDate().getTime(),
+      id: 'dayReminders',
+      title: '早起靈修，開啟你美好的一天',
+      body: this.getDiaryBiblePhrase('每日一'),
+      priority: 'high', 
+      show_in_foreground: true,
+      sound: 'default',
+      local: true,
+      badge: 1,
+      vibrate: 500,
+      wake_screen: true
+    });
+    FCM.scheduleLocalNotification({
+      fire_date: moment(`${moment().format('YYYY-MM-DD')} 22:00:00`).toDate().getTime(),
+      id: 'nightReminders',
+      title: '睡前靈修，願主與你一同進入夢鄉',
+      body: this.getDiaryBiblePhrase('睡前'),
+      priority: 'high', 
+      show_in_foreground: true,
+      sound: 'default',
+      local: true,
+      badge: 1,
+      vibrate: 500,
+      wake_screen: true
+    });
+  }
   componentWillUnmount() {
     // stop listening for events
-    this.notificationListener.remove();
+    // this.notificationListener.remove();
   }
   render() {
     return (
-      <View style={{opacity:0}}>
+      <View style={{opacity:1}}>
         <Button title="AAAA" onPress={() => this.props.navigation.navigate('Diary')}></Button>
-        <Button title="BBBBB" onPress={() => this.BBB()}></Button>
+        <Button title="BBBBB" onPress={() => this.scheduleLocalNotification()}></Button>
       </View>
     );
   }

@@ -15,6 +15,7 @@ import {
   Easing,
 } from 'react-native';
 import Spinner from 'react-native-spinkit';
+import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 import Drawer from 'react-native-drawer'
 import Storage from 'react-native-storage';
 import moment from 'moment/min/moment-with-locales';
@@ -137,6 +138,7 @@ export default class DiaryRead extends Component {
   }
   initData = async () => {
       try {
+        FCM.setBadgeNumber(0);
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
         const setting = await global.storage.load({key:'@setting'});
         const lang = await global.storage.load({key:'@lang'});
