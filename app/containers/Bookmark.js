@@ -202,7 +202,7 @@ export default class Bookmark extends Component {
       || item.createdTime.indexOf(key) != -1
       || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
       || R.concat(item.createdTime, `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || item.verse.indexOf(key) != -1
+      || item.verse.toUpperCase().indexOf(key.toUpperCase()) != -1
       || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
       || R.concat(item.createdTime, `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1;
     const find = R.curry((bookmarkList, key) =>
@@ -262,9 +262,13 @@ export default class Bookmark extends Component {
     return (
     <View style={{flex:1, width:'100%', justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
       <SearchBar
+        onEndEditing={(e) => this.search(e.nativeEvent.text)}
         platform={`${Platform.OS}`}
         cancelButtonTitle={'Cancel'}
-        onChangeText={this.search.bind(this)}
+        onChangeText={(e) => {
+            if(Platform.OS != 'ios') this.search(e)
+          }
+        }
         onClearText={this.onClearText}
         clearIcon
         lightTheme
