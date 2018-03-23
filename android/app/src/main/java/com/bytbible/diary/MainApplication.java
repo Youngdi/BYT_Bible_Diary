@@ -49,7 +49,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNSpinkitPackage(),
             new RNI18nPackage(),
             new RNFSPackage(),
-            new BlurViewPackage()
+            new BlurViewPackage(),
+            new LottiePackage()
       );
     }
 
