@@ -32,6 +32,51 @@ export default class Verse extends Component {
   state = {
     selected: false,
   }
+  componentDidMount(){
+    this.props.targetVerse ? this.showHint() : null;
+  }
+  showHint = async () => {
+    setTimeout(() => {
+      this.setState({
+        selected: true,
+      });
+    }, 1100);
+    setTimeout(() => {
+      this.setState({
+        selected: false,
+      });
+    }, 1500);
+    setTimeout(() => {
+      this.setState({
+        selected: true,
+      });
+    }, 1900);
+    setTimeout(() => {
+      this.setState({
+        selected: false,
+      });
+    }, 2300);
+    setTimeout(() => {
+      this.setState({
+        selected: true,
+      });
+    }, 2700);
+    setTimeout(() => {
+      this.setState({
+        selected: false,
+      });
+    }, 3100);
+    setTimeout(() => {
+      this.setState({
+        selected: true,
+      });
+    }, 3500);
+    setTimeout(() => {
+      this.setState({
+        selected: false,
+      });
+    }, 3900);
+  }
   handleVerseClick = () => {
     this.setState({
       selected: !this.state.selected,

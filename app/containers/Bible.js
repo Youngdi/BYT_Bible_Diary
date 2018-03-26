@@ -140,10 +140,7 @@ export default class Bible extends PureComponent {
       bg: '#fff',
       highlightList: [],
       selectVerse: {},
-      selectVerseNumberRef: {},
-      selectVerseRef: {},
       lastPress: 0,
-      lastPress1: 0,
       content: [[]],
       book_name: '',
       book_nr: 0,
@@ -212,9 +209,9 @@ export default class Bible extends PureComponent {
       if(eachHeight > this.state.pharseContainerHeight - deviceHeight) {
         this.contentView.root.scrollToEnd();
       } else {
-        this.contentView.root.scrollTo({y: eachHeight, animated: false});
+        this.contentView.root.scrollTo({y: eachHeight, animated: true});
       }
-    }, 200);
+    }, 600);
   }
   handlelayout = (e) => {
     this.setState({
@@ -559,6 +556,7 @@ export default class Bible extends PureComponent {
             bg={this.state.bg}
           >
           <BibleContent
+            verse_nr={this.state.verse_nr}
             selectVerse={this.state.selectVerse}
             fontColor={this.state.setting.fontColor}
             fontSize={this.state.setting.fontSize}

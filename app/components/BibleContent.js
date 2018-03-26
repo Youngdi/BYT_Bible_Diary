@@ -43,7 +43,8 @@ export default class BibleContent extends PureComponent {
             >
             {item.map(verseItem => {
               return(
-                <Verse 
+                <Verse
+                  targetVerse={verseItem.verse_nr == this.props.verse_nr}
                   lineHeight={this.props.lineHeight}
                   fontColor={this.props.fontColor}
                   fontSize={this.props.fontSize}
