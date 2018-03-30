@@ -28,56 +28,37 @@ const PharseText = styled.Text`
   line-height: ${props => props.lineHeight};
   font-weight: 300;
 `;
+// const runHint = ([x, ...xs], p = Promise.resolve()) => x ? runHint(xs, p.then(x)): p;
 export default class Verse extends Component {
+  constructor(props){
+    super(props);
+    this.showHintTimes = props.targetVerse ? 4 : 0;
+  }
   state = {
     selected: false,
   }
   componentDidMount(){
-    this.props.targetVerse ? this.showHint() : null;
+    setTimeout(() => {
+      this.props.targetVerse ? this.runHint(new Array(this.showHintTimes).fill(1).map(() => this.showHint)) : null;
+    }, 500);
   }
-  showHint = async () => {
+  runHint = ([x, ...xs], p = Promise.resolve()) => x ? this.runHint(xs, p.then(x)): p;
+  showHint = () => new Promise((resolve, reject) => {
     setTimeout(() => {
       this.setState({
         selected: true,
       });
-    }, 1100);
-    setTimeout(() => {
-      this.setState({
-        selected: false,
-      });
-    }, 1500);
-    setTimeout(() => {
-      this.setState({
-        selected: true,
-      });
-    }, 1900);
-    setTimeout(() => {
-      this.setState({
-        selected: false,
-      });
-    }, 2300);
-    setTimeout(() => {
-      this.setState({
-        selected: true,
-      });
-    }, 2700);
-    setTimeout(() => {
-      this.setState({
-        selected: false,
-      });
-    }, 3100);
-    setTimeout(() => {
-      this.setState({
-        selected: true,
-      });
-    }, 3500);
-    setTimeout(() => {
-      this.setState({
-        selected: false,
-      });
-    }, 3900);
-  }
+      setTimeout(() => {
+        this.setState({
+          selected: false,
+        });
+        this.showHintTimes = this.showHintTimes - 1;
+        resolve();
+      }, 400);
+    }, 400);
+  });
   handleVerseClick = () => {
+    if(this.showHintTimes > 0) return;
     this.setState({
       selected: !this.state.selected,
     });
