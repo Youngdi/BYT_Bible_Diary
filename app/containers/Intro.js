@@ -29,8 +29,6 @@ const getImage = (id) => {
         return require('../images/intro/intro_10.jpg');
       case 11:
         return require('../images/intro/intro_11.jpg');
-      case 12:
-        return require('../images/intro/intro_12.jpg');
       default:
         return require('../images/intro/intro_1.jpg');
   }
@@ -49,12 +47,16 @@ export default class Intro extends Component {
     this.props.navigation.goBack();
   }
   render() {
-    const pageArray = new Array(12).fill(1).map((val, i) => {
+    const pageArray = new Array(11).fill(1).map((val, i) => {
       return (
         <View style={[styles.slide,{ backgroundColor: '#131721' }]}>
           <View level={5}></View>
           <View level={10}>
-            <Image style={{ width: deviceWidth, height:deviceHeight }} source={getImage(i + 1)} />
+            <Image 
+              style={{width: deviceWidth, height:deviceHeight}}
+              source={getImage(i + 1)}
+              resizeMode="contain"
+            />
           </View>
         </View>
       );
