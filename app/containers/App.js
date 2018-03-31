@@ -56,33 +56,33 @@ class MyHomeScreen extends Component {
           this.setupScheduleLocalNotification();
           return;
         } else {
-          alert(notif.aps.alert);
+          // alert(notif.aps.alert);
         }
-    } else {
-        alert(notif.fcm.body);
-    }
-    if(notif.local_notification){
-      return;
-    }
-    if(notif.opened_from_tray){
-      return;
-    }
-    if(Platform.OS ==='ios') {
-      switch(notif._notificationType){
-        case NotificationType.Remote:
-          notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-          break;
-        case NotificationType.NotificationResponse:
-          notif.finish();
-          break;
-        case NotificationType.WillPresent:
-          notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
-          break;
+      } else {
+          // alert(notif.fcm.body);
       }
-    }
-    this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, token => {
-      console.log("TOKEN (refreshUnsubscribe)", token);
-    });
+      if(notif.local_notification){
+        return;
+      }
+      if(notif.opened_from_tray){
+        return;
+      }
+      if(Platform.OS ==='ios') {
+        switch(notif._notificationType){
+          case NotificationType.Remote:
+            notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+            break;
+          case NotificationType.NotificationResponse:
+            notif.finish();
+            break;
+          case NotificationType.WillPresent:
+            notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
+            break;
+        }
+      }
+      this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, token => {
+        console.log("TOKEN (refreshUnsubscribe)", token);
+      });
   });
     CodePush.sync({ updateDialog: false, installMode: CodePush.InstallMode.IMMEDIATE },
       (status) => {
