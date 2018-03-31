@@ -121,6 +121,14 @@ export default class Header extends PureComponent {
               style={{width: 26, height: 26, marginTop:2, marginLeft:9, backgroundColor:'transparent'}}
             />
           </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1E1E1E' onPress={() => this.props.navigateTo('Intro')}>
+            <Ionicons
+              name='ios-information-circle-outline'
+              size={24}
+              color='#bbb'
+              style={{width: 26, height: 26, marginTop:1, marginLeft:7, backgroundColor:'transparent'}}
+            />
+          </ActionButton.Item>
         </ActionButton>
         <View style={shadowStyle}>
           <TouchableOpacity onPress={()=> this.props.toggleModal()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>

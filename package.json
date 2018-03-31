@@ -39,6 +39,7 @@
     "react-native": "^0.54.0",
     "react-native-action-button": "^2.8.4",
     "react-native-animatable": "^1.2.4",
+    "react-native-app-intro": "git+https://github.com/merryjs/react-native-app-intro.git",
     "react-native-blur": "^3.2.2",
     "react-native-calendars": "^1.16.1",
     "react-native-circular-action-menu": "^0.4.0",

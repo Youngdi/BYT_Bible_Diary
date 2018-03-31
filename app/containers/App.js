@@ -16,6 +16,7 @@ import BookmarkScreen from './Bookmark';
 import BibleScreen from './Bible';
 import MoreScreen from './More';
 import NoteScreen from './Note';
+import IntroScreen from './Intro';
 import BibleSearchScreen from './BibleSearch';
 import { test_db } from '../api/api';
 import bibleFlag from '../constants/bible';
@@ -249,6 +250,9 @@ const App = StackNavigator(
   },
   BibleSearch: {
     screen: BibleSearchScreen,
+  },
+  Intro : {
+    screen: IntroScreen,
   }
 },
   {
