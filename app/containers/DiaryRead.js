@@ -14,6 +14,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import Spinner from 'react-native-spinkit';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 import Drawer from 'react-native-drawer';
@@ -37,6 +38,7 @@ import ArrowUp from '../components/ArrowUp';
 import Check from '../components/Check';
 import Tooltip from '../components/Tooltip';
 import BibleListPanel from '../components/BibleListPanel';
+import InitIntro from './InitIntro';
 import { dbFindDiary } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
 const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
@@ -65,7 +67,7 @@ const StyledContainer = styled.View`
   flex: 1;
   background-color: ${props => props.bg};
 `;
-
+const AnimatedStyledContainer = Animatable.createAnimatableComponent(StyledContainer);
 I18n.fallbacks = true
 // Available languages
 I18n.translations = {
@@ -117,6 +119,7 @@ export default class DiaryRead extends Component {
         lineHeight: 33,
         brightnessValue: 1,
         readingMode: false, // 0 -> day, 1 -> night
+        tourist: false,
       },
       markedDates: {
         [moment().format('YYYY-MM-DD')]: {selected: true},
@@ -199,6 +202,7 @@ export default class DiaryRead extends Component {
                 lineHeight: 33,
                 brightnessValue: 1,
                 readingMode: false, // 0 -> day, 1 -> night
+                tourist: true,
               },
               expires: null,
             });
@@ -709,12 +713,33 @@ export default class DiaryRead extends Component {
     } 
     this.props.navigation.navigate(toWhere);
   }
+  closeTourist = async () => {
+    await global.storage.save({
+      key: '@setting',
+      data: {
+        ...this.state.setting,
+        tourist: false,
+      },
+      expires: null,
+    });
+    await this.setState({
+      setting: {
+        ...this.state.setting,
+        tourist: false
+      }
+    });
+  }
   render() {
     const { bg, fullScreenMode } = this.state;
     const drawerStyles = {
       drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
       main: {paddingLeft: 3},
       drawerOverlay: { opacity: 0.1}
+    }
+    if(this.state.setting.tourist) {
+      return (
+        <InitIntro closeTourist={this.closeTourist}/>
+      );
     }
     if(R.isEmpty(this.state.content)) {
       return (
@@ -752,7 +777,12 @@ export default class DiaryRead extends Component {
         })}
         ref={(ref) => this._drawer = ref}
       >
-        <StyledContainer bg={bg}>
+        <AnimatedStyledContainer
+          bg={bg}
+          animation="fadeIn"
+          duration={1500}
+          delay={500}
+        >
           <StyledMain
             ref={r => this.contentView = r}
             bg={bg} 
@@ -886,7 +916,7 @@ export default class DiaryRead extends Component {
             handeleChangeLang={this.handeleChangeLang}
           />
         }
-        </StyledContainer>
+        </AnimatedStyledContainer>
       </Drawer>
     );
   }
