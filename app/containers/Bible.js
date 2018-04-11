@@ -104,7 +104,11 @@ export default class Bible extends PureComponent {
       gesturesEnabled: true,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        state.params.closeControlPanel();
+                        setTimeout(navigation.goBack, 200);
+                      }
+                    }
                    >
                     <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
                   </TouchableOpacity>

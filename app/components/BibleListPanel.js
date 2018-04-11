@@ -87,7 +87,7 @@ export default class BibleListPanel extends PureComponent {
       mode: 'book',
       title: 'Books',
     });
-    this.props.navigation.navigate('Bible', {
+    this.props.navigateTo('Bible', {
       book_nr: this.state.book_nr,
       chapter_nr: this.state.chapter_nr,
       verse_nr: verse_nr,

@@ -697,20 +697,27 @@ export default class DiaryRead extends Component {
       await global.storage.save({key: '@readingSchdule', data: recordMarkedDates, expires: null});
     }
   }
-  navigateTo = (toWhere) => {
+  navigateTo = (toWhere, data = {}) => {
     this.reset();
     if(toWhere == 'BibleSearch') {
       this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
-      return
+      return;
     }
     if(toWhere == 'Bookmark') {
       this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
-      return
+      return;
     }
-    if(toWhere == 'Note') {
-      this.props.navigation.navigate(toWhere, {done: false, currentDate: this.state.currentDate, setting:this.state.setting, bg: this.state.bg});
-      return
-    } 
+    if(toWhere == 'NoteList') {
+      this.props.navigation.navigate(toWhere, {currentDate: this.state.currentDate, setting:this.state.setting, bg: this.state.bg});
+      return;
+    }
+    if(toWhere == 'Bible') {
+      this.props.navigation.navigate(toWhere, {
+        ...data,
+        closeControlPanel: this.closeControlPanel,
+      });
+      return;
+    }
     this.props.navigation.navigate(toWhere);
   }
   closeTourist = async () => {
@@ -754,7 +761,7 @@ export default class DiaryRead extends Component {
         type="displace"
         content={
           <BibleListPanel
-            navigation={this.props.navigation}
+            navigateTo={this.navigateTo}
             defaultLang={this.state.defaultLang}
             oldBooks={this.state.oldBooks}
             newBooks={this.state.newBooks}
