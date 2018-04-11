@@ -87,7 +87,7 @@ class FlatListItem extends Component {
               setting: this.props.setting,
               bg: this.props.bg,
               noteId,
-              done: false,
+              done: true,
               refresh: this.props.refresh,
             })
           }
@@ -203,7 +203,7 @@ export default class NoteList extends Component {
                 setting: state.params.setting,
                 bg: state.params.bg,
                 noteId,
-                done: false,
+                done: true,
                 refresh: this.refresh,
               });
             }, 0);

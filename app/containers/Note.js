@@ -99,8 +99,19 @@ export default class Note extends Component {
       richtext : this.richtext,
     });
   }
-  onEditorInitialized() {
+  onEditorInitialized = () => {
     this.setFocusHandlers();
+    if(this.state.title != null){
+      this.richtext.blurTitleEditor();
+      this.richtext.blurContentEditor();
+      this.props.navigation.setParams({
+        done: true,
+      });
+    } else {
+      this.props.navigation.setParams({
+        done: false,
+      });
+    }
   }
   hideToolbar = () => {
     this.props.navigation.setParams({
@@ -123,12 +134,14 @@ export default class Note extends Component {
         updatedTime: new Date(),
       }
     };
-    await global.storage.save({
-      key: '@note',
-      data: newNoteList,
-      expires: null,
-    });
-    await this.props.navigation.state.params.refresh();
+    if(noteList[this.state.noteId].title != title || noteList[this.state.noteId].content != contentHtml) {
+      await global.storage.save({
+        key: '@note',
+        data: newNoteList,
+        expires: null,
+      });
+      await this.props.navigation.state.params.refresh();
+    }
   }
   setFocusHandlers() {
     this.richtext.setTitleFocusHandler(() => {
@@ -164,7 +177,7 @@ export default class Note extends Component {
               contentPlaceholder={this.state.contentPlaceholder}
               initialTitleHTML={this.state.title}
               initialContentHTML={this.state.content}
-              editorInitializedCallback={() => this.onEditorInitialized()}
+              editorInitializedCallback={this.onEditorInitialized}
           />
           {
             this.state.hideToolbar ? null : <RichTextToolbar getEditor={() => this.richtext} />
