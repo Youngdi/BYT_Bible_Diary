@@ -11,7 +11,8 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import Swipeout from "react-native-swipeout";
+import ActionButton from 'react-native-action-button';
+import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import I18n from 'react-native-i18n';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,11 +22,22 @@ import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { sperateVerse } from '../api/utilities';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment/min/moment-with-locales';
+import striptags from 'striptags';
+;
 const {
   height: deviceHeight,
   width: deviceWidth,
 } = Dimensions.get('window');
+
+const styles = StyleSheet.create({
+  actionButtonIcon: {
+    fontSize: 22,
+    height: 24,
+    color: 'white',
+  },
+});
 
 const StyledHeaderTitle = styled.Text`
   color: ${props => props.color};
@@ -50,12 +62,7 @@ class FlatListItem extends Component {
     }
   }
   render() {
-    const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
-    const setting = this.props.setting;
-    let lang = version;
-    if(version == 'japan') lang = 'ja';
-    if(version == 'kjv') lang = 'en';
-    const verseArray = this.props.searchKey.length == 0 ? [verse] : sperateVerse(verse, this.props.searchKey);
+    const {noteId, createdTime, updatedTime, title, content} = this.props.item;
     return (
         <TouchableOpacity
           style={{
@@ -75,18 +82,15 @@ class FlatListItem extends Component {
             marginLeft:5,
             marginRight:5,
           }}
-          onPress={() => {
-            this.props.navigation.navigate('Bible', {
-              book_nr: book_nr,
-              chapter_nr: chapter_nr,
-              verse_nr: verse_nr,
-              title: `${book_name}${' '}${chapter_nr}`,
-              lang: lang,
-              version: version,
-              setting: setting,
-              bg: setting.readingMode ? '#333' : '#fff',
-            });
-          }}
+          onPress={() => 
+            this.props.navigation.navigate('Note', {
+              setting: this.props.setting,
+              bg: this.props.bg,
+              noteId,
+              done: false,
+              refresh: this.props.refresh,
+            })
+          }
         >
           <View
             style={{
@@ -99,48 +103,32 @@ class FlatListItem extends Component {
           >
             <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:10}}>
               <Text style={{ fontSize: 18, fontWeight:'800' }}>
-                {`${book_name}${chapter_nr}:${verse_nr}`}
+                {`${title == null ? `${I18n.t('noteList_no_name')}`: title}`}
               </Text>
-              {
-                this.state.bookmarkEnable ?
-                  <TouchableOpacity 
-                    hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
-                    onPress={() => {
-                      this.props.deleteBookmark(keyId);
-                      this.setState({
-                        bookmarkEnable: !this.state.bookmarkEnable,
-                      });
-                    }}
-                  >
-                    <Ionicons color='#777' name='ios-bookmark' size={30} />
-                  </TouchableOpacity>
-                :
                 <TouchableOpacity
                   hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
                   onPress={() => {
-                    this.props.addBookmark(this.props.item);
-                    this.setState({
-                      bookmarkEnable: !this.state.bookmarkEnable,
-                    });
+                    Alert.alert(
+                      R.replace('noteName', title, I18n.t('noteList_delete')),
+                      '',
+                      [
+                        {text: `${I18n.t('noteList_delete_yes')}`, onPress: () => console.log('Cancel Pressed')},
+                        {text: `${I18n.t('noteList_delete_no')}`, onPress: () => this.props.deleteNote(noteId)},
+                      ],
+                    )
                   }}
                 >
-                  <Ionicons color='#ccc' name='ios-bookmark-outline' size={30} />
+                  <Ionicons color='#ff0000' name='ios-trash-outline' size={30} />
                 </TouchableOpacity>
-              }
             </View>
             <View>
-              <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
-              {
-                verseArray.map(item =>
-                  item.toUpperCase().indexOf(this.props.searchKey.toUpperCase()) > -1 && this.props.searchKey.length != 0
-                  ? <Text style={{color:'red'}}>{item}</Text>
-                  : <Text>{item}</Text>)
-              }
+              <Text numberOfLines={3} style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
+              {`${striptags(content)}`}
               </Text>
             </View>
             <View style={{display:'flex', justifyContent:'flex-end', flexDirection:'row'}}>
               <Text style={{ fontSize: 14, fontWeight:'200'}}>
-                {`${createdTime}`}
+                {`${moment(createdTime).format('YYYY-MM-DD')}`}
               </Text>
             </View>
           </View>
@@ -157,195 +145,130 @@ export default class NoteList extends Component {
       headerStyle: {
         backgroundColor: state.params.bg,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>Bookmarks</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={state.params.setting.fontColor}>Notes</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
                     <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
                   </TouchableOpacity>
-      ,headerRight: <TouchableOpacity
-                      hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
-                      onPress={() => state.params.handleRefresh()}
-                    >
-                      <Ionicons style={{marginRight:15}} name='ios-refresh' size={30} color={state.params.setting.fontColor} />
-                    </TouchableOpacity>
     };
   };
   constructor(props) {
     super(props);
     this.state = {
-      bookmarkList: [],
-      bookmarkListfilter: [],
+      noteList: [],
+      noteListfilter: [],
       refreshing: false,
       fullScreenMode: false,
       searchKey: '',
     }
   }
   componentDidMount = async () => {
-    this.props.navigation.setParams({ handleRefresh: this.refresh });
-    const bookmarkList = await global.storage.load({key:'@bookmark'});
-    const _bookmarkList = R.pipe(
+    // this.props.navigation.setParams({ handleRefresh: this.refresh });
+    const noteList = await global.storage.load({key:'@note'});
+    const _noteList = R.pipe(
       R.values(),
       R.sort(R.descend(R.prop('createdTime'))),
-    )(bookmarkList);
+    )(noteList);
     this.setState({
-      bookmarkList: _bookmarkList,
-      bookmarkListfilter: R.keys(bookmarkList),
+      noteList: _noteList,
+      // bookmarkListfilter: R.keys(bookmarkList),
     });
   }
-  search = (event) => {
-    const matchKey = key => item => 
-      R.concat(item.book_name, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.book_name_short, `${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.replace(/-/g, '', item.createdTime).indexOf(key) != -1
-      || item.createdTime.indexOf(key) != -1
-      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.createdTime, `${item.book_name}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || item.verse.toUpperCase().indexOf(key.toUpperCase()) != -1
-      || R.concat(R.replace(/-/g, '', item.createdTime), `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1
-      || R.concat(item.createdTime, `${item.book_name_short}${item.chapter_nr}:${item.verse_nr}`).indexOf(key) != -1;
-    const find = R.curry((bookmarkList, key) =>
-      R.pipe(
-        R.filter(matchKey(key)),
-        R.map(R.prop('keyId')),
-      )(bookmarkList),
-    );
-    const matchs = find(this.state.bookmarkList, event);
-    this.setState({
-      searchKey: event,
-      bookmarkListfilter: R.isEmpty(event) ? R.map(R.prop('keyId'), this.state.bookmarkList) : matchs.length ? matchs : [],
-    });
-  }
-  refresh = (keyId) => {
-    this.setState({
-      refreshing: true,
-    });
-    setTimeout(async () => {
-      const bookmarkList = await global.storage.load({key:'@bookmark'});
-      const _bookmarkList = R.pipe(
-        R.values(),
-        R.sort(R.descend(R.prop('createdTime'))),
-      )(bookmarkList);
-      await this.setState({
-        bookmarkList: _bookmarkList,
-        bookmarkListfilter: this.state.bookmarkListfilter,
-        refreshing: false,
-      });
-    }, 1000);
-  }
-  deleteBookmark = async (keyId) => {
-    const bookmarkList = await global.storage.load({key:'@bookmark'});
-    delete bookmarkList[keyId];
-    await global.storage.save({key:'@bookmark', data:bookmarkList, expires: null});
-    this.state.bookmarkListfilter = R.without([keyId], this.state.bookmarkListfilter);
-  }
-  addBookmark = async (item) => {
-    this.state.bookmarkListfilter = R.concat([item.keyId], this.state.bookmarkListfilter);
-    const bookmarkList = await global.storage.load({key:'@bookmark'});
-    const _bookmark = {
-      ...bookmarkList,
-      [item.keyId]: item,
-    }
-    await global.storage.save({key: '@bookmark', data: _bookmark, expires: null});
-  }
-  onClearText = () => {
-    this.setState({
-      bookmarkListfilter: R.map(R.prop('keyId'), this.state.bookmarkList),
-      searchKey: '',
-    });
-  }
-  renderHeader = () => {
-    const matchSearchText = R.replace('searchKey', this.state.searchKey, R.replace('bookmark_number', this.state.bookmarkListfilter.length, I18n.t('bookmark_matchSearchKey')))
-    const noMatchSearchText = R.replace('bookmark_number', this.state.bookmarkListfilter.length, I18n.t('bookmark_number'));
-    const searchTips = R.isEmpty(this.state.searchKey) ?[noMatchSearchText] : sperateVerse(matchSearchText, this.state.searchKey);
+  renderAddNoteButton = () => {
+    const {state, setParams} = this.props.navigation;
     return (
-    <View style={{flex:1, width:'100%', justifyContent:'center', alignItems:'center',marginTop:10, marginBottom:20}}>
-      <SearchBar
-        onEndEditing={(e) => this.search(e.nativeEvent.text)}
-        platform={`${Platform.OS}`}
-        cancelButtonTitle={'Cancel'}
-        onChangeText={(e) => {
-            if(Platform.OS != 'ios') this.search(e)
+      <ActionButton
+        buttonColor="rgba(231,76,60,1)"
+        onPress={async () => {
+            const noteList = await global.storage.load({key:'@note'});
+            const noteId = uuidv4();
+            const newNoteList = {
+              ...noteList,
+              [noteId]: {
+                noteId,
+                createdTime: new Date(),
+                title: null,
+                content: null,
+              }
+            };
+            await global.storage.save({
+              key: '@note',
+              data: newNoteList,
+              expires: null,
+            });
+            setTimeout(() => {
+              this.props.navigation.navigate('Note', {
+                setting: state.params.setting,
+                bg: state.params.bg,
+                noteId,
+                done: false,
+                refresh: this.refresh,
+              });
+            }, 0);
           }
         }
-        onClearText={this.onClearText}
-        clearIcon
-        lightTheme
-        placeholder={`${I18n.t('bookmark_search')}...`}
-        round
-        value={this.state.searchKey}
-      />
-      {
-        R.isEmpty(this.state.bookmarkListfilter) ? 
-        <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:10}}>
-          <Text style={{fontSize:14, fontWeight:'400'}}>
-            {R.replace('bookmark_no_searchKey', this.state.searchKey, I18n.t('bookmark_no_searchKey'))}
-          </Text>
-        </View>
-        :
-        <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:10}}>
-          <Text style={{fontSize:14, fontWeight:'400'}}>
-          { 
-            searchTips.map(item =>
-              item.toUpperCase().indexOf(this.state.searchKey.toUpperCase()) > -1 && !R.isEmpty(this.state.searchKey)
-              ? <Text style={{color:'red'}}>{item}</Text>
-              : <Text>{item}</Text>)
-          }
-          </Text>
-        </View>
-      }
-    </View>
-    )
-  };
+        renderIcon={() => <MaterialIcons name="mode-edit" style={styles.actionButtonIcon}/>}
+      >
+      </ActionButton>
+    );
+  }
   renderItem = ({item, index}) => {
+    const { setting, bg } = this.props.navigation.state.params;
     return (
       <FlatListItem
-        searchKey={this.state.searchKey}
-        key={item.keyId}
-        addBookmark={this.addBookmark}
-        deleteBookmark={this.deleteBookmark}
+        key={item.noteId}
         item={item}
         index={index}
-        setting={this.props.navigation.state.params.setting}
         navigation={this.props.navigation}
+        refresh={this.refresh}
+        deleteNote={this.deleteNote}
+        setting={setting}
+        bg={bg}
       />
     );
   }
-  handeleScrollTop = (e) => {
-    this.contentView.scrollToOffset({x: 0, y: 0, animated: true});
+  refresh = async () => {
+    const noteList = await global.storage.load({key:'@note'});
+    const _noteList = R.pipe(
+      R.values(),
+      R.sort(R.descend(R.prop('updatedTime'))),
+    )(noteList);
+    this.setState({
+      noteList: _noteList,
+    });
+  }
+  deleteNote = async (noteId) => {
+    const noteList = await global.storage.load({key:'@note'});
+    delete noteList[noteId];
+    await global.storage.save({
+      key: '@note',
+      data: noteList,
+      expires: null,
+    });
+    await this.refresh();
   }
   render() {
-    const isMatch = key => item => R.contains(item.keyId, key);
-    const bookmarkList = R.curry((bookmarkList, key) =>
-      R.pipe(
-        R.filter(isMatch(key)),
-      )(bookmarkList),
-    )(this.state.bookmarkList, this.state.bookmarkListfilter);
+    const {state, setParams} = this.props.navigation;
+    const noteList = this.state.noteList;
     return (
-      R.isEmpty(this.state.bookmarkList) ?
+      R.isEmpty(noteList) ?
       <View style={{flex:1, justifyContent:'flex-start', alignItems:'center', marginTop:20}}>
-        <Text>{I18n.t('bookmark_isempty')}</Text>
+        <Text>{I18n.t('noteList_isempty')}</Text>
+        {this.renderAddNoteButton()}
       </View>
       :
       <View style={{flex:1, backgroundColor:'#eee'}}>
         <FlatList
           ref={r => this.contentView = r}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.refresh.bind(this)}
-            />
-          }
           extraData={this.state}
-          ListHeaderComponent={this.renderHeader}
-          data={bookmarkList}
+          // ListHeaderComponent={this.renderHeader}
+          data={noteList}
           renderItem={this.renderItem}
-          keyExtractor={(item, index) => item.keyId}
+          keyExtractor={(item, index) => item.noteId}
         />
-        <ArrowUpFixedContainer>
-          <ArrowUp handeleScrollTop={this.handeleScrollTop} fullScreenMode={true} />
-        </ArrowUpFixedContainer>
+        {this.renderAddNoteButton()}
       </View>
     );
   }

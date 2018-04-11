@@ -16,6 +16,7 @@ import BookmarkScreen from './Bookmark';
 import BibleScreen from './Bible';
 import MoreScreen from './More';
 import NoteScreen from './Note';
+import NoteListScreen from './NoteList';
 import IntroScreen from './Intro';
 import BibleSearchScreen from './BibleSearch';
 import { test_db } from '../api/api';
@@ -247,6 +248,9 @@ const App = StackNavigator(
   },
   Note: {
     screen: NoteScreen,
+  },
+  NoteList: {
+    screen: NoteListScreen,
   },
   BibleSearch: {
     screen: BibleSearchScreen,

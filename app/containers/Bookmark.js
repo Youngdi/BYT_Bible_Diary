@@ -129,7 +129,7 @@ class FlatListItem extends Component {
               }
             </View>
             <View>
-              <Text style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
+              <Text numberOfLines={3} style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
               {
                 verseArray.map(item =>
                   item.toUpperCase().indexOf(this.props.searchKey.toUpperCase()) > -1 && this.props.searchKey.length != 0

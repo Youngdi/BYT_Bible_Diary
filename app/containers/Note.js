@@ -40,11 +40,11 @@ export default class Note extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
-      gesturesEnabled: true,
+      gesturesEnabled: false,
       headerStyle: {
         backgroundColor: state.params.bg,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{`${state.params.currentDate} QT`}</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{`${moment().format('YYYY-MM-DD')} QT`}</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => {
@@ -82,13 +82,14 @@ export default class Note extends Component {
     this.initData();
   }
   initData = async () => {
+    const { noteId } = this.props.navigation.state.params;
     const noteList = await global.storage.load({key:'@note'});
-    const note = R.path([this.props.navigation.state.params.currentDate], noteList);
+    const note = R.path([noteId], noteList);
     this.setState({
+      hideToolbar: false,
       title: note ? note.title: this.state.title,
       content: note ? note.content: this.state.content,
-      currentDate: this.props.navigation.state.params.currentDate,
-      hideToolbar: false,
+      noteId,
     });
   }
   componentDidMount() {
@@ -96,6 +97,55 @@ export default class Note extends Component {
       saveNote: this.saveNote,
       hideToolbar: this.hideToolbar,
       richtext : this.richtext,
+    });
+  }
+  onEditorInitialized() {
+    this.setFocusHandlers();
+  }
+  hideToolbar = () => {
+    this.props.navigation.setParams({
+      done: true,
+    });
+    this.setState({
+      hideToolbar: true,
+    });
+  }
+  async saveNote() {
+    const title = await this.richtext.getTitleText();
+    const contentHtml = await this.richtext.getContentHtml();
+    const noteList = await global.storage.load({key:'@note'});
+    const newNoteList = {
+      ...noteList,
+      [this.state.noteId]: {
+        ...noteList[this.state.noteId],
+        title: title,
+        content: contentHtml,
+        updatedTime: new Date(),
+      }
+    };
+    await global.storage.save({
+      key: '@note',
+      data: newNoteList,
+      expires: null,
+    });
+    await this.props.navigation.state.params.refresh();
+  }
+  setFocusHandlers() {
+    this.richtext.setTitleFocusHandler(() => {
+      this.props.navigation.setParams({
+        done: false,
+      });
+      this.setState({
+        hideToolbar: false,
+      });
+    });
+    this.richtext.setContentFocusHandler(() => {
+      this.props.navigation.setParams({
+        done: false,
+      });
+      this.setState({
+        hideToolbar: false,
+      });
     });
   }
   render() {
@@ -117,57 +167,11 @@ export default class Note extends Component {
               editorInitializedCallback={() => this.onEditorInitialized()}
           />
           {
-            this.state.hideToolbar ? null :<RichTextToolbar getEditor={() => this.richtext} />
+            this.state.hideToolbar ? null : <RichTextToolbar getEditor={() => this.richtext} />
           }
           {Platform.OS === 'ios' && <KeyboardSpacer/>}
         </StyledContainer>
     );
-  }
-  onEditorInitialized() {
-    this.setFocusHandlers();
-  }
-  hideToolbar = () => {
-    this.props.navigation.setParams({
-      done: true,
-    });
-    this.setState({
-      hideToolbar: true,
-    });
-  }
-  async saveNote() {
-    const title = await this.richtext.getTitleText();
-    const contentHtml = await this.richtext.getContentHtml();
-    const noteList = await global.storage.load({key:'@note'});
-    const currentNote = {
-      ...noteList,
-      [this.state.currentDate]: {
-        title: title,
-        content: contentHtml,
-      }
-    };
-    await global.storage.save({
-      key: '@note',
-      data: currentNote,
-      expires: null,
-    });
-  }
-  setFocusHandlers() {
-    this.richtext.setTitleFocusHandler(() => {
-      this.props.navigation.setParams({
-        done: false,
-      });
-      this.setState({
-        hideToolbar: false,
-      });
-    });
-    this.richtext.setContentFocusHandler(() => {
-      this.props.navigation.setParams({
-        done: false,
-      });
-      this.setState({
-        hideToolbar: false,
-      });
-    });
   }
 }
 

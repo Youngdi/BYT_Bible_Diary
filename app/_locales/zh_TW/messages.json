@@ -40,5 +40,10 @@
   "bible_search_title": "搜尋",
   "bible_verse_number": "目前經文有verse_number個",
   "note_title_placeholder": "為這天靈修日記訂個標題！",
-  "note_content_placeholder": "寫點什麼..."
+  "note_content_placeholder": "寫點什麼...",
+  "noteList_isempty": "目前沒有筆記",
+  "noteList_delete": "確定要刪除筆記noteName",
+  "noteList_delete_yes": "是",
+  "noteList_delete_no": "否",
+  "noteList_no_name": "未命名筆記"
 }

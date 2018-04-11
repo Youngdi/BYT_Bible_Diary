@@ -40,5 +40,10 @@
   "bible_search_title": "Search",
   "bible_verse_number": "verse_number verses is found",
   "note_title_placeholder": "Write a title for the Note",
-  "note_content_placeholder": "Something I want to say..."
+  "note_content_placeholder": "Something I want to say...",
+  "noteList_isempty": "No notes to show",
+  "noteList_delete": "Do you want to delete noteName?",
+  "noteList_delete_yes": "Yes",
+  "noteList_delete_no": "No",
+  "noteList_no_name": "New Note"
 }
