@@ -53,6 +53,7 @@ const CloseRow = styled.View`
 `;
 export default class Tooltip extends PureComponent {
   render() {
+    const colorList = [['#1A8B9D','#fff'],['#388E3C', '#fff'],['#F67280', '#fff'],['#DBB4A2', '#333'],['#FCFA70', '#333'], ['transparent', 'transparent']];
     return (
       <ModalWrapper
         style={{zIndex:3}}
@@ -97,36 +98,15 @@ export default class Tooltip extends PureComponent {
                   showsVerticalScrollIndicator={false}
                   showsHorizontalScrollIndicator={false}
                 >
-                  <TouchableOpacity
-                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                    onPress={() => this.props.handleHighlight('#1A8B9D', '#fff')}
-                    style={{margin:5,backgroundColor:'#1A8B9D', width: 36, height: 36, borderColor:'#1A8B9D', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                  />
-                  <TouchableOpacity
-                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                      onPress={() => this.props.handleHighlight('#FCFA70', '#333')}
-                      style={{margin:5,backgroundColor:'#FCFA70', width: 36, height: 36, borderColor:'#FCFA70', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                  />
-                  <TouchableOpacity
-                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                    onPress={() => this.props.handleHighlight('#388E3C', '#fff')}
-                    style={{margin:5,backgroundColor:'#388E3C', width: 36, height: 36, borderColor:'#388E3C', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                  />
-                  <TouchableOpacity
-                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                      onPress={() => this.props.handleHighlight('#F67280', '#fff')}
-                      style={{margin:5,backgroundColor:'#F67280', width: 36, height: 36, borderColor:'#F67280', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                  />
-                  <TouchableOpacity
-                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                      onPress={() => this.props.handleHighlight('#DBB4A2', '#333')}
-                      style={{margin:5,backgroundColor:'#DBB4A2', width: 36, height: 36, borderColor:'#DBB4A2', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                  />
-                  <TouchableOpacity
-                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                    onPress={() => this.props.handleHighlight('transparent', 'transparent')}
-                    style={{margin:5,backgroundColor:'#fff', width: 36, height: 36, borderColor:'black', borderWidth:0.5, borderStyle:'solid', borderRadius: 18}}
-                  />
+                  {colorList.map((item) => {
+                    return (
+                      <TouchableOpacity
+                        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                        onPress={() => this.props.handleHighlight(item[0], item[1])}
+                        style={{margin:5,backgroundColor:item[0], width: 36, height: 36, borderColor:item[0] == 'transparent' ? 'black' : item[0], borderWidth:0.5, borderStyle:'solid', borderRadius: 18}}
+                      />
+                    )
+                  })}
                 </ScrollView>
               </View>
           </TooltipRow>
