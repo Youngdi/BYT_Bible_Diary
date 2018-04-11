@@ -123,7 +123,7 @@ class FlatListItem extends Component {
             </View>
             <View>
               <Text numberOfLines={3} style={{ fontSize: 16, fontWeight:'400', lineHeight: 25,marginBottom:10 }}>
-              {`${striptags(content)}`}
+              {content == null ? `...` : striptags(content)}
               </Text>
             </View>
             <View style={{display:'flex', justifyContent:'flex-end', flexDirection:'row'}}>

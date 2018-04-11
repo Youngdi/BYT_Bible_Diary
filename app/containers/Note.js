@@ -118,8 +118,8 @@ export default class Note extends Component {
       ...noteList,
       [this.state.noteId]: {
         ...noteList[this.state.noteId],
-        title: title,
-        content: contentHtml,
+        title: R.isEmpty(title) ? null : title,
+        content: R.isEmpty(contentHtml) ? null : contentHtml,
         updatedTime: new Date(),
       }
     };
