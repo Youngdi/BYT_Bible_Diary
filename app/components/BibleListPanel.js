@@ -44,7 +44,6 @@ const StyledTitleContainer = styled.View`
   align-items:center;
   margin-top:${isIphoneX() ? '16px' : '0px'};
 `;
-//this.props.closeControlPanel()
 export default class BibleListPanel extends PureComponent {
   constructor(props){
     super(props);
@@ -88,7 +87,6 @@ export default class BibleListPanel extends PureComponent {
       mode: 'book',
       title: 'Books',
     });
-    this.props.closeControlPanel();
     this.props.navigation.navigate('Bible', {
       book_nr: this.state.book_nr,
       chapter_nr: this.state.chapter_nr,
