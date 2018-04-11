@@ -124,7 +124,7 @@ export default class DiaryContent extends PureComponent {
         >
         {item.map((verseItem, i) => {
           return(
-            <Verse 
+            <Verse
               fontSize={this.props.fontSize}
               fontColor={this.props.fontColor}
               lineHeight={this.props.lineHeight}

@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { View, Dimensions, TouchableOpacity, Text, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from "styled-components/native";
 import ModalWrapper from 'react-native-modal-wrapper';
@@ -91,22 +91,43 @@ export default class Tooltip extends PureComponent {
                   size={35}
                 />
               </TouchableOpacity>
-              <View style={{display:'flex', flexDirection:'row'}}>
-                <TouchableOpacity
-                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                  onPress={() => this.props.handleHighlight('#1A8B9D')}
-                  style={{margin:5,backgroundColor:'#1A8B9D', width: 36, height: 36, borderColor:'#1A8B9D', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                />
-                <TouchableOpacity
-                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                  onPress={() => this.props.handleHighlight('#388E3C')}
-                  style={{margin:5,backgroundColor:'#388E3C', width: 36, height: 36, borderColor:'#388E3C', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
-                />
-                <TouchableOpacity
-                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                  onPress={() => this.props.handleHighlight('transparent')}
-                  style={{margin:5,backgroundColor:'#fff', width: 36, height: 36, borderColor:'black', borderWidth:0.5, borderStyle:'solid', borderRadius: 18}}
-                />
+              <View style={{width:150}}>
+                <ScrollView
+                  horizontal={true}
+                  showsVerticalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <TouchableOpacity
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                    onPress={() => this.props.handleHighlight('#1A8B9D', '#fff')}
+                    style={{margin:5,backgroundColor:'#1A8B9D', width: 36, height: 36, borderColor:'#1A8B9D', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
+                  />
+                  <TouchableOpacity
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                      onPress={() => this.props.handleHighlight('#FCFA70', '#333')}
+                      style={{margin:5,backgroundColor:'#FCFA70', width: 36, height: 36, borderColor:'#FCFA70', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
+                  />
+                  <TouchableOpacity
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                    onPress={() => this.props.handleHighlight('#388E3C', '#fff')}
+                    style={{margin:5,backgroundColor:'#388E3C', width: 36, height: 36, borderColor:'#388E3C', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
+                  />
+                  <TouchableOpacity
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                      onPress={() => this.props.handleHighlight('#F67280', '#fff')}
+                      style={{margin:5,backgroundColor:'#F67280', width: 36, height: 36, borderColor:'#F67280', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
+                  />
+                  <TouchableOpacity
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                      onPress={() => this.props.handleHighlight('#DBB4A2', '#333')}
+                      style={{margin:5,backgroundColor:'#DBB4A2', width: 36, height: 36, borderColor:'#DBB4A2', borderWidth:4, borderStyle:'solid', borderRadius: 18}}
+                  />
+                  <TouchableOpacity
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                    onPress={() => this.props.handleHighlight('transparent', 'transparent')}
+                    style={{margin:5,backgroundColor:'#fff', width: 36, height: 36, borderColor:'black', borderWidth:0.5, borderStyle:'solid', borderRadius: 18}}
+                  />
+                </ScrollView>
               </View>
           </TooltipRow>
           <CloseRow>

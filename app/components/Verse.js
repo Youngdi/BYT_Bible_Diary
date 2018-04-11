@@ -81,15 +81,15 @@ export default class Verse extends Component {
     return (
       <PharseText
         onPress={this.handleVerseClick}
-        color={this.state.selected ? '#CF1B1B' : this.props.fontColor}
-        backgroundColor={this.props.highlightColor}
+        color={this.state.selected ? '#CF1B1B' : this.props.highlightColor == 'transparent' ? this.props.fontColor : this.props.highlightColor.bgColor == 'transparent' ? this.props.fontColor : this.props.highlightColor.fontColor}
+        backgroundColor={this.props.highlightColor == 'transparent' ? this.props.highlightColor : R.isEmpty(this.props.highlightColor.bgColor) ? this.props.highlightColor : this.props.highlightColor.bgColor}
         textDecorationLine={this.state.selected ? 'underline' : 'none'}
         lineHeight={this.props.lineHeight}
       >
         <PharseNumber
           fontSize={this.props.fontSize - 6}
-          color={this.state.selected ? '#CF1B1B' : this.props.fontColor}
-          backgroundColor={this.props.highlightColor}
+          color={this.state.selected ? '#CF1B1B' : this.props.highlightColor == 'transparent' ? this.props.fontColor : this.props.highlightColor.bgColor == 'transparent' ? this.props.fontColor : this.props.highlightColor.fontColor}
+          backgroundColor={this.props.highlightColor == 'transparent' ? this.props.highlightColor : R.isEmpty(this.props.highlightColor.bgColor) ? this.props.highlightColor : this.props.highlightColor.bgColor}
           textDecorationLine={this.state.selected ? 'underline' : 'none'}
           lineHeight={this.props.lineHeight}
         >

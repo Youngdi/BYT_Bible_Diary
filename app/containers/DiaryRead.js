@@ -544,13 +544,13 @@ export default class DiaryRead extends Component {
     const isMatch = await checkBookmark(this.state.selectVerse);
     this.setState({bookmarkIsMatch : isMatch});
   }
-  handleHighlight = async (color) => {
+  handleHighlight = async (bgColor, fontColor) => {
     const highlightList = await setHighlight({
-      color,
-      fontColor: this.state.setting.fontColor,
+      bgColor,
+      fontColor,
       selectVerse: this.state.selectVerse,
     });
-    this.setState({ isTooltipModalVisible: false,  highlightList});
+    this.setState({ isTooltipModalVisible: false, highlightList});
     this.resetHighlight();
   }
   handleBookmark = async () => {

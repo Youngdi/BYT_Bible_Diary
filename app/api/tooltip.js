@@ -36,13 +36,16 @@ export async function addBookmark(action, selectVerse) {
   }
 }
 export async function setHighlight(data) {
-  const {color, selectVerse, fontColor} = data;
+  const {bgColor, selectVerse, fontColor} = data;
   try {
     const selectVerses = R.keys(selectVerse);
     const setColorList = selectVerses.reduce((acc, val) => {
       return {
         ...acc,
-        [val]: color,
+        [val]: {
+          bgColor: bgColor,
+          fontColor: fontColor,
+        }
       };
     }, {});
     const highlightList = await global.storage.load({key:'@highlightList'});
