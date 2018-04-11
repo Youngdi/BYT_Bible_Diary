@@ -40,5 +40,10 @@
   "bible_search_title": "検索",
   "bible_verse_number": "ブックマークにお経はbookmark_number個あります。",
   "note_title_placeholder": "この精神的な日誌のタイトルを書いてください！",
-  "note_content_placeholder": "何かを書く......"
+  "note_content_placeholder": "何かを書く......",
+  "noteList_isempty": "メモがありません",
+  "noteList_delete": "noteNameを削除しますか？",
+  "noteList_delete_yes": "Yes",
+  "noteList_delete_no": "No",
+  "noteList_no_name": "New Note"
 }
