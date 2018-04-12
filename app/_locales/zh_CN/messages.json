@@ -42,7 +42,7 @@
   "note_title_placeholder": "为这天灵修日记订个标题！",
   "note_content_placeholder": "写点什么...",
   "noteList_isempty": "目前没有笔记",
-  "noteList_delete": "确定要删除笔记noteName",
+  "noteList_delete": "确定要删除笔记: noteName ?",
   "noteList_delete_yes": "是",
   "noteList_delete_no": "否",
   "noteList_no_name": "無名メモ"

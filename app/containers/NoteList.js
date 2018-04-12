@@ -63,6 +63,7 @@ class FlatListItem extends Component {
   }
   render() {
     const {noteId, createdTime, updatedTime, title, content} = this.props.item;
+    const noteTitle = (title == null) ? `${I18n.t('noteList_no_name')}`: title;
     return (
         <TouchableOpacity
           style={{
@@ -103,13 +104,13 @@ class FlatListItem extends Component {
           >
             <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:10}}>
               <Text style={{ fontSize: 18, fontWeight:'800' }}>
-                {`${title == null ? `${I18n.t('noteList_no_name')}`: title}`}
+                {noteTitle}
               </Text>
                 <TouchableOpacity
                   hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
                   onPress={() => {
                     Alert.alert(
-                      R.replace('noteName', title, I18n.t('noteList_delete')),
+                      R.replace('noteName', noteTitle, I18n.t('noteList_delete')),
                       '',
                       [
                         {text: `${I18n.t('noteList_delete_no')}`, onPress: () => console.log('Cancel Pressed')},
