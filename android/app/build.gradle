@@ -103,8 +103,8 @@ android {
         applicationId "com.bytbible.diary"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 4
-        versionName "4"
+        versionCode 5
+        versionName "5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
