@@ -183,7 +183,7 @@ export default class BibleSearch extends Component {
       showLoading: false,
     }
   }
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.generateOptions();
   }
   searchVerse = async (e) => {
