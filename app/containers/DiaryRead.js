@@ -219,7 +219,7 @@ export default class DiaryRead extends Component {
               markedDates: {
                 [this.state.date.dateString]: {
                   selected : true,
-                  marked: R.path([`${this.state.date.dateString}`, 'marked'], readingRecord) ? true : false,
+                  marked: false,
                 },
               },
             });
