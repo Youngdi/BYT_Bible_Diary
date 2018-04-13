@@ -23,6 +23,8 @@ import { bookName } from '../constants/bibleBookList';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { dbCustomizeSearch } from '../api/api';
 import { sperateVerse } from '../api/utilities';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
 
 const {
   height: deviceHeight,
@@ -80,7 +82,6 @@ class FlatListItem extends React.Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
-    const setting = this.props.setting;
     let lang = version;
     if(version == 'japan') lang = 'ja';
     if(version == 'kjv') lang = 'en';
@@ -113,8 +114,6 @@ class FlatListItem extends React.Component {
               title: `${book_name}${' '}${chapter_nr}`,
               lang: lang,
               version: version,
-              setting: setting,
-              bg: setting.readingMode ? '#333' : '#fff',
             });
           }}
         >
@@ -148,20 +147,21 @@ class FlatListItem extends React.Component {
   }
 }
 
+@observer
 export default class BibleSearch extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
       gesturesEnabled: true,
       headerStyle: {
-        backgroundColor: state.params.bg,
+        backgroundColor: storeSetting.bgColor,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{I18n.t('bible_search_title')}</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={storeSetting.fontColor}>{I18n.t('bible_search_title')}</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={storeSetting.fontColor} />
                   </TouchableOpacity>
     };
   };
@@ -382,7 +382,6 @@ export default class BibleSearch extends Component {
         deleteBookmark={this.deleteBookmark}
         item={item}
         index={index}
-        setting={this.props.navigation.state.params.setting}
         navigation={this.props.navigation}
       />
     );

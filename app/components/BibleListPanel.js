@@ -81,7 +81,6 @@ export default class BibleListPanel extends PureComponent {
     });
   }
   goBible = async (verse_nr) => {
-    const setting = await global.storage.load({key: '@setting',});
     const results = await dbFindVerse(this.state.book_nr, this.state.chapter_nr, this.props.defaultLang);
     this.setState({
       mode: 'book',
@@ -94,8 +93,6 @@ export default class BibleListPanel extends PureComponent {
       title: `${results[0].book_name}${' '}${results[0].chapter_nr}`,
       lang: this.props.defaultLang,
       version: results[0].version,
-      setting: setting,
-      bg: setting.readingMode ? '#333' : '#fff',
     });
   }
   renderBooks = () => {

@@ -41,6 +41,8 @@ import BibleListPanel from '../components/BibleListPanel';
 import InitIntro from './InitIntro';
 import { dbFindDiary } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
+import { storeSetting } from '../store/index';
+import { observer, Observer } from "mobx-react";
 const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
 
 const storage = new Storage({
@@ -57,15 +59,15 @@ const {
 global.storage = storage;
 const StyledMain = styled.ScrollView`
   display:flex;
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
   margin-top: ${isIphoneX() ? 33 : 22}px;
 `;
 const StyledMainContent = styled.TouchableWithoutFeedback`
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
 `;
 const StyledContainer = styled.View`
   flex: 1;
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
 `;
 const AnimatedStyledContainer = Animatable.createAnimatableComponent(StyledContainer);
 I18n.fallbacks = true
@@ -79,6 +81,7 @@ I18n.translations = {
   'en-US': require('../_locales/en/messages'),
   'ja': require('../_locales/ja/messages'),
 };
+@observer
 export default class DiaryRead extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
@@ -146,8 +149,8 @@ export default class DiaryRead extends Component {
         const setting = await global.storage.load({key:'@setting'});
         const lang = await global.storage.load({key:'@lang'});
         const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
-        const FontColor = setting.readingMode ? '#ccc' : '#000';
-        const BgColor = setting.readingMode ? '#333' : '#fff';
+        const fontColor = setting.readingMode ? '#ccc' : '#000';
+        const bgColor = setting.readingMode ? '#333' : '#fff';
         if(lang == 'cht') I18n.locale = 'zh-hant';
         if(lang == 'chs') I18n.locale = 'zh-hans';
         if(lang == 'en') I18n.locale = 'en';
@@ -158,15 +161,21 @@ export default class DiaryRead extends Component {
         });
         await this.generateContent();
         await this.generateBooks(lang);
+        storeSetting.syncLocalstorage({
+          ...setting,
+          brightnessValue: brightness,
+          bgColor,
+          fontColor,
+        });
         this.setState({
           contentView: this.contentView,
-          bg: BgColor,
-          setting:{
-            ...this.state.setting,
-            ...setting,
-            brightnessValue: brightness,
-            fontColor: FontColor,
-          },
+          // bg: BgColor,
+          // setting:{
+          //   ...this.state.setting,
+          //   ...setting,
+          //   brightnessValue: brightness,
+          //   fontColor: FontColor,
+          // },
           markedDates: {
             ...readingRecord,
             [this.state.date.dateString]: {
@@ -217,8 +226,20 @@ export default class DiaryRead extends Component {
               expires: null,
             });
             const readingRecord = await global.storage.load({key:'@readingSchdule'});
+            const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
             await this.generateContent();
             await this.generateBooks('cht');
+            storeSetting.syncLocalstorage({
+              language: 'cht',
+              fontFamily: 'Avenir',
+              fontSize: 18,
+              fontColor: '#000',
+              bgColor: '#fff',
+              lineHeight: 33,
+              brightnessValue: brightness,
+              readingMode: false, // 0 -> day, 1 -> night
+              tourist: true,
+            });
             await this.setState({
               contentView: this.contentView,
               markedDates: {
@@ -410,73 +431,6 @@ export default class DiaryRead extends Component {
     setTimeout(() => {
       this.generateContent();
     }, 0);
-  }
-  handleSettingLineHeight = async (value) => {
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        lineHeight: value,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  handleSettingFontFamily = async (font) => {
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        fontFamily: font,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  handleSettingFontSize = async (value) => {
-    if(this.state.setting.fontSize >= 28 && value == 2) return null;
-    if(this.state.setting.fontSize <= 12 && value == -2) return null;
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        fontSize: this.state.setting.fontSize + value,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  handleSettingReadingMode = async () => {
-    const FontColor = !this.state.setting.readingMode ? '#ccc' : '#000';
-    const BgColor = !this.state.setting.readingMode ? '#333' : '#fff';
-    await this.setState({
-      bg: BgColor,
-      setting:{
-        ...this.state.setting,
-        readingMode: !this.state.setting.readingMode,
-        fontColor: FontColor,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  handleSliderValueChange = (value) => {
-    DeviceBrightness.setBrightnessLevel(value);
-    this.setState({
-      setting:{
-        ...this.state.setting,
-        brightnessValue: value,
-      }
-    });
   }
   handleChangeDay = async (day) => {
     this.closeActionButton();
@@ -700,15 +654,15 @@ export default class DiaryRead extends Component {
   navigateTo = (toWhere, data = {}) => {
     this.reset();
     if(toWhere == 'BibleSearch') {
-      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
+      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang});
       return;
     }
     if(toWhere == 'Bookmark') {
-      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang, setting:this.state.setting, bg: this.state.bg});
+      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang});
       return;
     }
     if(toWhere == 'NoteList') {
-      this.props.navigation.navigate(toWhere, {currentDate: this.state.currentDate, setting:this.state.setting, bg: this.state.bg});
+      this.props.navigation.navigate(toWhere, {currentDate: this.state.currentDate});
       return;
     }
     if(toWhere == 'Bible') {
@@ -720,24 +674,8 @@ export default class DiaryRead extends Component {
     }
     this.props.navigation.navigate(toWhere);
   }
-  closeTourist = async () => {
-    await global.storage.save({
-      key: '@setting',
-      data: {
-        ...this.state.setting,
-        tourist: false,
-      },
-      expires: null,
-    });
-    await this.setState({
-      setting: {
-        ...this.state.setting,
-        tourist: false
-      }
-    });
-  }
   render() {
-    const { bg, fullScreenMode } = this.state;
+    const { fullScreenMode } = this.state;
     const drawerStyles = {
       drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
       main: {paddingLeft: 3},
@@ -745,7 +683,7 @@ export default class DiaryRead extends Component {
     }
     if(this.state.setting.tourist) {
       return (
-        <InitIntro closeTourist={this.closeTourist}/>
+        <InitIntro/>
       );
     }
     if(R.isEmpty(this.state.content)) {
@@ -785,28 +723,23 @@ export default class DiaryRead extends Component {
         ref={(ref) => this._drawer = ref}
       >
         <AnimatedStyledContainer
-          bg={bg}
+          bgColor={storeSetting.bgColor}
           animation="fadeIn"
           duration={1500}
           delay={500}
         >
           <StyledMain
             ref={r => this.contentView = r}
-            bg={bg} 
+            bgColor={storeSetting.bgColor} 
             onScroll={this.handleScroll}
             onContentSizeChange={(w, h) => { this.contentHeight = h }}
             onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
             scrollEventThrottle={16}
           >
-            <StyledMainContent bg={bg} onPress={this.handleDoublePress}>
+            <StyledMainContent bgColor={storeSetting.bgColor} onPress={this.handleDoublePress}>
               <View style={{marginTop:60, marginBottom:isIphoneX() ? 20 : 10}}>
                 <DiaryContent
                   selectVerse={this.state.selectVerse}
-                  fontColor={this.state.setting.fontColor}
-                  fontSize={this.state.setting.fontSize}
-                  lineHeight={this.state.setting.lineHeight}
-                  fontFamily={this.state.setting.fontFamily}
-                  readingMode={this.state.setting.readingMode}
                   content={this.state.content}
                   defaultLang={this.state.defaultLang}
                   date={this.state.date}

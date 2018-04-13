@@ -25,7 +25,9 @@ import { sperateVerse } from '../api/utilities';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment/min/moment-with-locales';
 import striptags from 'striptags';
-;
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
+
 const {
   height: deviceHeight,
   width: deviceWidth,
@@ -85,8 +87,6 @@ class FlatListItem extends Component {
           }}
           onPress={() => 
             this.props.navigation.navigate('Note', {
-              setting: this.props.setting,
-              bg: this.props.bg,
               noteId,
               done: true,
               refresh: this.props.refresh,
@@ -138,20 +138,21 @@ class FlatListItem extends Component {
   }
 }
 
+@observer
 export default class NoteList extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
       gesturesEnabled: true,
       headerStyle: {
-        backgroundColor: state.params.bg,
+        backgroundColor: storeSetting.bgColor,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>Notes</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={storeSetting.fontColor}>Notes</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={storeSetting.fontColor} />
                   </TouchableOpacity>
     };
   };
@@ -201,8 +202,6 @@ export default class NoteList extends Component {
             });
             setTimeout(() => {
               this.props.navigation.navigate('Note', {
-                setting: state.params.setting,
-                bg: state.params.bg,
                 noteId,
                 done: true,
                 refresh: this.refresh,
@@ -216,7 +215,6 @@ export default class NoteList extends Component {
     );
   }
   renderItem = ({item, index}) => {
-    const { setting, bg } = this.props.navigation.state.params;
     return (
       <FlatListItem
         key={item.noteId}
@@ -225,8 +223,6 @@ export default class NoteList extends Component {
         navigation={this.props.navigation}
         refresh={this.refresh}
         deleteNote={this.deleteNote}
-        setting={setting}
-        bg={bg}
       />
     );
   }

@@ -19,6 +19,9 @@ import { SearchBar } from 'react-native-elements';
 import {RichTextEditor, RichTextToolbar} from 'react-native-zss-rich-text-editor';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import moment from 'moment/min/moment-with-locales';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
+
 
 const StyledHeaderTitle = styled.Text`
   color: ${props => props.color};
@@ -36,15 +39,16 @@ const StyledContainer = styled.View`
   flex-direction: column;
   padding-top: 20px;
 `;
+@observer
 export default class Note extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
       gesturesEnabled: false,
       headerStyle: {
-        backgroundColor: state.params.bg,
+        backgroundColor: storeSetting.bgColor
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{`${moment().format('YYYY-MM-DD')} QT`}</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={storeSetting.fontColor}>{`${moment().format('YYYY-MM-DD')} QT`}</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => {
@@ -52,7 +56,7 @@ export default class Note extends Component {
                       navigation.goBack();
                     }}
                     >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={storeSetting.fontColor} />
                     </TouchableOpacity>
       ,headerRight: <TouchableOpacity
                       hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
@@ -64,7 +68,7 @@ export default class Note extends Component {
                       }}
                       style={{marginRight:15}}
                     >
-                      {state.params.done ? null : <StyledDoneText color={state.params.setting.fontColor}>完成</StyledDoneText>}
+                      {state.params.done ? null : <StyledDoneText color={storeSetting.fontColor}>完成</StyledDoneText>}
                     </TouchableOpacity>
     };
   };
@@ -163,7 +167,7 @@ export default class Note extends Component {
   }
   render() {
     let customCSS = 'body {background-color:#fff, color: #000}';
-    if(this.props.navigation.state.params.setting.readingMode) {
+    if(storeSetting.readingMode) {
       customCSS = `body {background-color:#333, color: #ccc}`;
     } else {
       customCSS = `body {background-color:#fff, color: #000}`;

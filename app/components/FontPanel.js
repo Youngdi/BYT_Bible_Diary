@@ -13,6 +13,8 @@ import Slider from "react-native-slider";
 import styled from "styled-components/native";
 import I18n from 'react-native-i18n';
 import LottieView from 'lottie-react-native';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
 
 const {
   height: deviceHeight,
@@ -100,7 +102,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class CalendarModal extends Component {
+@observer 
+class CalendarModal extends Component {
   componentDidMount() {
     //this.animation.play(0,500);
   }
@@ -120,14 +123,14 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>{I18n.t('font_type')}</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Avenir')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Avenir' ? '#F7B633': '#fff'}}>{I18n.t('font_type1')}</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => storeSetting.handleSettingFontFamily('Avenir')}>
+              <StyledFontSettingModalText style={{color: storeSetting.fontFamily == 'Avenir' ? '#F7B633': '#fff'}}>{I18n.t('font_type1')}</StyledFontSettingModalText>
             </TouchableOpacity>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('PingFangSC-Semibold')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff'}}>{I18n.t('font_type2')}</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => storeSetting.handleSettingFontFamily('PingFangSC-Semibold')}>
+              <StyledFontSettingModalText style={{color: storeSetting.fontFamily == 'PingFangSC-Semibold' ? '#F7B633': '#fff'}}>{I18n.t('font_type2')}</StyledFontSettingModalText>
             </TouchableOpacity>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontFamily('Times New Roman')}>
-              <StyledFontSettingModalText style={{color: this.props.setting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff'}}>{I18n.t('font_type3')}</StyledFontSettingModalText>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => storeSetting.handleSettingFontFamily('Times New Roman')}>
+              <StyledFontSettingModalText style={{color: storeSetting.fontFamily == 'Times New Roman' ? '#F7B633': '#fff'}}>{I18n.t('font_type3')}</StyledFontSettingModalText>
             </TouchableOpacity>
           </StyledSettingRow>
         </StyledFontSettingModalRow1>
@@ -136,7 +139,7 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>{I18n.t('font_size')}</StyledFontSettingModalText>
         </View>
           <StyledSettingRow>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontSize(-2)} style={{marginRight: 5}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => storeSetting.handleSettingFontSize(-2)} style={{marginRight: 5}}>
               <EvilIcons
                 name='minus'
                 size={30}
@@ -144,9 +147,9 @@ export default class CalendarModal extends Component {
               />
             </TouchableOpacity>
             <View style={{marginRight:3}}>
-              <StyledFontSettingModalText>{this.props.setting.fontSize}{'px'}</StyledFontSettingModalText>
+              <StyledFontSettingModalText>{storeSetting.fontSize}{'px'}</StyledFontSettingModalText>
             </View>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => this.props.handleSettingFontSize(2)} style={{marginRight:2, marginLeft:5}} >
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}} onPress={() => storeSetting.handleSettingFontSize(2)} style={{marginRight:2, marginLeft:5}} >
               <EvilIcons
                 name='plus'
                 size={30}
@@ -160,35 +163,35 @@ export default class CalendarModal extends Component {
             <StyledFontSettingModalText>{I18n.t('font_line')}</StyledFontSettingModalText>
           </View>
           <StyledSettingRow>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(28)} style={{marginRight:3}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => storeSetting.handleSettingLineHeight(28)} style={{marginRight:3}}>
               <Ionicons
                 name='ios-menu'
                 size={25}
-                color={this.props.setting.lineHeight == 28 ? '#F7B633': '#bbb'}
+                color={storeSetting.lineHeight == 28 ? '#F7B633': '#bbb'}
               />
             </TouchableOpacity>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(33)} style={{marginRight:1}}>
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => storeSetting.handleSettingLineHeight(33)} style={{marginRight:1}}>
               <Ionicons
                 name='md-menu'
                 size={30}
-                color={this.props.setting.lineHeight == 33 ? '#F7B633': '#bbb'}
+                color={storeSetting.lineHeight == 33 ? '#F7B633': '#bbb'}
               />
             </TouchableOpacity>
-            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => this.props.handleSettingLineHeight(38)} >
+            <TouchableOpacity hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}  onPress={() => storeSetting.handleSettingLineHeight(38)} >
               <SimpleLineIcons
                 name='menu'
                 size={30}
-                color={this.props.setting.lineHeight == 38 ? '#F7B633': '#bbb'}
+                color={storeSetting.lineHeight == 38 ? '#F7B633': '#bbb'}
               />
             </TouchableOpacity>
           </StyledSettingRow>
         </StyledFontSettingModalRow2>
         <StyledFontSettingModalRow3>
-          <TouchableOpacity onPress={() => this.props.handleSettingReadingMode()} style={{backgroundColor:'white', width:35, height:35, borderColor: this.props.setting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
+          <TouchableOpacity onPress={storeSetting.handleSettingReadingMode} style={{backgroundColor:'white', width:35, height:35, borderColor: storeSetting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
             <Ionicons
               name='ios-moon'
               size={30}
-              color={this.props.setting.readingMode == 1 ? '#F7B633': '#000'}
+              color={storeSetting.readingMode == 1 ? '#F7B633': '#000'}
               style={{marginLeft:6, marginTop:1, backgroundColor:'transparent'}}
             />
           </TouchableOpacity>
@@ -207,8 +210,8 @@ export default class CalendarModal extends Component {
               minimumTrackTintColor='#F7B633'
               maximumTrackTintColor='#d3d3d3'
               thumbTintColor='#1a9274'
-              value={this.props.setting.brightnessValue}
-              onValueChange={(value) => this.props.handleSliderValueChange(value)}
+              value={storeSetting.brightnessValue}
+              onValueChange={(value) => storeSetting.handleSliderValueChange(value)}
             />
           </StyledSliderContainer>
           <View style={{marginRight:7}}>
@@ -231,3 +234,4 @@ export default class CalendarModal extends Component {
     );
   }
 }
+export default CalendarModal;

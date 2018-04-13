@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import { AppRegistry, Alert, Dimensions, StyleSheet, View, Text, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import AppIntro from 'react-native-app-intro';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
+
 const {
   height: deviceHeight,
   width: deviceWidth
 } = Dimensions.get('window');
 
+@observer
 export default class InitIntro extends Component {
   render() {
     const pageArray = new Array(1).fill(1).map((val, i) => {
@@ -28,7 +32,7 @@ export default class InitIntro extends Component {
                   borderRadius:10,
                   opacity:0.98,
                 }}
-                onPress={this.props.closeTourist}
+                onPress={storeSetting.handleCloseTourist}
                 >
                 <Text style={{color: '#eee', opacity:1, fontSize:18, fontWeight:'800'}}>開始使用</Text>
               </TouchableOpacity>

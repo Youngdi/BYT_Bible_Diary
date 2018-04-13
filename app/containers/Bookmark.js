@@ -21,6 +21,8 @@ import { SearchBar } from 'react-native-elements';
 import ArrowUp from '../components/ArrowUp';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { sperateVerse } from '../api/utilities';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
 
 const {
   height: deviceHeight,
@@ -51,7 +53,6 @@ class FlatListItem extends Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
-    const setting = this.props.setting;
     let lang = version;
     if(version == 'japan') lang = 'ja';
     if(version == 'kjv') lang = 'en';
@@ -83,8 +84,6 @@ class FlatListItem extends Component {
               title: `${book_name}${' '}${chapter_nr}`,
               lang: lang,
               version: version,
-              setting: setting,
-              bg: setting.readingMode ? '#333' : '#fff',
             });
           }}
         >
@@ -149,26 +148,27 @@ class FlatListItem extends Component {
   }
 }
 
+@observer
 export default class Bookmark extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const {state, setParams} = navigation;
     return {
       gesturesEnabled: true,
       headerStyle: {
-        backgroundColor: state.params.bg,
+        backgroundColor: storeSetting.bgColor,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>Bookmarks</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={storeSetting.fontColor}>Bookmarks</StyledHeaderTitle>,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => navigation.goBack()}
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={storeSetting.fontColor} />
                   </TouchableOpacity>
       ,headerRight: <TouchableOpacity
                       hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                       onPress={() => state.params.handleRefresh()}
                     >
-                      <Ionicons style={{marginRight:15}} name='ios-refresh' size={30} color={state.params.setting.fontColor} />
+                      <Ionicons style={{marginRight:15}} name='ios-refresh' size={30} color={storeSetting.fontColor} />
                     </TouchableOpacity>
     };
   };
@@ -307,7 +307,6 @@ export default class Bookmark extends Component {
         deleteBookmark={this.deleteBookmark}
         item={item}
         index={index}
-        setting={this.props.navigation.state.params.setting}
         navigation={this.props.navigation}
       />
     );

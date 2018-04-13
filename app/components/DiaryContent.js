@@ -21,6 +21,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { bookName } from '../constants/bible';
 import Verse from './Verse';
 import {checkVerseSelected, checkVerseHighlighted} from '../api/tooltip';
+import { storeSetting } from '../store/index';
+import { observer, Observer } from "mobx-react";
 import I18n from 'react-native-i18n';
 const {
   height: deviceHeight,
@@ -62,7 +64,8 @@ const PharseNumber = styled.Text`
   margin-top: -10px;
   margin-right: 5px;
 `;
-export default class DiaryContent extends PureComponent {
+@observer
+export default class DiaryContent extends Component {
   renderDiaryTitle = () => {
     const renderDay = () =>
       <TouchableOpacity
@@ -70,8 +73,8 @@ export default class DiaryContent extends PureComponent {
         style={{borderLeftWidth:8, paddingLeft:10, borderColor: this.props.marked ? '#F7B633' : '#CF0A2C'}}
       >
         <Title
-          fontColor={this.props.fontColor}
-          fontFamily={this.props.fontFamily}
+          fontColor={storeSetting.fontColor}
+          fontFamily={storeSetting.fontFamily}
         >
         {`${this.props.date.month}${I18n.t('month')}${this.props.date.day}${I18n.t('day')}`}
         </Title>
@@ -107,37 +110,41 @@ export default class DiaryContent extends PureComponent {
   }
   renderItem = (item, i) => {
     return (
-      <View>
-        <BookTitle
-          fontSize={this.props.fontSize + 2}
-          fontColor={this.props.fontColor}
-          lineHeight={this.props.lineHeight}
-          fontFamily={this.props.fontFamily}
-        >
-        {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}${item.length == 1 ? '' : '-' + item[item.length -1].verse_nr}`}
-        </BookTitle>
-        <PharseCantainer
-          fontSize={this.props.fontSize}
-          fontColor={this.props.fontColor}
-          lineHeight={this.props.lineHeight}
-          fontFamily={this.props.fontFamily}
-        >
-        {item.map((verseItem, i) => {
-          return(
-            <Verse
-              fontSize={this.props.fontSize}
-              fontColor={this.props.fontColor}
-              lineHeight={this.props.lineHeight}
-              verseItem={verseItem}
-              defaultLang={this.props.defaultLang}
-              handleVerseClick={this.props.handleVerseClick}
-              selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
-              highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}
-            />
-          );
-        })}
-        </PharseCantainer>
-      </View>
+      <Observer>
+      {() => 
+        <View>
+          <BookTitle
+            fontSize={storeSetting.fontSize + 2}
+            fontColor={storeSetting.fontColor}
+            lineHeight={storeSetting.lineHeight}
+            fontFamily={storeSetting.fontFamily}
+          >
+          {i ? '': '\n'}{'\n'}{`${item[0].book_name}${item[0].chapter_nr}:${item[0].verse_nr}${item.length == 1 ? '' : '-' + item[item.length -1].verse_nr}`}
+          </BookTitle>
+          <PharseCantainer
+            fontSize={storeSetting.fontSize}
+            fontColor={storeSetting.fontColor}
+            lineHeight={storeSetting.lineHeight}
+            fontFamily={storeSetting.fontFamily}
+          >
+          {item.map((verseItem, i) => {
+            return(
+              <Verse
+                fontSize={storeSetting.fontSize}
+                fontColor={storeSetting.fontColor}
+                lineHeight={storeSetting.lineHeight}
+                verseItem={verseItem}
+                defaultLang={this.props.defaultLang}
+                handleVerseClick={this.props.handleVerseClick}
+                selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
+                highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}
+              />
+            );
+          })}
+          </PharseCantainer>
+        </View>
+      }
+      </Observer>
     );
   }
   renderDiaryVerse = () => this.props.content.map((item, i) =>
@@ -154,15 +161,15 @@ export default class DiaryContent extends PureComponent {
     return(
       this.props.marked ? 
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:100, marginTop:30}}>
-        <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('finishe_today')}</Text>
+        <Text style={{color:storeSetting.fontColor, fontFamily:storeSetting.fontFamily}}>{I18n.t('finishe_today')}</Text>
       </View> :
       <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', height:200, marginTop:30}}>
-        <Text style={{color:this.props.fontColor, fontFamily:this.props.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
+        <Text style={{color:storeSetting.fontColor, fontFamily:storeSetting.fontFamily}}>{I18n.t('pull_down_to_finish')}</Text>
         <MaterialCommunityIcons
           style={{marginTop:20}}
           name='arrow-expand-up'
           size={30}
-          color={`${this.props.fontColor}`}
+          color={`${storeSetting.fontColor}`}
         />
       </View>
     );
