@@ -187,7 +187,7 @@ export default class FontPanel extends Component {
           </StyledSettingRow>
         </StyledFontSettingModalRow2>
         <StyledFontSettingModalRow3>
-          <TouchableOpacity onPress={storeSetting.handleSettingReadingMode} style={{backgroundColor:'white', width:35, height:35, borderColor: storeSetting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
+          <TouchableOpacity onPress={this.props.handleReadMode ? this.props.handleReadMode : storeSetting.handleSettingReadingMode} style={{backgroundColor:'white', width:35, height:35, borderColor: storeSetting.readingMode == 1 ? '#F7B633': '#bbb', borderWidth:1, borderRadius:5}}>
             <Ionicons
               name='ios-moon'
               size={30}

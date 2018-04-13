@@ -8,6 +8,8 @@ import styled from "styled-components/native";
 import I18n from 'react-native-i18n';
 import Verse from './Verse';
 import {checkVerseSelected, checkVerseHighlighted} from '../api/tooltip';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
 
 const StyledMainContainer = styled.View`
   margin-top:20px;
@@ -28,6 +30,7 @@ const PharseNumber = styled.Text`
   margin-right: 5px;
 `;
 
+@observer
 export default class BibleContent extends PureComponent {
   renderBibleVerse = () => {
     if(R.isEmpty(this.props.content[0])) return;
@@ -36,20 +39,20 @@ export default class BibleContent extends PureComponent {
         return (
           <View onLayout={this.props.handlelayout}>
             <PharseCantainer
-              fontSize={this.props.fontSize}
-              fontColor={this.props.fontColor}
-              lineHeight={this.props.lineHeight}
-              fontFamily={this.props.fontFamily}
+              fontSize={storeSetting.fontSize}
+              fontColor={storeSetting.fontColor}
+              lineHeight={storeSetting.lineHeight}
+              fontFamily={storeSetting.fontFamily}
             >
             {item.map(verseItem => {
               return(
                 <Verse
                   targetVerse={verseItem.verse_nr == this.props.verse_nr}
-                  lineHeight={this.props.lineHeight}
-                  fontColor={this.props.fontColor}
-                  fontSize={this.props.fontSize}
+                  lineHeight={storeSetting.lineHeight}
+                  fontColor={storeSetting.fontColor}
+                  fontSize={storeSetting.fontSize}
                   verseItem={verseItem}
-                  defaultLang={this.props.defaultLang}
+                  language={storeSetting.language}
                   handleVerseClick={this.props.handleVerseClick}
                   selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
                   highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}

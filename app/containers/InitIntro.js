@@ -32,7 +32,7 @@ export default class InitIntro extends Component {
                   borderRadius:10,
                   opacity:0.98,
                 }}
-                onPress={storeSetting.handleCloseTourist}
+                onPress={this.props.handleCloseTourist}
                 >
                 <Text style={{color: '#eee', opacity:1, fontSize:18, fontWeight:'800'}}>開始使用</Text>
               </TouchableOpacity>

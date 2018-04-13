@@ -114,15 +114,6 @@ export default class DiaryRead extends Component {
       bookmarkIsMatch: false,
       scrollPosition: 0,
       hasRead: 0,
-      setting: {
-        fontFamily: 'Avenir',
-        fontSize: 18,
-        fontColor: '#000',
-        lineHeight: 33,
-        brightnessValue: 1,
-        readingMode: false, // 0 -> day, 1 -> night
-        tourist: false,
-      },
       markedDates: {
         [moment().format('YYYY-MM-DD')]: {selected: true},
       },
@@ -155,7 +146,6 @@ export default class DiaryRead extends Component {
         if(language == 'en') I18n.locale = 'en';
         if(language == 'ja') I18n.locale = 'ja';
         if(language == 'cht_en') I18n.locale = 'zh-hant';
-        await this.generateContent(language);
         await this.generateBooks(language);
         storeSetting.syncLocalstorage({
           ...setting,
@@ -213,8 +203,6 @@ export default class DiaryRead extends Component {
               data: {},
               expires: null,
             });
-            // const readingRecord = await global.storage.load({key:'@readingSchdule'});
-            await this.generateContent('cht');
             await this.generateBooks('cht');
             storeSetting.syncLocalstorage({
               language: 'cht',
@@ -228,9 +216,7 @@ export default class DiaryRead extends Component {
               tourist: true,
             });
             await this.setState({
-              contentView: this.contentView,
               markedDates: {
-                // ...readingRecord,
                 [this.state.date.dateString]: {
                   selected : true,
                   marked: R.path([`${this.state.date.dateString}`, 'marked'], readingRecord) ? true : false,
@@ -243,11 +229,20 @@ export default class DiaryRead extends Component {
         }
       }
   }
-  // componentDidMount() {
-  //   autorun(() => this.setState({
-  //     defaultLang: storeSetting.language,
-  //   }))
-  // }
+  componentDidMount() {
+    this.disposer = autorun(() => this.generateContent(storeSetting.language));
+  }
+  componentWillUnmount() {
+    this.disposer();
+  }
+  handleCloseTourist = () => {
+    storeSetting.handleCloseTourist();
+    setTimeout(() => {
+      this.setState({
+        contentView: this.contentView,
+      });
+    }, 100);
+  }
   closeControlPanel = () => this._drawer.close()
   openControlPanel = () => this._drawer.open()
   setFullScreenMode = () => this.setState({fullScreenMode: true})
@@ -668,7 +663,7 @@ export default class DiaryRead extends Component {
     }
     if(storeSetting.tourist) {
       return (
-        <InitIntro/>
+        <InitIntro handleCloseTourist={this.handleCloseTourist}/>
       );
     }
     if(R.isEmpty(this.state.content)) {

@@ -34,6 +34,9 @@ import BibleContent from '../components/BibleContent';
 import AndroidActionButton from '../components/AndroidActionButton';;
 import { dbFindChapter, dbFindVerse, dbGetBookContent } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
+import { storeSetting } from '../store/index';
+import { observer, Observer } from "mobx-react";
+import { autorun } from 'mobx';
 
 const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
 const {
@@ -45,7 +48,7 @@ import { quicksort } from '../api/utilities';
 
 const StyledContainer = styled.View`
   flex: 1;
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
 `;
 const StyledBibleContainer = styled.View`
   margin-left:30px;
@@ -87,30 +90,31 @@ const PharseNumber = styled.Text`
 `;
 const StyledMain = styled.ScrollView`
   display:flex;
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
 `;
 
 const StyledMainContent = styled.TouchableWithoutFeedback`
-  background-color: ${props => props.bg};
+  background-color: ${props => props.bgColor};
 `;
-export default class Bible extends PureComponent {
+@observer
+export default class Bible extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
     return {
       headerStyle: {
-        backgroundColor: state.params.bg,
+        backgroundColor: storeSetting.bgColor,
       },
-      title: <StyledHeaderTitle color={state.params.setting.fontColor}>{state.params.title}</StyledHeaderTitle>,
+      title: <StyledHeaderTitle color={storeSetting.fontColor}>{state.params.title}</StyledHeaderTitle>,
       gesturesEnabled: true,
       headerLeft: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
                     onPress={() => {
-                        state.params.closeControlPanel();
+                        state.params.closeControlPanel && state.params.closeControlPanel();
                         setTimeout(navigation.goBack, 200);
                       }
                     }
                    >
-                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginLeft:15}} name='ios-arrow-back-outline' size={30} color={storeSetting.fontColor} />
                   </TouchableOpacity>
       ,headerRight: <TouchableOpacity
                     hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}
@@ -119,13 +123,13 @@ export default class Bible extends PureComponent {
                         index: 1,
                         actions: [
                           NavigationActions.navigate({routeName: 'Diary'}),
-                          NavigationActions.navigate({routeName: 'BibleSearch', params:{lang: state.params.lang, setting:state.params.setting, bg:state.params.bg}})
+                          NavigationActions.navigate({routeName: 'BibleSearch'})
                         ],
                       });
                       navigation.dispatch(resetAction);
                     }}
                   >
-                    <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color={state.params.setting.fontColor} />
+                    <Ionicons style={{marginRight:15}} name='ios-search-outline' size={25} color={storeSetting.fontColor} />
                   </TouchableOpacity>
     };
   };
@@ -140,8 +144,6 @@ export default class Bible extends PureComponent {
       isTooltipModalVisible: false,
       isFontSettingModalVisible: false,
       bookmarkIsMatch: false,
-      lang: 'cht',
-      bg: '#fff',
       highlightList: [],
       selectVerse: {},
       lastPress: 0,
@@ -150,14 +152,6 @@ export default class Bible extends PureComponent {
       book_nr: 0,
       chapter_nr: 0,
       verse_nr: 0,
-      setting: {
-        fontFamily: 'Avenir',
-        fontSize: 18,
-        fontColor: '#000',
-        lineHeight: 28,
-        brightnessValue: 1,
-        readingMode: false, // 0 -> day, 1 -> night
-      },
       pharseContainerHeight: 0,
     }
     this.offset = 0;
@@ -165,19 +159,7 @@ export default class Bible extends PureComponent {
   }
   initData = async () => {
     const highlightList = await global.storage.load({key:'@highlightList'});
-    const setting = await global.storage.load({key:'@setting'});
-    const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
-    const FontColor = setting.readingMode ? '#ccc' : '#000';
-    const BgColor = setting.readingMode ? '#333' : '#fff';
     await this.setState({
-      lang: this.props.navigation.state.params.lang,
-      bg: BgColor,
-      setting:{
-        ...this.state.setting,
-        ...setting,
-        brightnessValue: brightness,
-        fontColor: FontColor,
-      },
       highlightList: highlightList,
       verse_nr: this.props.navigation.state.params.verse_nr,
       chapter_nr: this.props.navigation.state.params.chapter_nr,
@@ -185,11 +167,7 @@ export default class Bible extends PureComponent {
       chapterLength: this.props.navigation.state.params.chapterLength,
       version: this.props.navigation.state.params.version,
     });
-    await this.generateContent();
-    this.props.navigation.setParams({
-      setting: this.state.setting,
-      bg: BgColor,
-    });
+    await this.generateContent(storeSetting.language);
     setTimeout(() => {
       const wordNumbers = R.pipe(
         R.map(R.prop('verse')),
@@ -370,9 +348,9 @@ export default class Bible extends PureComponent {
       selectVerse: {},
     });
   }
-  generateContent = async (chapter_index, book_nr_index = 0) => {
+  generateContent = async (language) => {
     const highlightList = await global.storage.load({key:'@highlightList'});
-    const {results_findLength, content} = await dbGetBookContent(this.state.book_nr, this.state.chapter_nr, this.state.lang);
+    const {results_findLength, content} = await dbGetBookContent(this.state.book_nr, this.state.chapter_nr, language);
     const length = R.pipe(
       R.map(R.prop('chapter_nr')),
       R.uniq(),
@@ -409,7 +387,7 @@ export default class Bible extends PureComponent {
         chapter_nr: this.state.chapter_nr + 1,
       });
     }
-    await this.generateContent();
+    await this.generateContent(storeSetting.language);
     setTimeout(() => this.contentView.root.scrollTo({y: 0, animated: true}), 0);
   }
   handlePrevious = async () => {
@@ -442,133 +420,51 @@ export default class Bible extends PureComponent {
         chapter_nr: this.state.chapter_nr - 1,
       });
     }
-    await this.generateContent();
+    await this.generateContent(storeSetting.language);
     setTimeout(() => this.contentView.root.scrollTo({y: 0, animated: true}), 0);
   }
-  handeleChangeLang = async (lang) => {
+  handleReadMode = () => {
+    storeSetting.handleSettingReadingMode();
+    this.props.navigation.setParams({});
+  }
+  handleChangeLang = (language) => {
     if(this.state.loadContent) return null;
-    if(lang == 'cht') I18n.locale = 'zh-hant';
-    if(lang == 'chs') I18n.locale = 'zh-hans';
-    if(lang == 'en') I18n.locale = 'en';
-    if(lang == 'ja') I18n.locale = 'ja';
-    if(lang == 'cht_en') I18n.locale = 'zh-hant';
-    await this.setState({
-      lang: lang,
-    });
-    this.props.navigation.setParams({
-      lang: lang,
-    });
-    if(lang == 'cht_en') {
+    if(language == 'cht') I18n.locale = 'zh-hant';
+    if(language == 'chs') I18n.locale = 'zh-hans';
+    if(language == 'en') I18n.locale = 'en';
+    if(language == 'ja') I18n.locale = 'ja';
+    if(language == 'cht_en') I18n.locale = 'zh-hant';
+    if(language == 'cht_en') {
       this.setState({content: [[]]});
     } else {
       this.resetHighlight();
     }
+    storeSetting.handleChangeLanguage(language);
     setTimeout(() => {
-      this.generateContent();
-    }, 0);
+      this.generateContent(storeSetting.language);
+    }, 100);
   }
   toggleModalFontSetting = () => {
     this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
   }
-  handleSettingFontFamily = async (font) => {
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        fontFamily: font,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  handleSettingFontSize = async (value) => {
-    if(this.state.setting.fontSize >= 28 && value == 2) return null;
-    if(this.state.setting.fontSize <= 12 && value == -2) return null;
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        fontSize: this.state.setting.fontSize + value,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  _handleSettingLineHeight = async (value) => {
-    await this.setState({
-      setting:{
-        ...this.state.setting,
-        lineHeight: value,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-  }
-  _handleSettingReadingMode = async () => {
-    const FontColor = !this.state.setting.readingMode ? '#ccc' : '#000';
-    const BgColor = !this.state.setting.readingMode ? '#333' : '#fff';
-    await this.setState({
-      bg: BgColor,
-      setting:{
-        ...this.state.setting,
-        readingMode: !this.state.setting.readingMode,
-        fontColor: FontColor,
-      },
-    });
-    await global.storage.save({
-      key: '@setting',
-      data: this.state.setting,
-      expires: null,
-    });
-    await this.props.navigation.setParams({
-      setting:{
-        ...this.state.setting,
-        readingMode: !this.state.setting.readingMode,
-        fontColor: FontColor,
-      },
-      bg: BgColor,
-    });
-  }
-  _handleSliderValueChange = (value) => {
-    DeviceBrightness.setBrightnessLevel(value);
-    this.setState({
-      setting:{
-        ...this.state.setting,
-        brightnessValue: value,
-      }
-    });
-  }
   render() {
     return (
-      <StyledContainer bg={this.state.bg}>
+      <StyledContainer bgColor={storeSetting.bgColor}>
         <StyledMain
           ref={r => this.contentView = r}
-          bg={this.state.bg} 
+          bgColor={storeSetting.bgColor} 
           onScroll={this.handleScroll}
           onContentSizeChange={(w, h) => { this.contentHeight = h }}
           onLayout={(ev) => { this.scrollViewHeight = ev.nativeEvent.layout.height }}
           scrollEventThrottle={16}
         >
           <StyledMainContent
-            bg={this.state.bg}
+            bgColor={storeSetting.bgColor}
           >
           <BibleContent
             verse_nr={this.state.verse_nr}
             selectVerse={this.state.selectVerse}
-            fontColor={this.state.setting.fontColor}
-            fontSize={this.state.setting.fontSize}
-            lineHeight={this.state.setting.lineHeight}
-            fontFamily={this.state.setting.fontFamily}
-            readingMode={this.state.setting.readingMode}
             content={this.state.content}
-            defaultLang={this.state.lang}
             highlightList={this.state.highlightList}
             handleVerseClick={this.handleVerseClick}
             handlelayout={this.handlelayout}
@@ -588,8 +484,7 @@ export default class Bible extends PureComponent {
               ref={(el) => this.footer = el}
               handleNextDay={this.handleNext}
               handlePreviousDay={this.handlePrevious}
-              handeleChangeLang={this.handeleChangeLang}
-              defaultLang={this.state.lang}
+              handleChangeLang={this.handleChangeLang}
               getDiaryBiblePhrase={this.getDiaryBiblePhrase}
               navigation={this.props.navigation}
               toggleModal={this.toggleModalFontSetting}
@@ -602,8 +497,7 @@ export default class Bible extends PureComponent {
           <AndroidActionAnimatedButton
             offsetY={this.state.footerScrollY}
             opacity={this.state.fadeInOpacity}
-            defaultLang={this.state.lang}
-            handeleChangeLang={this.handeleChangeLang}
+            handleChangeLang={this.handleChangeLang}
           />
         }
         <Pupup marginAdjust={-150} text={this.state.popupText} ref={r => this.pupupDialog = r}/>
@@ -620,12 +514,7 @@ export default class Bible extends PureComponent {
         <FontPanelModal
           isFontSettingModalVisible={this.state.isFontSettingModalVisible}
           toggleModalFontSetting={this.toggleModalFontSetting}
-          handleSettingFontFamily={this.handleSettingFontFamily}
-          handleSettingFontSize={this.handleSettingFontSize}
-          handleSettingLineHeight={this._handleSettingLineHeight}
-          handleSettingReadingMode={this._handleSettingReadingMode}
-          handleSliderValueChange={this._handleSliderValueChange}
-          setting={this.state.setting}
+          handleReadMode={this.handleReadMode}
         />
       </StyledContainer>
     );
