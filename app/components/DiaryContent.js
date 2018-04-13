@@ -134,7 +134,7 @@ export default class DiaryContent extends Component {
                 fontColor={storeSetting.fontColor}
                 lineHeight={storeSetting.lineHeight}
                 verseItem={verseItem}
-                defaultLang={this.props.defaultLang}
+                language={storeSetting.language}
                 handleVerseClick={this.props.handleVerseClick}
                 selected={checkVerseSelected(this.props.selectVerse, `${verseItem.id}-${verseItem.version}`)}
                 highlightColor={checkVerseHighlighted(this.props.highlightList, verseItem)}

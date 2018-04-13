@@ -112,7 +112,6 @@ class FlatListItem extends React.Component {
               chapter_nr: chapter_nr,
               verse_nr: verse_nr,
               title: `${book_name}${' '}${chapter_nr}`,
-              lang: lang,
               version: version,
             });
           }}
@@ -171,7 +170,6 @@ export default class BibleSearch extends Component {
       verseList: [],
       refreshing: false,
       searchKey: '',
-      lang: 'cht',
       bookFilterKey: 0,
       chapterFilterKey: 0,
       bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
@@ -196,29 +194,29 @@ export default class BibleSearch extends Component {
       }
       await this.setState({showLoading: true});
       if(this.state.bookFilterKey == 1) { //舊約
-        results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`testament = 0 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 2) { // 新約
-        results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`testament = 1 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 3) { // 律法書
-        results = await dbCustomizeSearch(`book_nr >= 1 AND book_nr <= 5 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 1 AND book_nr <= 5 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 4) { // 歷史書
-        results = await dbCustomizeSearch(`book_nr >= 6 AND book_nr <= 17 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 6 AND book_nr <= 17 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 5) { // 智慧書
-        results = await dbCustomizeSearch(`book_nr >= 18 AND book_nr <= 22 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 18 AND book_nr <= 22 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 6) { // 先知書
-        results = await dbCustomizeSearch(`book_nr >= 23 AND book_nr <= 39 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 23 AND book_nr <= 39 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 7) { // 四福音
-        results = await dbCustomizeSearch(`book_nr >= 40 AND book_nr <= 43 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 40 AND book_nr <= 43 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 8) { // 保羅書信
-        results = await dbCustomizeSearch(`book_nr >= 45 AND book_nr <= 58 AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_nr >= 45 AND book_nr <= 58 AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey == 0) { // 指定書卷
-        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey != 0) { // 指定章節
-        results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey != 0 && this.state.chapterFilterKey != 0) { // 指定書卷及章節
-        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`book_name_short = '${this.state.bookOptionsPlaceHolder}' AND chapter_nr = ${this.state.chapterOptionPlaceHolder} AND verse CONTAINS[c] '${text}'`, storeSetting.language);
       } else if(this.state.bookFilterKey == 0 && this.state.chapterFilterKey == 0) { // 所有
-        results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, this.state.lang);
+        results = await dbCustomizeSearch(`verse CONTAINS[c] '${text}'`, storeSetting.language);
       }
       await this.setState({
         verseList: results,
@@ -256,9 +254,8 @@ export default class BibleSearch extends Component {
     if(this.state.searchKey.length != 0) await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
   }
   generateOptions = () => {
-    const bookNameList = R.values(bookName[this.props.navigation.state.params.lang]);
+    const bookNameList = R.values(bookName[storeSetting.language]);
     this.setState({
-      lang: this.props.navigation.state.params.lang,
       bookOptions: [
         I18n.t('bible_search_placeholder'),
         I18n.t('bible_search_old_testament'),

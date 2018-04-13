@@ -82,7 +82,6 @@ class FlatListItem extends Component {
               chapter_nr: chapter_nr,
               verse_nr: verse_nr,
               title: `${book_name}${' '}${chapter_nr}`,
-              lang: lang,
               version: version,
             });
           }}

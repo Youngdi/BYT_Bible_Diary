@@ -85,7 +85,7 @@ export default class Verse extends Component {
         backgroundColor={this.props.highlightColor == 'transparent' ? this.props.highlightColor : R.isEmpty(this.props.highlightColor.bgColor) ? this.props.highlightColor : this.props.highlightColor.bgColor}
         textDecorationLine={this.state.selected ? 'underline' : 'none'}
         lineHeight={this.props.lineHeight}
-        letterSpacing={this.props.defaultLang == 'en' ? 0 : 2}
+        letterSpacing={this.props.language == 'en' ? 0 : 2}
       >
         <PharseNumber
           fontSize={this.props.fontSize - 6}
@@ -94,9 +94,9 @@ export default class Verse extends Component {
           textDecorationLine={this.state.selected ? 'underline' : 'none'}
           lineHeight={this.props.lineHeight}
         >
-          {this.props.defaultLang == 'en' ? '  ': ''}{`${this.props.verseItem.verse_nr}`}{'  '}
+          {this.props.language == 'en' ? '  ': ''}{`${this.props.verseItem.verse_nr}`}{'  '}
         </PharseNumber>
-        {`${this.props.verseItem.verse}`}{this.props.defaultLang == 'cht_en' ? '\n' : ''}
+        {`${this.props.verseItem.verse}`}{this.props.language == 'cht_en' ? '\n' : ''}
       </PharseText>
     );
   }

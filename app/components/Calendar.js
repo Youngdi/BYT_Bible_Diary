@@ -3,6 +3,8 @@ import { View, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import Triangle from 'react-native-triangle';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
 
 const {
   height: deviceHeight,
@@ -22,9 +24,10 @@ LocaleConfig.locales['ja'] = {
   dayNamesShort: ['にち','げつ','か','すい','もく','きん','ど']
 };
 
+@observer
 export default class CalendarModal extends Component {
   render() {
-    LocaleConfig.defaultLocale = this.props.defaultLang;
+    LocaleConfig.defaultLocale = storeSetting.language;
     return (
       <Modal 
         isVisible={this.props.isCalendarModalVisible}

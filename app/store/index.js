@@ -14,6 +14,9 @@ export const storeSetting = types
     tourist: false,
   })
   .actions(self => ({
+    handleChangeLanguage(language) {
+      self.language = language;
+    },
     handleSettingFontSize(value) {
       if(self.fontSize >= 28 && value == 2) return null;
       if(self.fontSize <= 12 && value == -2) return null;

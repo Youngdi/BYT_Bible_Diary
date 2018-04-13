@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 });
 
 @observer 
-class CalendarModal extends Component {
+export default class FontPanel extends Component {
   componentDidMount() {
     //this.animation.play(0,500);
   }
@@ -234,4 +234,3 @@ class CalendarModal extends Component {
     );
   }
 }
-export default CalendarModal;

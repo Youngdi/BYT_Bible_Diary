@@ -43,6 +43,7 @@ import { dbFindDiary } from '../api/api';
 import { copyVerse, setHighlight, addBookmark, checkBookmark } from '../api/tooltip';
 import { storeSetting } from '../store/index';
 import { observer, Observer } from "mobx-react";
+import { autorun } from 'mobx';
 const AndroidActionAnimatedButton = Animated.createAnimatedComponent(AndroidActionButton);
 
 const storage = new Storage({
@@ -102,10 +103,8 @@ export default class DiaryRead extends Component {
       newBooks: [],
       content: [],
       popupText: '',
-      defaultLang: 'cht',
       lastPress: 0,
       lastPress1: 0,
-      bg: '#fff',
       fullScreenMode: false,
       isCalendarModalVisible: false,
       isFontSettingModalVisible: false,
@@ -147,35 +146,26 @@ export default class DiaryRead extends Component {
         FCM.setBadgeNumber(0);
         const readingRecord = await global.storage.load({key:'@readingSchdule'});
         const setting = await global.storage.load({key:'@setting'});
-        const lang = await global.storage.load({key:'@lang'});
+        const language = setting.language;
         const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
         const fontColor = setting.readingMode ? '#ccc' : '#000';
         const bgColor = setting.readingMode ? '#333' : '#fff';
-        if(lang == 'cht') I18n.locale = 'zh-hant';
-        if(lang == 'chs') I18n.locale = 'zh-hans';
-        if(lang == 'en') I18n.locale = 'en';
-        if(lang == 'ja') I18n.locale = 'ja';
-        if(lang == 'cht_en') I18n.locale = 'zh-hant';
-        await this.setState({
-          defaultLang: lang,
-        });
-        await this.generateContent();
-        await this.generateBooks(lang);
+        if(language == 'cht') I18n.locale = 'zh-hant';
+        if(language == 'chs') I18n.locale = 'zh-hans';
+        if(language == 'en') I18n.locale = 'en';
+        if(language == 'ja') I18n.locale = 'ja';
+        if(language == 'cht_en') I18n.locale = 'zh-hant';
+        await this.generateContent(language);
+        await this.generateBooks(language);
         storeSetting.syncLocalstorage({
           ...setting,
           brightnessValue: brightness,
           bgColor,
           fontColor,
+          language,
         });
         this.setState({
           contentView: this.contentView,
-          // bg: BgColor,
-          // setting:{
-          //   ...this.state.setting,
-          //   ...setting,
-          //   brightnessValue: brightness,
-          //   fontColor: FontColor,
-          // },
           markedDates: {
             ...readingRecord,
             [this.state.date.dateString]: {
@@ -187,6 +177,7 @@ export default class DiaryRead extends Component {
       } catch (err) {
         switch (err.name) {
           case 'NotFoundError':
+            const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
             await global.storage.save({
               key: '@readingSchdule',
               data: {},
@@ -205,19 +196,16 @@ export default class DiaryRead extends Component {
             await global.storage.save({
               key: '@setting',
               data: {
+                language: 'cht',
                 fontFamily: 'Avenir',
                 fontSize: 18,
                 fontColor: '#000',
+                bgColor: '#fff',
                 lineHeight: 33,
-                brightnessValue: 1,
+                brightnessValue: brightness,
                 readingMode: false, // 0 -> day, 1 -> night
                 tourist: true,
               },
-              expires: null,
-            });
-            await global.storage.save({
-              key: '@lang',
-              data: 'cht',
               expires: null,
             });
             await global.storage.save({
@@ -225,9 +213,8 @@ export default class DiaryRead extends Component {
               data: {},
               expires: null,
             });
-            const readingRecord = await global.storage.load({key:'@readingSchdule'});
-            const brightness = Platform.OS == 'ios' ? await DeviceBrightness.getBrightnessLevel() : await DeviceBrightness.getSystemBrightnessLevel();
-            await this.generateContent();
+            // const readingRecord = await global.storage.load({key:'@readingSchdule'});
+            await this.generateContent('cht');
             await this.generateBooks('cht');
             storeSetting.syncLocalstorage({
               language: 'cht',
@@ -243,7 +230,7 @@ export default class DiaryRead extends Component {
             await this.setState({
               contentView: this.contentView,
               markedDates: {
-                ...readingRecord,
+                // ...readingRecord,
                 [this.state.date.dateString]: {
                   selected : true,
                   marked: R.path([`${this.state.date.dateString}`, 'marked'], readingRecord) ? true : false,
@@ -256,6 +243,11 @@ export default class DiaryRead extends Component {
         }
       }
   }
+  // componentDidMount() {
+  //   autorun(() => this.setState({
+  //     defaultLang: storeSetting.language,
+  //   }))
+  // }
   closeControlPanel = () => this._drawer.close()
   openControlPanel = () => this._drawer.open()
   setFullScreenMode = () => this.setState({fullScreenMode: true})
@@ -279,16 +271,16 @@ export default class DiaryRead extends Component {
     if(this.header) this.header.closeActionButton();
     if(this.footer) this.footer.closeActionButton();
   }
-  generateBooks = async (lang) => {
-    const bookNameList = bookName[lang];
+  generateBooks = async (language) => {
+    const bookNameList = bookName[language];
     this.setState({
       oldBooks: R.slice(0, 39 ,R.values(bookNameList)),
       newBooks: R.slice(39, 66, R.values(bookNameList)),
     });
   }
-  generateContent = async () => {
+  generateContent = async (language) => {
     const highlightList = await global.storage.load({key:'@highlightList'});
-    const content = await dbFindDiary(this.state.date, this.state.defaultLang);
+    const content = await dbFindDiary(this.state.date, language);
     this.setState({
       content: content,
       highlightList: highlightList,
@@ -398,7 +390,7 @@ export default class DiaryRead extends Component {
     });
     this.contentView.root.scrollTo({y: 0, animated: true});
     setTimeout(() => {
-      this.generateContent();
+      this.generateContent(storeSetting.language);
     }, 0);
   }
   handlePreviousDay = () => {
@@ -429,7 +421,7 @@ export default class DiaryRead extends Component {
     });
     this.contentView.root.scrollTo({y: 0, animated: true});
     setTimeout(() => {
-      this.generateContent();
+      this.generateContent(storeSetting.language);
     }, 0);
   }
   handleChangeDay = async (day) => {
@@ -449,7 +441,7 @@ export default class DiaryRead extends Component {
     this.contentView.root.scrollTo({y: 0, animated: true});
     this.resetHighlight();
     setTimeout( () => {
-      this.generateContent();
+      this.generateContent(storeSetting.language);
     }, 10);
   }
   handleMonthChange = (month) => {
@@ -472,26 +464,19 @@ export default class DiaryRead extends Component {
       fullScreenMode: true,
     });
   }
-  handeleChangeLang = async (lang) => {
+  handleChangeLang = async (language) => {
     if(this.state.loadContent) return null;
-    if(lang == 'cht') I18n.locale = 'zh-hant';
-    if(lang == 'chs') I18n.locale = 'zh-hans';
-    if(lang == 'en') I18n.locale = 'en';
-    if(lang == 'ja') I18n.locale = 'ja';
-    if(lang == 'cht_en') I18n.locale = 'zh-hant';
-    await this.setState({
-      defaultLang: lang,
-    });
-    await global.storage.save({
-      key: '@lang',
-      data: lang,
-      expires: null,
-    });
+    if(language == 'cht') I18n.locale = 'zh-hant';
+    if(language == 'chs') I18n.locale = 'zh-hans';
+    if(language == 'en') I18n.locale = 'en';
+    if(language == 'ja') I18n.locale = 'ja';
+    if(language == 'cht_en') I18n.locale = 'zh-hant';
+    storeSetting.handleChangeLanguage(language);
     setTimeout(() => {
-      this.generateContent();
+      this.generateContent(language);
     }, 200);
     setTimeout(() => {
-      this.generateBooks(lang);
+      this.generateBooks(language);
     }, 1500);
   }
   handleCheckBookmark = async () => {
@@ -654,11 +639,11 @@ export default class DiaryRead extends Component {
   navigateTo = (toWhere, data = {}) => {
     this.reset();
     if(toWhere == 'BibleSearch') {
-      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang});
+      this.props.navigation.navigate(toWhere);
       return;
     }
     if(toWhere == 'Bookmark') {
-      this.props.navigation.navigate(toWhere, {lang: this.state.defaultLang});
+      this.props.navigation.navigate(toWhere);
       return;
     }
     if(toWhere == 'NoteList') {
@@ -681,7 +666,7 @@ export default class DiaryRead extends Component {
       main: {paddingLeft: 3},
       drawerOverlay: { opacity: 0.1}
     }
-    if(this.state.setting.tourist) {
+    if(storeSetting.tourist) {
       return (
         <InitIntro/>
       );
@@ -700,7 +685,6 @@ export default class DiaryRead extends Component {
         content={
           <BibleListPanel
             navigateTo={this.navigateTo}
-            defaultLang={this.state.defaultLang}
             oldBooks={this.state.oldBooks}
             newBooks={this.state.newBooks}
             closeControlPanel={this.closeControlPanel}
@@ -741,7 +725,6 @@ export default class DiaryRead extends Component {
                 <DiaryContent
                   selectVerse={this.state.selectVerse}
                   content={this.state.content}
-                  defaultLang={this.state.defaultLang}
                   date={this.state.date}
                   contentView={this.state.contentView}
                   marked={this.state.markedDates[this.state.currentDate].marked}
@@ -788,8 +771,7 @@ export default class DiaryRead extends Component {
               ref={r => this.footer = r}
               handleNextDay={this.handleNextDay}
               handlePreviousDay={this.handlePreviousDay}
-              handeleChangeLang={this.handeleChangeLang}
-              defaultLang={this.state.defaultLang}
+              handleChangeLang={this.handleChangeLang}
               getDiaryBiblePhrase={this.getDiaryBiblePhrase}
               navigation={this.props.navigation}
               toggleModal={this.toggleModalFontSetting}
@@ -815,7 +797,6 @@ export default class DiaryRead extends Component {
         { this.state.finishedReading ? <Check finishedReading={this.state.finishedReading} content={this.state.content} handleFinished={this.handleFinished} /> : null}
         { !this.state.finishedReading &&
           <CalendarModal
-            defaultLang={this.state.defaultLang}
             isCalendarModalVisible={this.state.isCalendarModalVisible}
             currentDate={this.state.currentDate}
             handleChangeDay={this.handleChangeDay}
@@ -845,15 +826,13 @@ export default class DiaryRead extends Component {
             handleSettingLineHeight={this.handleSettingLineHeight}
             handleSettingReadingMode={this.handleSettingReadingMode}
             handleSliderValueChange={this.handleSliderValueChange}
-            setting={this.state.setting}
           />
         }
         {Platform.OS == 'ios' ? null : 
           <AndroidActionAnimatedButton
             offsetY={this.state.footerScrollY}
             opacity={this.state.fadeInOpacity}
-            defaultLang={this.state.defaultLang}
-            handeleChangeLang={this.handeleChangeLang}
+            handleChangeLang={this.handleChangeLang}
           />
         }
         </AnimatedStyledContainer>

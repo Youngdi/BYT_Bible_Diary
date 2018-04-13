@@ -13,6 +13,9 @@ import Feather from 'react-native-vector-icons/Feather';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import * as R from 'ramda';
 import { dbFindChapter, dbFindVerse } from '../api/api';
+import { storeSetting } from '../store/index';
+import { observer } from "mobx-react";
+
 var {
   height: deviceHeight,
   width: deviceWidth,
@@ -44,6 +47,7 @@ const StyledTitleContainer = styled.View`
   align-items:center;
   margin-top:${isIphoneX() ? '16px' : '0px'};
 `;
+@observer
 export default class BibleListPanel extends PureComponent {
   constructor(props){
     super(props);
@@ -58,7 +62,7 @@ export default class BibleListPanel extends PureComponent {
     };
   }
   findChapterLength = async (book_nr) => {
-    const results = await dbFindChapter(book_nr, this.props.defaultLang);
+    const results = await dbFindChapter(book_nr, storeSetting.language);
     const findLength = R.pipe(
       R.map(R.prop('chapter_nr')),
       R.uniq(),
@@ -72,7 +76,7 @@ export default class BibleListPanel extends PureComponent {
     });
   }
   findVerseLength = async (chapter_nr) => {
-    const results = await dbFindVerse(this.state.book_nr, chapter_nr, this.props.defaultLang);
+    const results = await dbFindVerse(this.state.book_nr, chapter_nr, storeSetting.language);
     this.setState({
       chapter_nr: chapter_nr,
       verseLength: results.length,
@@ -81,7 +85,7 @@ export default class BibleListPanel extends PureComponent {
     });
   }
   goBible = async (verse_nr) => {
-    const results = await dbFindVerse(this.state.book_nr, this.state.chapter_nr, this.props.defaultLang);
+    const results = await dbFindVerse(this.state.book_nr, this.state.chapter_nr, storeSetting.language);
     this.setState({
       mode: 'book',
       title: 'Books',
@@ -91,7 +95,7 @@ export default class BibleListPanel extends PureComponent {
       chapter_nr: this.state.chapter_nr,
       verse_nr: verse_nr,
       title: `${results[0].book_name}${' '}${results[0].chapter_nr}`,
-      lang: this.props.defaultLang,
+      lang: storeSetting.language,
       version: results[0].version,
     });
   }
