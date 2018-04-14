@@ -42,16 +42,40 @@ export default class InitIntro extends Component {
         </View>
       );
     });
-    return (
-      <AppIntro
-        onDoneBtnClick={this.doneBtnHandle}
-        onSkipBtnClick={this.onSkipBtnHandle}
-        showSkipButton={false}
-        showDoneButton={false}
-        showDots={false}
-      >
-        {pageArray}
-      </AppIntro>
+    // return (
+    //   <AppIntro
+    //     onDoneBtnClick={this.doneBtnHandle}
+    //     onSkipBtnClick={this.onSkipBtnHandle}
+    //     showSkipButton={false}
+    //     showDoneButton={false}
+    //     showDots={false}
+    //   >
+    //     {pageArray}
+    //   </AppIntro>
+    // );
+    return(
+      <View>
+        <ImageBackground 
+          style={{width: deviceWidth, height:deviceHeight}}
+          source={require('../images/intro/intro.jpg')}
+          resizeMode="contain"
+        >
+        <View style={{width:deviceWidth,height:deviceHeight,display:'flex',justifyContent:'center', alignItems:'center'}}>
+          <TouchableOpacity
+            style={{
+              alignItems: 'center',
+              backgroundColor: '#1E1E1E',
+              padding: 30,
+              borderRadius:10,
+              opacity:0.98,
+            }}
+            onPress={this.props.handleCloseTourist}
+            >
+            <Text style={{color: '#eee', opacity:1, fontSize:18, fontWeight:'800'}}>開始使用</Text>
+          </TouchableOpacity>
+        </View>
+        </ImageBackground>
+      </View>
     );
   }
 }

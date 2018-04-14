@@ -184,21 +184,6 @@ export default class DiaryRead extends Component {
               expires: null,
             });
             await global.storage.save({
-              key: '@setting',
-              data: {
-                language: 'cht',
-                fontFamily: 'Avenir',
-                fontSize: 18,
-                fontColor: '#000',
-                bgColor: '#fff',
-                lineHeight: 33,
-                brightnessValue: brightness,
-                readingMode: false, // 0 -> day, 1 -> night
-                tourist: true,
-              },
-              expires: null,
-            });
-            await global.storage.save({
               key: '@note',
               data: {},
               expires: null,
@@ -240,11 +225,13 @@ export default class DiaryRead extends Component {
   }
   handleCloseTourist = () => {
     storeSetting.handleCloseTourist();
+    this.generateContent(storeSetting.language);
+    this.generateBooks(storeSetting.language);
     setTimeout(() => {
       this.setState({
         contentView: this.contentView,
       });
-    }, 100);
+    }, 400);
   }
   closeControlPanel = () => this._drawer.close()
   openControlPanel = () => this._drawer.open()
