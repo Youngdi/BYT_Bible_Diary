@@ -462,7 +462,7 @@ export default class DiaryRead extends Component {
       fullScreenMode: true,
     });
   }
-  handleChangeLang = async (language) => {
+  handleChangeLang = (language) => {
     if(this.state.loadContent) return null;
     if(language == 'cht') I18n.locale = 'zh-hant';
     if(language == 'chs') I18n.locale = 'zh-hans';

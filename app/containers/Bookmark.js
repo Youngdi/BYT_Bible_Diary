@@ -53,9 +53,9 @@ class FlatListItem extends Component {
   }
   render() {
     const {id, version, testament, book_ref, book_name, book_name_short, book_nr, chapter_nr, verse_nr, verse, createdTime, keyId} = this.props.item;
-    let lang = version;
-    if(version == 'japan') lang = 'ja';
-    if(version == 'kjv') lang = 'en';
+    let language = version;
+    if(version == 'japan') language = 'ja';
+    if(version == 'kjv') language = 'en';
     const verseArray = this.props.searchKey.length == 0 ? [verse] : sperateVerse(verse, this.props.searchKey);
     return (
         <TouchableOpacity
@@ -83,6 +83,7 @@ class FlatListItem extends Component {
               verse_nr: verse_nr,
               title: `${book_name}${' '}${chapter_nr}`,
               version: version,
+              language: language,
             });
           }}
         >

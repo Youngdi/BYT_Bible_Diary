@@ -166,7 +166,7 @@ export default class Bible extends Component {
       chapterLength: this.props.navigation.state.params.chapterLength,
       version: this.props.navigation.state.params.version,
     });
-    await this.generateContent(storeSetting.language);
+    await this.generateContent(this.props.navigation.state.params.language || storeSetting.language);
     setTimeout(() => {
       const wordNumbers = R.pipe(
         R.map(R.prop('verse')),
@@ -427,15 +427,12 @@ export default class Bible extends Component {
     if(language == 'en') I18n.locale = 'en';
     if(language == 'ja') I18n.locale = 'ja';
     if(language == 'cht_en') I18n.locale = 'zh-hant';
-    if(language == 'cht_en') {
-      this.setState({content: [[]]});
-    } else {
-      this.resetHighlight();
-    }
+    if(language == 'cht_en') this.setState({content: [[]]});
+    this.resetHighlight();
     storeSetting.handleChangeLanguage(language);
     setTimeout(() => {
       this.generateContent(language);
-    }, 100);
+    }, 400);
   }
   toggleModalFontSetting = () => {
     this.setState({ isFontSettingModalVisible: !this.state.isFontSettingModalVisible });
