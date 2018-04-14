@@ -138,7 +138,6 @@ export default class Bible extends Component {
     this.state = {
       footerScrollY: new Animated.Value(0),
       fadeInOpacity: new Animated.Value(1),
-      loadContent: false,
       fullScreenMode: false,
       popupText: '',
       isTooltipModalVisible: false,
@@ -362,11 +361,6 @@ export default class Bible extends Component {
       chapterLength: length,
       book_name: content[0].book_name,
     });
-    setTimeout(() => {
-      this.setState({
-        loadContent: false,
-      });
-    }, 500);
     this.props.navigation.setParams({ title: `${content[0].book_name}${' '}${content[0].chapter_nr}`});
   }
   handleNext = async () => {
@@ -428,7 +422,6 @@ export default class Bible extends Component {
     this.props.navigation.setParams({});
   }
   handleChangeLang = (language) => {
-    if(this.state.loadContent) return null;
     if(language == 'cht') I18n.locale = 'zh-hant';
     if(language == 'chs') I18n.locale = 'zh-hans';
     if(language == 'en') I18n.locale = 'en';
@@ -441,7 +434,7 @@ export default class Bible extends Component {
     }
     storeSetting.handleChangeLanguage(language);
     setTimeout(() => {
-      this.generateContent(storeSetting.language);
+      this.generateContent(language);
     }, 100);
   }
   toggleModalFontSetting = () => {

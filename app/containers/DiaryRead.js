@@ -230,7 +230,10 @@ export default class DiaryRead extends Component {
       }
   }
   componentDidMount() {
-    this.disposer = autorun(() => this.generateContent(storeSetting.language));
+    this.disposer = autorun(() => {
+      this.generateBooks(storeSetting.language);
+      this.generateContent(storeSetting.language);
+    });
   }
   componentWillUnmount() {
     this.disposer();
