@@ -8,7 +8,8 @@ target 'BYTBibleDiary' do
   # use_frameworks!
 
   # Pods for TakeOver
-
+  pod 'Fabric'
+  pod 'Crashlytics'
 
   target 'BYTBibleDiaryTests' do
     inherit! :search_paths

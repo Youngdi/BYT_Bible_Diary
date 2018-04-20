@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		0042093F1EA84092B3EB3970 /* libRNDeviceBrightness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6BFAF1EF9AA4C6882A9271D /* libRNDeviceBrightness.a */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
@@ -161,6 +162,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
 			remoteInfo = "fishhook-tvOS";
+		};
+		2F2F776E2089FFF500EB4A6A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
+			remoteInfo = jsinspector;
+		};
+		2F2F77702089FFF500EB4A6A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
+			remoteInfo = "jsinspector-tvOS";
 		};
 		2F4D6A86202C82A7002DA407 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -755,6 +770,8 @@
 				3DAD3EAB1DF850E9000B6D8A /* libcxxreact.a */,
 				3DAD3EAD1DF850E9000B6D8A /* libjschelpers.a */,
 				3DAD3EAF1DF850E9000B6D8A /* libjschelpers.a */,
+				2F2F776F2089FFF500EB4A6A /* libjsinspector.a */,
+				2F2F77712089FFF500EB4A6A /* libjsinspector-tvOS.a */,
 				2F86A8C420183BE00005FACB /* libthird-party.a */,
 				2F86A8C620183BE00005FACB /* libthird-party.a */,
 				2F86A8C820183BE00005FACB /* libdouble-conversion.a */,
@@ -1069,6 +1086,7 @@
 				2F86AB5020188F880005FACB /* Embed Frameworks */,
 				B77D791D79B639C81258D958 /* [CP] Embed Pods Frameworks */,
 				92703EE6EEB2C966A372AF04 /* [CP] Copy Pods Resources */,
+				2F2F77412089FFF400EB4A6A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1351,6 +1369,20 @@
 			fileType = archive.ar;
 			path = "libfishhook-tvOS.a";
 			remoteRef = 2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F2F776F2089FFF500EB4A6A /* libjsinspector.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjsinspector.a;
+			remoteRef = 2F2F776E2089FFF500EB4A6A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2F2F77712089FFF500EB4A6A /* libjsinspector-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libjsinspector-tvOS.a";
+			remoteRef = 2F2F77702089FFF500EB4A6A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2F4D6A87202C82A7002DA407 /* libCodePush.a */ = {
@@ -1745,6 +1777,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		2F2F77412089FFF400EB4A6A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" ef189b81854fb9fdefca6ba4715bf2e9a1e80e11 ab34646c123227eb4fb4bef1652ae7ff9493febf8b396ddf91c2f68c6163ae8d";
 		};
 		4383096140F40F729C13C00C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

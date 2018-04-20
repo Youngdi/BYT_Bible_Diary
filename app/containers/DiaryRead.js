@@ -104,7 +104,6 @@ export default class DiaryRead extends Component {
       content: [],
       popupText: '',
       lastPress: 0,
-      lastPress1: 0,
       fullScreenMode: false,
       isCalendarModalVisible: false,
       isFontSettingModalVisible: false,
