@@ -13,6 +13,8 @@
 #import <React/RCTRootView.h>
 #import "RNFIRMessaging.h"
 #import <CodePush/CodePush.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 
@@ -21,6 +23,7 @@
 //  NSURL *jsCodeLocation;
 //
 //
+  [Fabric with:@[[Crashlytics class]]];
   NSURL *jsCodeLocation;
   
   #ifdef DEBUG

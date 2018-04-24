@@ -25,6 +25,7 @@ import { dbCustomizeSearch } from '../api/api';
 import { sperateVerse } from '../api/utilities';
 import { storeSetting } from '../store/index';
 import { observer } from "mobx-react";
+import { autorun } from 'mobx';
 
 const {
   height: deviceHeight,
@@ -181,8 +182,13 @@ export default class BibleSearch extends Component {
       showLoading: false,
     }
   }
-  componentDidMount = () => {
-    this.generateOptions();
+  componentDidMount() {
+    this.disposer = autorun(() => {
+      this.generateOptions(storeSetting.language);
+    });
+  }
+  componentWillUnmount() {
+    this.disposer();
   }
   searchVerse = async (e) => {
     try {
@@ -253,8 +259,8 @@ export default class BibleSearch extends Component {
     });
     if(this.state.searchKey.length != 0) await this.searchVerse({nativeEvent: {text: this.state.searchKey}});
   }
-  generateOptions = () => {
-    const bookNameList = R.values(bookName[storeSetting.language]);
+  generateOptions = (language) => {
+    const bookNameList = R.values(bookName[language]);
     this.setState({
       bookOptions: [
         I18n.t('bible_search_placeholder'),
@@ -268,6 +274,8 @@ export default class BibleSearch extends Component {
         I18n.t('bible_search_paul'),
         ...bookNameList
       ],
+      bookOptionsPlaceHolder: I18n.t('bible_search_placeholder'),
+      chapterOptionPlaceHolder: I18n.t('bible_search_placeholder'),
       chapterOption: [I18n.t('bible_search_placeholder'), ...R.range(1,150)],
     });
   }
