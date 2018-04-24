@@ -15,7 +15,6 @@ import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.cmcewen.blurview.BlurViewPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.rnfs.RNFSPackage;
-import com.cmcewen.blurview.BlurViewPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
