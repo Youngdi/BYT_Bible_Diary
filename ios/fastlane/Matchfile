@@ -1,0 +1,8 @@
+# git_url("https://gitlab.com/Youngdi/BYT_Bible_Diary")
+
+# type("development") # The default type, can be: appstore, adhoc, enterprise or development
+
+# app_identifier(["byt.bible.diary"])
+# username("u9951060@icloud.com") # Your Apple Developer Portal username
+
+
